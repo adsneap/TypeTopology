@@ -6,10 +6,10 @@ open import UF.FunExt
 open import UF.Subsingletons
 open import MLTT.Spartan
 open import Naturals.Order
-open import DedekindReals.Integers.Order
-open import DedekindReals.Integers.Integers
+open import Integers.Order
+open import Integers.Integers
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
-open import DedekindReals.Integers.Addition renaming (_+_ to _+ℤ_)
+open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Notation.Order
 open import UF.PropTrunc
 open import UF.Quotient

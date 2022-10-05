@@ -5,13 +5,13 @@
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
 open import Notation.Order
-open import DedekindReals.Integers.Integers
-open import DedekindReals.Integers.Addition
-open import DedekindReals.Integers.Order
-open import DedekindReals.Integers.Multiplication
+open import Integers.Integers
+open import Integers.Addition
+open import Integers.Order
+open import Integers.Multiplication
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
 open import Naturals.Multiplication renaming (_*_ to _*ℕ_)
-open import DedekindReals.Integers.Negation
+open import Integers.Negation
 open import UF.Base
 open import UF.FunExt
 open import UF.Powerset hiding (𝕋)

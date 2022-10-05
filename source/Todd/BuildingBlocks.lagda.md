@@ -5,9 +5,9 @@
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
 open import Notation.Order
-open import DedekindReals.Integers.Integers
-open import DedekindReals.Integers.Addition
-open import DedekindReals.Integers.Negation
+open import Integers.Integers
+open import Integers.Addition
+open import Integers.Negation
 open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Subsingletons

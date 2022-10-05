@@ -1,6 +1,6 @@
 This file defines Dedekind reals using Dyadic Rationals.
 
-The code is this file is based upon the work in the DedekindReals.lagda file, in most cases simply changing ℚ to ℤ[1/2] is all that is necessary.
+The code is this file is based upon the work in the lagda file, in most cases simply changing ℚ to ℤ[1/2] is all that is necessary.
 
 http://math.andrej.com/wp-content/uploads/2008/08/abstract-cca2008.pdf
 
@@ -112,7 +112,7 @@ rational inhabiting a cut. This is useful for readability purposes.
 
 ```
 The following proofs are incomplete, but can be completed easily by
-modelling the proofs in the DedekindReals.lagda file which uses usual
+modelling the proofs in the lagda file which uses usual
 rationals.
 
 ```agda

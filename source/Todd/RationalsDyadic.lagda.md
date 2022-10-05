@@ -9,12 +9,12 @@ aim is to provide specific implementations of these postulates.
 
 open import MLTT.Spartan renaming (_+_ to _∔_) -- TypeTopology
 
-open import DedekindReals.Integers.Integers
-open import DedekindReals.Integers.Abs
-open import DedekindReals.Integers.Addition renaming (_+_ to _+ℤ_)
-open import DedekindReals.Integers.Multiplication 
-open import DedekindReals.Integers.Negation 
-open import DedekindReals.Integers.Order hiding (min₃ ; max₃)
+open import Integers.Integers
+open import Integers.Abs
+open import Integers.Addition renaming (_+_ to _+ℤ_)
+open import Integers.Multiplication 
+open import Integers.Negation 
+open import Integers.Order hiding (min₃ ; max₃)
 open import Naturals.Addition
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import MLTT.NaturalNumbers
@@ -500,9 +500,9 @@ rationals into rationals.
 
 open import Notation.CanonicalMap
 open import Naturals.Division
-open import DedekindReals.Rationals.Fractions
-open import DedekindReals.Rationals.Rationals
-open import DedekindReals.Rationals.Multiplication renaming (_*_ to _ℚ*_)
+open import Rationals.Fractions
+open import Rationals.Rationals
+open import Rationals.Multiplication renaming (_*_ to _ℚ*_)
 
 ```
 Proof that any integer is in lowest terms. 

@@ -8,13 +8,13 @@ Dedekind reals defined using subsets of dyadic rationals.
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
 open import Notation.Order
-open import DedekindReals.Integers.Integers
-open import DedekindReals.Integers.Addition
-open import DedekindReals.Integers.Order
-open import DedekindReals.Integers.Multiplication
+open import Integers.Integers
+open import Integers.Addition
+open import Integers.Order
+open import Integers.Multiplication
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
 open import Naturals.Multiplication renaming (_*_ to _*ℕ_)
-open import DedekindReals.Integers.Negation
+open import Integers.Negation
 open import UF.Base
 open import UF.FunExt
 open import UF.Powerset hiding (𝕋)
@@ -665,7 +665,7 @@ operation-builder _⊕_ ⊕-monotic k (f , b) (g , b') = {!!} , {!!}
 
 
 
-open import DedekindReals.Integers.Abs
+open import Integers.Abs
 open import Naturals.Order
 
 power-of-two-grows : (n : ℕ) → 2^ n < 2^ (succ n)
@@ -926,7 +926,7 @@ specific level of precision.
 
 
 ```agda
-open import DedekindReals.Integers.Order
+open import Integers.Order
 
 --Confirm with Todd... This is sound but not complete
 _<𝕋_on-level_ : 𝕋 → 𝕋 → ℤ → 𝓤₀ ̇
