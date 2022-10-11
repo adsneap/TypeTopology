@@ -405,6 +405,9 @@ record OrderProperties : 𝓤₁ ̇ where
  Bℤ[1/2] : (x y ε : ℤ[1/2]) → 0ℤ[1/2] < ε → 𝓤₀ ̇
  Bℤ[1/2] p q ε l = metric p q < ε
 
+ ℤ[1/2]-minus-zero : 0ℤ[1/2] ＝ (ℤ[1/2]- 0ℤ[1/2])
+ ℤ[1/2]-minus-zero = {!!}
+ 
  ℤ[1/2]<-≤ : (x y z : ℤ[1/2]) → x < y → y ≤ z → x < z
  ℤ[1/2]<-≤ x y z x<y y≤z with ≤-split y z y≤z
  ... | inl y<z = trans x y z x<y y<z
