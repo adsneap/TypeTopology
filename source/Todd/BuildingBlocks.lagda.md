@@ -65,7 +65,7 @@ record Collection (n : ℕ) : {!!} ̇ where
   Condition-3 : (x : Vec ℤ[1/2] (succ n)) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε) → Σ (a , b) ꞉ Vec ℤ[1/2] (succ n) × Vec ℤ[1/2] (succ n) , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (R (zip (a , b))) (D x) ε 0<ε
   
  F : Vec ℝ-d (succ n) → ℝ-d
- F v = (Lc , Rc) , inhabited-l , inhabited-r , rounded-l , {!!} , is-disjoint , is-located
+ F v = (Lc , Rc) , inhabited-l , inhabited-r , rounded-l , {!rounded-r!} , is-disjoint , is-located
   where
    Lc Rc : 𝓟 ℤ[1/2] 
    Lc p = (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , (pairwise-P' (λ (a , b) x → a < x × x < b) asbs v) × p < L asbs) , ∃-is-prop
@@ -76,26 +76,59 @@ record Collection (n : ℕ) : {!!} ̇ where
     where
      I : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v
        → Σ p ꞉ ℤ[1/2] , ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
-     I (asbs , a<x<b) = ((L asbs) - 1ℤ[1/2]) , ∣ asbs , a<x<b , {!L asbs - 1 < L asbs!} ∣
+     I (asbs , a<x<b) = ((L asbs) - 1ℤ[1/2]) , ∣ asbs , a<x<b , ℤ[1/2]<-neg (L asbs) 1ℤ[1/2] 0<1ℤ[1/2] ∣
 
    inhabited-r : inhabited-right Rc
    inhabited-r = ∥∥-functor I (generate-asbs v)
     where
      I : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v
        → Σ q ꞉ ℤ[1/2] , ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
-     I (asbs , a<x<b) = (R asbs + 1ℤ[1/2]) , ∣ asbs , a<x<b , {!R < R + 1!} ∣
+     I (asbs , a<x<b) = (R asbs + 1ℤ[1/2]) , ∣ asbs , a<x<b , ℤ[1/2]<-+ (R asbs) 1ℤ[1/2] 0<1ℤ[1/2] ∣
 
    rounded-l : rounded-left Lc
    rounded-l p = ltr , rtl
     where
      ltr : ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
          → ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p' < L asbs)
-     ltr tasbs = do
-                (asbs , as<xs<bs) ← tasbs
-                {!!}
-     rtl : {!!}
-     rtl = {!!} --just density/minus1
+     ltr = ∥∥-functor I
+      where
+       I : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
+         → Σ p' ꞉ ℤ[1/2] , p < p' × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p' < L asbs)
+       I (asbs , as<xs<bs , p<Lasbs) = let (p' , p<p' , p'<Lasbs) = dense p (L asbs) p<Lasbs in p' , (p<p' , ∣ asbs , (as<xs<bs , p'<Lasbs) ∣)
+     rtl : ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p' < L asbs)
+         → ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
+     rtl = ∥∥-rec ∃-is-prop I
+      where
+       I : Σ p' ꞉ ℤ[1/2] , p < p' × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p' < L asbs)
+         → ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
+       I (p' , p<p' , tasbs) = ∥∥-functor II tasbs
+        where
+         II : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p' < L asbs
+            → Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × p < L asbs
+         II (asbs , as<xs<bs , p'<Lasbs) = asbs , (as<xs<bs , trans p p' (L asbs) p<p' p'<Lasbs)
 
+   rounded-r : rounded-right Rc
+   rounded-r q = ltr , rtl
+    where
+     ltr : ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
+         → ∃ q' ꞉ ℤ[1/2] , q' < q × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q')
+     ltr = ∥∥-functor I
+      where
+       I : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
+         → Σ q' ꞉ ℤ[1/2] , q' < q × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q')
+       I (asbs , as<xs<bs , Rasbs<q) = let (q' , Rasbs<q' , q'<q) = dense (R asbs) q Rasbs<q in q' , (q'<q , ∣ asbs , (as<xs<bs , Rasbs<q') ∣)
+     rtl : ∃ q' ꞉ ℤ[1/2] , q' < q × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q' )
+         → ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
+     rtl = ∥∥-rec ∃-is-prop I
+      where
+       I : Σ q' ꞉ ℤ[1/2] , q' < q × (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q' )
+         → ∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
+       I (q' , q'<q , tasbs) = ∥∥-functor II tasbs
+        where
+         II : Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q' 
+            → Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , pairwise-P' (λ (a , b) x → a < x × x < b) asbs v × R asbs < q
+         II (asbs , as<xs<bs , Rasbs<q') = asbs , (as<xs<bs , trans (R asbs) q' q Rasbs<q' q'<q)
+      
    is-disjoint : disjoint Lc Rc
    is-disjoint p q (p<x , x<q) = {!!}
    -- p < Lab
@@ -106,13 +139,6 @@ record Collection (n : ℕ) : {!!} ̇ where
    is-located p q p<q = {!!}
    -- 0<q-p → 
 
- L' R' : Vec (ℤ × ℤ) (succ n) → ℤ × ℤ
- L' = {!!}
- R' = {!!}
-
- F* : Vec 𝕋 (succ n) → 𝕋
- F* x = {!!} 
-
  dyadic-function-equiv-to-real : (x : Vec ℤ[1/2] (succ n)) → ι (D x) ＝ F (vec-map ι x)
  dyadic-function-equiv-to-real x = ℝ-d-equality-from-left-cut ltr rtl
   where
@@ -122,17 +148,17 @@ record Collection (n : ℕ) : {!!} ̇ where
      ε : ℤ[1/2] 
      ε = ℤ[1/2]-abs (p - D x)
      0<ε : 0ℤ[1/2] <ℤ[1/2] ε
-     0<ε = {!!} -- positive since p<Dx
+     0<ε = transport (0ℤ[1/2] <_) (ℤ[1/2]-pos-abs p (D x) p<Dx ∙ ℤ[1/2]-abs-lemma (D x) p) (diff-positive p (D x) p<Dx)
      by-condition-3 : Σ (a , b) ꞉ Vec ℤ[1/2] (succ n) × Vec ℤ[1/2] (succ n) , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (L (zip (a , b))) (D x) ε 0<ε
                     → p ∈ lower-cut-of (F (vec-map ι x))
      by-condition-3 ((a , b) , a<x , x<b , distance-proof) = ∣ (zip (a , b)) , V , p<Lab ∣
       where
        I : 0ℤ[1/2] ≤ (D x - L (zip (a , b)))
-       I = {!since L ≤ D!}
+       I = diff-positive' (L (zip (a , b))) (D x) (Condition-1b a x b (Vecℤ[1/2]<-to-Vecℤ[1/2]≤ a x a<x , Vecℤ[1/2]<-to-Vecℤ[1/2]≤ x b x<b))
        II : 0ℤ[1/2] ≤ (D x - p)
-       II = {!Since p ≤ D!}
+       II = <-is-≤ℤ[1/2] 0ℤ[1/2] (D x - p) (diff-positive p (D x) p<Dx)
        III : (D x - L (zip (a , b))) < (D x - p)
-       III = {!using I, II, and distance-proof!}
+       III = {!!} -- {!using I, II, and distance-proof!}
        IV : (- (L (zip (a , b)))) < (- p)
        IV = {!from III!}
        p<Lab : p < L (zip (a , b))
@@ -148,9 +174,6 @@ record Collection (n : ℕ) : {!!} ̇ where
       where
        II : L (zip (unzip asbs)) ≤ℤ[1/2] D x
        II = Condition-1b (get-left asbs) x (get-right asbs) (dyadic-real-lemma' asbs x a<x<b)
-
- ternary-boehm-function-equiv-to-real : (α : Vec 𝕋 (succ n)) → ⟦ F* α ⟧ ＝ F (vec-map ⟦_⟧ α)
- ternary-boehm-function-equiv-to-real = {!!}
 
 neg-D : Vec ℤ[1/2] 1 → ℤ[1/2]
 neg-D (x ∷ []) = - x
@@ -351,9 +374,5 @@ addition-collection = record
                         }
 
 open Collection
-
-tbr- : 𝕋 → 𝕋
-tbr- x = F* negation-collection (x ∷ [])
-
 
 ```
