@@ -8,6 +8,7 @@ open import Notation.Order
 open import Integers.Integers
 open import Integers.Addition renaming (_+_ to _ℤ+_;  _-_ to _ℤ-_)
 open import Integers.Negation renaming (-_ to ℤ-_ )
+open import UF.Base
 open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Subsingletons
@@ -63,9 +64,10 @@ record Collection (n : ℕ) : {!!} ̇ where
                
   Condition-2 : (x : Vec ℤ[1/2] (succ n)) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε) → Σ (a , b) ꞉ Vec ℤ[1/2] (succ n) × Vec ℤ[1/2] (succ n) , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (L (zip (a , b))) (D x) ε 0<ε
   Condition-3 : (x : Vec ℤ[1/2] (succ n)) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε) → Σ (a , b) ꞉ Vec ℤ[1/2] (succ n) × Vec ℤ[1/2] (succ n) , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (R (zip (a , b))) (D x) ε 0<ε
+  Condition-4 : (asbs csds : Vec (ℤ[1/2] × ℤ[1/2]) (succ n)) → L asbs ≤ R csds
   
  F : Vec ℝ-d (succ n) → ℝ-d
- F v = (Lc , Rc) , inhabited-l , inhabited-r , rounded-l , {!rounded-r!} , is-disjoint , is-located
+ F v = (Lc , Rc) , inhabited-l , inhabited-r , rounded-l , rounded-r , is-disjoint , is-located
   where
    Lc Rc : 𝓟 ℤ[1/2] 
    Lc p = (∃ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , (pairwise-P' (λ (a , b) x → a < x × x < b) asbs v) × p < L asbs) , ∃-is-prop
@@ -130,14 +132,18 @@ record Collection (n : ℕ) : {!!} ̇ where
          II (asbs , as<xs<bs , Rasbs<q') = asbs , (as<xs<bs , trans (R asbs) q' q Rasbs<q' q'<q)
       
    is-disjoint : disjoint Lc Rc
-   is-disjoint p q (p<x , x<q) = {!!}
-   -- p < Lab
-   --       Rab' < q
-
-   -- Lab ≤ Dx ≤ Rab
+   is-disjoint p q (p<x , x<q) = ∥∥-rec (<ℤ[1/2]-is-prop p q) I (binary-choice p<x x<q)
+    where
+     I : (Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , (pairwise-P' (λ (a , b) x → a < x × x < b) asbs v) × p < L asbs)
+       × (Σ asbs ꞉ Vec (ℤ[1/2] × ℤ[1/2]) (succ n) , (pairwise-P' (λ (a , b) x → a < x × x < b) asbs v) × R asbs < q)
+       → p <ℤ[1/2] q
+     I ((asbs , as<xs<bs , p<Lasbs) , (asbs' , as'<xs<bs' , Rasbs'<q)) = trans p (R asbs') q l Rasbs'<q
+      where
+       l : p < R asbs'
+       l = ℤ[1/2]<-≤ p (L asbs) (R asbs') p<Lasbs (Condition-4 asbs asbs')
+   
    is-located : located Lc Rc
    is-located p q p<q = {!!}
-   -- 0<q-p → 
 
  dyadic-function-equiv-to-real : (x : Vec ℤ[1/2] (succ n)) → ι (D x) ＝ F (vec-map ι x)
  dyadic-function-equiv-to-real x = ℝ-d-equality-from-left-cut ltr rtl
@@ -153,16 +159,24 @@ record Collection (n : ℕ) : {!!} ̇ where
                     → p ∈ lower-cut-of (F (vec-map ι x))
      by-condition-3 ((a , b) , a<x , x<b , distance-proof) = ∣ (zip (a , b)) , V , p<Lab ∣
       where
-       I : 0ℤ[1/2] ≤ (D x - L (zip (a , b)))
-       I = diff-positive' (L (zip (a , b))) (D x) (Condition-1b a x b (Vecℤ[1/2]<-to-Vecℤ[1/2]≤ a x a<x , Vecℤ[1/2]<-to-Vecℤ[1/2]≤ x b x<b))
-       II : 0ℤ[1/2] ≤ (D x - p)
-       II = <-is-≤ℤ[1/2] 0ℤ[1/2] (D x - p) (diff-positive p (D x) p<Dx)
-       III : (D x - L (zip (a , b))) < (D x - p)
-       III = {!!} -- {!using I, II, and distance-proof!}
-       IV : (- (L (zip (a , b)))) < (- p)
-       IV = {!from III!}
+       I : (D x - L (zip (a , b))) < (D x - p)
+       I = transport₂ _<_ α β distance-proof 
+        where
+         α : ℤ[1/2]-abs (L (zip (a , b)) - D x) ＝ D x - L (zip (a , b))
+         α = ℤ[1/2]-abs (L (zip (a , b)) - D x) ＝⟨ ℤ[1/2]-abs-lemma (L (zip (a , b))) (D x) ⟩
+             ℤ[1/2]-abs (D x - L (zip (a , b))) ＝⟨ ℤ[1/2]-pos-abs' (L (zip (a , b))) (D x) (Condition-1b a x b (Vecℤ[1/2]<-to-Vecℤ[1/2]≤ a x a<x , Vecℤ[1/2]<-to-Vecℤ[1/2]≤ x b x<b)) ⁻¹ ⟩
+             D x - L (zip (a , b)) ∎
+             
+         β : ε ＝ D x - p
+         β = ε                    ＝⟨ refl ⟩
+             ℤ[1/2]-abs (p - D x) ＝⟨ ℤ[1/2]-abs-lemma p (D x) ⟩
+             ℤ[1/2]-abs (D x - p) ＝⟨ ℤ[1/2]-pos-abs p (D x) p<Dx ⁻¹ ⟩
+             D x - p              ∎
+       II : (- (L (zip (a , b)))) < (- p)
+       II = ℤ[1/2]<-+cancel (- (L (zip (a , b)))) (- p) (D x) I
+       
        p<Lab : p < L (zip (a , b))
-       p<Lab = <-swap' (L (zip (a , b))) p IV
+       p<Lab = <-swap' (L (zip (a , b))) p II
        V : pairwise-P' (λ (a , b) x → a < x × x < b) (zip (a , b)) (vec-map ι x)
        V = dyadic-real-lemma a b (vec-map ι x) (vec-∈L-< a x a<x) (vec-∈R-< b x (vec-∈R-<-reorder b x x<b))
         

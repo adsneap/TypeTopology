@@ -109,6 +109,10 @@ _Vecℤ[1/2]<_ _Vecℤ[1/2]≤_ : {n : ℕ} → Vec ℤ[1/2] n → Vec ℤ[1/2] 
 _Vecℤ[1/2]<_ = pairwise-P' _<ℤ[1/2]_ 
 _Vecℤ[1/2]≤_ = pairwise-P' _≤ℤ[1/2]_
 
+Vecℤ[1/2]<-to-Vecℤ[1/2]≤ : {n : ℕ} → (a b : Vec ℤ[1/2] n) → a Vecℤ[1/2]< b → a Vecℤ[1/2]≤ b
+Vecℤ[1/2]<-to-Vecℤ[1/2]≤ {0} [] []    _ = ⋆
+Vecℤ[1/2]<-to-Vecℤ[1/2]≤ {succ n} (a ∷ as) (b ∷ bs) (a<b , as<bs) = (<-is-≤ℤ[1/2] a b a<b) , (Vecℤ[1/2]<-to-Vecℤ[1/2]≤ as bs as<bs)
+
 dyadic-real-lemma : {n : ℕ} → (as bs : Vec ℤ[1/2] n) (x : Vec ℝ-d n)
                      → pairwise-P' (λ a x → a < x) as x
                      → pairwise-P' (λ b x → x < b) bs x
