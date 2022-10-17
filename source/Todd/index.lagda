@@ -4,6 +4,7 @@
 
 module Todd.index where
 
+import Todd.Approximations
 import Todd.BelowAndAbove
 import Todd.BelowLemmas
 import Todd.BuildingBlocks
