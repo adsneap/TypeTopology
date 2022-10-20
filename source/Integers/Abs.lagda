@@ -43,6 +43,13 @@ absℤ-removes-neg-sign (negsucc x)    = refl
 pos-abs-is-equal : (x : ℕ) → absℤ (pos x) ＝ pos x
 pos-abs-is-equal x = refl
 
+abs-absℤ : (x : ℤ) → absℤ x ＝ pos (abs x)
+abs-absℤ (pos x)     = refl
+abs-absℤ (negsucc x) = refl
+
+abs-absℤ-neg : (x : ℤ) → absℤ (- x) ＝ pos (abs x)
+abs-absℤ-neg x = absℤ-removes-neg-sign x ⁻¹ ∙ abs-absℤ x
+
 \end{code}
 
 A standard result with absolute values is that it distributes over
