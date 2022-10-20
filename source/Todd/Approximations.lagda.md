@@ -56,7 +56,9 @@ is-odcs-c₃-lemma : (ζ : (ℤ → ℤ[1/2] × ℤ[1/2])) → ((c₁ , c₂ , c
                  → (n₁ n₂ : ℤ) → n₁ ≤ n₂ → (pr₁ (ζ n₁) ≤ℤ[1/2] pr₁ (ζ n₂)) × (pr₂ (ζ n₂) ≤ℤ[1/2] pr₂ (ζ n₁))
 is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂ k e
 
-
+postulate
+ ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a - b) < (c - d) → (a < c) ∔ (d < b)
+ 
 ⦅_⦆ : Σ is-odcs → ℝ-d
 ⦅ ζ , (c₁ , c₂ , c₃) ⦆
  = (L , R)
@@ -74,9 +76,43 @@ is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂
   inhabited-r = ∣ (pr₂ (ζ (pos 0)) + 1ℤ[1/2])
              , ∣ pos 0  , ℤ[1/2]<-+ (pr₂ (ζ (pos 0))) 1ℤ[1/2] 0<1ℤ[1/2] ∣ ∣
   rounded-l : rounded-left L
-  rounded-l = {!!}
+  rounded-l p = ltr , rtl
+   where
+    ltr : ∃ n ꞉ ℤ , (p <ℤ[1/2] pr₁ (ζ n)) → ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] pr₁ (ζ n')))
+    ltr = ∥∥-functor I
+     where
+      I : Σ n ꞉ ℤ , (p <ℤ[1/2] pr₁ (ζ n)) → Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] pr₁ (ζ n')))
+      I (n , p<ζn) = let (p' , p<p' , p'<ζn) = dense p (pr₁ (ζ n)) p<ζn
+                     in p' , (p<p' , ∣ n , p'<ζn ∣)
+    rtl : ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] pr₁ (ζ n)))
+        → ∃ n ꞉ ℤ , (p <ℤ[1/2] pr₁ (ζ n))
+    rtl = ∥∥-rec ∃-is-prop I
+     where
+      I : Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] pr₁ (ζ n)))
+        → ∃ n ꞉ ℤ , (p <ℤ[1/2] pr₁ (ζ n))
+      I (p' , p<p' , te) = ∥∥-functor II te
+       where
+        II : Σ n ꞉ ℤ , (p' <ℤ[1/2] pr₁ (ζ n)) → Σ n ꞉ ℤ , (p <ℤ[1/2] pr₁ (ζ n))
+        II (n  , p'<ζn) = n , (trans p p' (pr₁ (ζ n)) p<p' p'<ζn)
+      
   rounded-r : rounded-right R
-  rounded-r = {!!}
+  rounded-r q = ltr , rtl
+   where
+    ltr : ∃ n ꞉ ℤ , pr₂ (ζ n) < q → ∃ q' ꞉ ℤ[1/2] , q' < q × q' ∈ R
+    ltr = ∥∥-functor I
+     where
+      I : Σ n ꞉ ℤ , pr₂ (ζ n) < q → Σ q' ꞉ ℤ[1/2] , q' < q × q' ∈ R
+      I (n , ζn<q) = let (q' , ζn<q' , q'<q) = dense (pr₂ (ζ n)) q ζn<q
+                     in q' , (q'<q , ∣ n , ζn<q' ∣)
+    rtl : ∃ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
+    rtl = ∥∥-rec ∃-is-prop I
+     where
+      I : Σ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
+      I (q' , q'<q , te) = ∥∥-functor II te
+       where
+        II : Σ n ꞉ ℤ , (pr₂ (ζ n) < q') → Σ n ꞉ ℤ , (pr₂ (ζ n) <ℤ[1/2] q)
+        II (n , ζ<q') = n , (trans (pr₂ (ζ n)) q' q ζ<q' q'<q)
+  
   is-disjoint : disjoint L R
   is-disjoint p q (tp<x , tx<q) = ∥∥-rec (<ℤ[1/2]-is-prop p q) I (binary-choice tp<x tx<q)
    where
@@ -89,9 +125,20 @@ is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂
     ... | inr n'≤n = let p<r' = ℤ[1/2]<-≤ p (pr₁ (ζ n)) (pr₂ (ζ n)) p<l (c₁ n)
                          r<q' = ℤ[1/2]≤-< (pr₂ (ζ n)) (pr₂ (ζ n')) q (pr₂ (is-odcs-c₃-lemma ζ (c₁ , c₂ , c₃) n' n n'≤n)) r<q
                      in trans p (pr₂ (ζ n)) q p<r' r<q'
-
+ 
   is-located : located L R
-  is-located = {!!}
+  is-located p q p<q = I (c₂ (1/2 * (q - p)))
+   where
+    0<ε : 0ℤ[1/2] < (1/2 * (q - p))
+    0<ε = <-pos-mult' 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)
+    I : (Σ n ꞉ ℤ , ((pr₂ (ζ n) - pr₁ (ζ n)) ≤ℤ[1/2] (1/2 * (q - p)))) → (L p holds) ∨ (R q holds)
+    I (n , l₁) = II (ℤ[1/2]-ordering-property (pr₂ (ζ n)) (pr₁ (ζ n)) q p l₂)
+     where
+      l₂ :(pr₂ (ζ n) - pr₁ (ζ n)) < (q - p)
+      l₂ = ℤ[1/2]≤-< (pr₂ (ζ n) - pr₁ (ζ n)) (1/2 * (q - p)) (q - p) l₁ (ℤ[1/2]-1/2-< (q - p) (diff-positive p q p<q))
+      II : pr₂ (ζ n) < q ∔ p < pr₁ (ζ n) → (L p holds) ∨ (R q holds)
+      II (inl ζ<q) = ∣ inr ∣ n , ζ<q ∣ ∣
+      II (inr p<ζ) = ∣ inl ∣ n , p<ζ ∣ ∣
 
 η η⁺² : ℤ × ℤ → ℤ[1/2]
 η   = normalise
@@ -99,7 +146,5 @@ is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂
 
 η[_,_] : ℤ → ℤ → ℤ[1/2] × ℤ[1/2]
 η[ k , p ] = η (k , p) , η⁺² (k , p)
-
-
 
 ```
