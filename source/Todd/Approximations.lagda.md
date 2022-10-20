@@ -36,6 +36,9 @@ open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans
 
 𝔻 = ℤ[1/2]
 
+-- SEQUENCES
+
+-- Def 1.5
 is-odcs : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀  ̇  
 is-odcs ζ = ((n : ℤ) → pr₁ (ζ n) ≤ℤ[1/2] pr₂ (ζ n))
           × ((ϵ : 𝔻) → Σ n ꞉ ℤ , ((pr₂ (ζ n) - pr₁ (ζ n)) ≤ℤ[1/2] ϵ))
@@ -58,7 +61,8 @@ is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂
 
 postulate
  ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a - b) < (c - d) → (a < c) ∔ (d < b)
- 
+
+-- Lem 1.6
 ⦅_⦆ : Σ is-odcs → ℝ-d
 ⦅ ζ , (c₁ , c₂ , c₃) ⦆
  = (L , R)
@@ -140,11 +144,106 @@ postulate
       II (inl ζ<q) = ∣ inr ∣ n , ζ<q ∣ ∣
       II (inr p<ζ) = ∣ inl ∣ n , p<ζ ∣ ∣
 
+-- Def 1.7
 η η⁺² : ℤ × ℤ → ℤ[1/2]
 η   = normalise
 η⁺² (k , p) = normalise (k +pos 2 , p)
 
-η[_,_] : ℤ → ℤ → ℤ[1/2] × ℤ[1/2]
-η[ k , p ] = η (k , p) , η⁺² (k , p)
+-- Def 1.8
+η[_] : ℤ × ℤ → ℤ[1/2] × ℤ[1/2]
+η[ (k , p) ] = η (k , p) , η⁺² (k , p)
 
+-- Lem 1.9
+𝔾 : 𝓤₀ ̇ 
+𝔾 = Σ ξ ꞉ (ℤ → ℤ × ℤ)
+  , (((ϵ : 𝔻) → Σ n ꞉ ℤ , ({!1/2^snd(ζn)-1!} ≤ ϵ))
+  × ((n : ℤ) → (η (ξ n) ≤ η (ξ (n +pos 1))) × (η⁺² (ξ (n +pos 1)) ≤ η⁺² (ξ n))))
+
+||_|| : (ℤ → ℤ × ℤ) → (ℤ → 𝔻 × 𝔻)
+|| ξ || = η[_] ∘ ξ
+
+𝔾-gives-odcs : ((ξ , _) : 𝔾) → is-odcs || ξ ||
+𝔾-gives-odcs = {!!}
+
+-- Lem 1.10
+<_> : 𝕋 → (ℤ → ℤ × ℤ)
+< χ , b > n = χ n , n
+
+<>-is-odcs : (χ : 𝕋) → is-odcs || < χ > ||
+<>-is-odcs (χ , b) = 𝔾-gives-odcs (< χ , b > , ({!!} , {!!}))
+
+-- Def 1.11
+⟦_⟧' : 𝕋 → ℝ-d
+⟦ χ ⟧' = ⦅ _ , <>-is-odcs χ ⦆
+
+-- FUNCTIONS
+
+-- Lem 1.12
+
+-- Thm 1.13
+
+-- JOINING
+
+-- Def 1.14
+
+J' : 𝔻 × 𝔻 → ℤ × ℤ × ℤ
+J' = {!!}
+
+-- Def 1.15
+
+_/2 : ℕ → ℕ
+zero /2 = 0
+succ zero /2 = 0
+succ (succ x) /2 = succ (x /2)
+
+{-# TERMINATING #-}
+upValue : ℕ → ℕ -- roughly clog2(x+1) (0 1 2 4 8 16)
+upValue 0 = 0
+upValue (succ n) = succ (upValue (succ n /2))
+
+-- need proofs that upValue provides correct covering
+
+join : (ℤ → 𝔻 × 𝔻) → (ℤ → ℤ × ℤ)
+join ζ n = rec a upRight m , p ℤ- pos m
+ where
+   abp = J' (ζ n)
+   a =  pr₁        abp
+   b = (pr₁ ∘ pr₂) abp
+   p = (pr₂ ∘ pr₂) abp
+   m = upValue (abs (b ℤ- a))
+
+-- Lem 1.16
+
+join-is-odcs : (ζ : ℤ → 𝔻 × 𝔻) → is-odcs || join ζ ||
+join-is-odcs ζ = 𝔾-gives-odcs ({!!} , ({!!} , {!!}))
+
+-- Lem 1.17
+
+_≡_ = _＝_
+
+join-same-real : ((ζ , i) : Σ is-odcs) → ⦅ ζ , i ⦆ ≡ ⦅ _ , join-is-odcs ζ ⦆
+join-same-real = {!!}
+
+-- PRE-NORMALISING
+
+-- Def 1.18
+
+is-prenormalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
+is-prenormalised ζ = (n : ℤ) → pr₂ (ζ n) ≥ n
+
+-- Def 1.19
+
+prenorm-for_ : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
+prenorm-for χ = Σ κ ꞉ (ℤ → ℤ) , (is-prenormalised (χ ∘ κ))
+
+-- Lem 1.20
+
+prenorm : (χ : ℤ → ℤ × ℤ) → prenorm-for χ → (ℤ → ℤ × ℤ)
+prenorm χ (κ , i) = χ ∘ κ
+
+prenorm-is-prenormalised : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
+                         → is-prenormalised (prenorm χ κ)
+prenorm-is-prenormalised χ (κ , i) = i
+
+-- prenorm-is-odcs : 
 ```
