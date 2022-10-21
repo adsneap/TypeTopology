@@ -154,36 +154,35 @@ postulate
 η[ (k , p) ] = η (k , p) , η⁺² (k , p)
 
 -- Lem 1.9
-𝔾 : 𝓤₀ ̇ 
-𝔾 = Σ ξ ꞉ (ℤ → ℤ × ℤ)
-  , (((ϵ : 𝔻) → Σ n ꞉ ℤ , (normalise ((pos 1) , (predℤ (pr₂ (ξ n)))) ≤ ϵ))
-  × ((n : ℤ) → (η (ξ n) ≤ η (ξ (succℤ n))) × (η⁺² (ξ (succℤ n)) ≤ η⁺² (ξ n))))
-
 ||_|| : (ℤ → ℤ × ℤ) → (ℤ → 𝔻 × 𝔻)
 || ξ || = η[_] ∘ ξ
 
-𝔾-gives-odcs : ((ξ , _) : 𝔾) → is-odcs || ξ ||
-𝔾-gives-odcs (ξ , ξc₁ , ξc₂) = c₁ , c₂ , c₃
+is-gbr : (ℤ → ℤ × ℤ) → 𝓤₀  ̇
+is-gbr ξ = ((ϵ : 𝔻) → Σ n ꞉ ℤ , (normalise ((pos 1) , (predℤ (pr₂ (ξ n)))) ≤ ϵ))
+         × ((n : ℤ) → (η (ξ n) ≤ η (ξ (succℤ n))) × (η⁺² (ξ (succℤ n)) ≤ η⁺² (ξ n)))
+
+𝔾-gives-odcs : (ξ : ℤ → ℤ × ℤ) → is-gbr ξ → is-odcs || ξ ||
+𝔾-gives-odcs ξ (ξc₁ , ξc₂) = c₁ , c₂ , ξc₂
  where
   c₁ : (n : ℤ) → pr₁ (|| ξ || n) ≤ℤ[1/2] pr₂ (|| ξ || n)
   c₁ n = <-is-≤ℤ[1/2] (pr₁ (|| ξ || n)) (pr₂ (|| ξ || n)) (normalise-< (ξ n))
   c₂ : (ϵ : 𝔻) → Σ n ꞉ ℤ , (pr₂ (|| ξ || n) - pr₁ (|| ξ || n)) ≤ℤ[1/2] ϵ
   c₂ ε with ξc₁ ε 
   ... | (n , l) = n , (transport (_≤ ε) (normalise-equality (ξ n)) l)
-  c₃ : (n : ℤ) → (pr₁ (|| ξ || n) ≤ℤ[1/2] pr₁ (|| ξ || (succℤ n))) × (pr₂ (|| ξ || (succℤ n)) ≤ℤ[1/2] pr₂ (|| ξ || n))
-  c₃ n = ξc₂ n
 
 -- Lem 1.10
 <_> : 𝕋 → (ℤ → ℤ × ℤ)
 < χ , b > n = χ n , n
 
-<>-is-odcs : (χ : 𝕋) → is-odcs || < χ > ||
-<>-is-odcs (χ , b) = 𝔾-gives-odcs (< χ , b > , ({!c₁!} , {!c₂!}))
- 
+<>-is-gbr : (χ : 𝕋) → is-gbr < χ >
+<>-is-gbr χ = {!!} , {!!}
+
+<>-gives-odcs : (χ : 𝕋) → is-odcs || < χ > ||
+<>-gives-odcs χ = 𝔾-gives-odcs < χ > (<>-is-gbr χ)
 
 -- Def 1.11
 ⟦_⟧' : 𝕋 → ℝ-d
-⟦ χ ⟧' = ⦅ _ , <>-is-odcs χ ⦆
+⟦ χ ⟧' = ⦅ _ , <>-gives-odcs χ ⦆
 
 -- FUNCTIONS
 
@@ -223,8 +222,11 @@ join ζ n = rec a upRight m , p ℤ- pos m
 
 -- Lem 1.16
 
+join-is-gbr : (ζ : ℤ → 𝔻 × 𝔻) → is-gbr (join ζ)
+join-is-gbr ζ = {!!}
+
 join-is-odcs : (ζ : ℤ → 𝔻 × 𝔻) → is-odcs || join ζ ||
-join-is-odcs ζ = 𝔾-gives-odcs ({!!} , ({!!} , {!!}))
+join-is-odcs ζ = 𝔾-gives-odcs (join ζ) (join-is-gbr ζ)
 
 -- Lem 1.17
 
@@ -254,5 +256,28 @@ prenorm-is-prenormalised : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
                          → is-prenormalised (prenorm χ κ)
 prenorm-is-prenormalised χ (κ , i) = i
 
--- prenorm-is-odcs : 
+prenorm-is-gbr : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
+               → is-gbr (prenorm χ κ)
+prenorm-is-gbr χ = {!!}
+
+prenorm-is-odcs : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
+                → is-odcs || prenorm χ κ ||
+prenorm-is-odcs χ κ = 𝔾-gives-odcs (prenorm χ κ) (prenorm-is-gbr χ κ)
+
+prenorm-same-real : (χ : ℤ → ℤ × ℤ) → (i : is-gbr χ) → (κ : prenorm-for χ)
+                  → ⦅ || χ || , 𝔾-gives-odcs χ i ⦆ ≡ ⦅ _ , prenorm-is-odcs χ κ ⦆
+prenorm-same-real = {!!}
+
+-- Lem 1.21
+
+is-normalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
+is-normalised ζ = (n : ℤ) → pr₂ (ζ n) ≡ n
+
+-- Thm 1.22
+
+-- Lem 1.23
+
+norm : (χ : ℤ → ℤ × ℤ) → (ℤ → ℤ × ℤ)
+norm = {!!}
+
 ```
