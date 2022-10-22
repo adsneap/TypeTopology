@@ -175,10 +175,24 @@ is-gbr ξ = ((ϵ : 𝔻) → Σ n ꞉ ℤ , (normalise ((pos 1) , (predℤ (pr�
 < χ , b > n = χ n , n
 
 <>-is-gbr : (χ : 𝕋) → is-gbr < χ >
-<>-is-gbr χ = {!!} , {!!}
-
+<>-is-gbr (χ , b) = c₁ , c₂
+ where
+  c₁ : (ε : ℤ[1/2]) → Σ n ꞉ ℤ , (normalise (pos 1 , predℤ (pr₂ (< χ , b > n))) ≤ ε)
+  c₁ = {!!}
+  c₂ : (n : ℤ) → (η (< χ , b > n) ≤ η (< χ , b > (succℤ n))) -- normalise (x n , n) ≤ normalise (x (n + 1) , (n + 1))
+               × η⁺² (< χ , b > (succℤ n)) ≤ (η⁺² (< χ , b > n))
+  c₂ = {!!}
+  
 <>-gives-odcs : (χ : 𝕋) → is-odcs || < χ > ||
 <>-gives-odcs χ = 𝔾-gives-odcs < χ > (<>-is-gbr χ)
+
+open import Todd.BelowAndAbove fe hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_)
+
+postulate
+ normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z ℤ+ z , succℤ n)
+
+<>-is-odcs : (χ : 𝕋) → is-odcs || < χ > ||
+<>-is-odcs (χ , b) = <>-gives-odcs (χ , b)
 
 -- Def 1.11
 ⟦_⟧' : 𝕋 → ℝ-d
