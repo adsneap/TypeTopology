@@ -174,19 +174,23 @@ is-gbr ξ = ((ϵ : 𝔻) → Σ n ꞉ ℤ , (normalise ((pos 1) , (predℤ (pr�
 <_> : 𝕋 → (ℤ → ℤ × ℤ)
 < χ , b > n = χ n , n
 
+<>-is-gbr-lemma₁ : ((χ , b) : 𝕋) → (n : ℤ) → normalise (χ n , n) ≤ normalise (χ (succℤ n) , (succℤ n))
+<>-is-gbr-lemma₁ = {!!}
+
+<>-is-gbr-lemma₂ : ((χ , b) : 𝕋) → (n : ℤ) → normalise (succℤ (succℤ (χ (succℤ n))) , (succℤ n)) ≤ normalise (succℤ (succℤ (χ n)) , n)
+<>-is-gbr-lemma₂ = {!!}
+
+normalise-ε : ((χ , b) : 𝕋) → (ε : ℤ[1/2]) → Σ n ꞉ ℤ , (normalise (pos 1 , predℤ (pr₂ (< χ , b > n))) ≤ ε)
+normalise-ε = {!!}
+
 <>-is-gbr : (χ : 𝕋) → is-gbr < χ >
-<>-is-gbr (χ , b) = c₁ , c₂
- where
-  c₁ : (ε : ℤ[1/2]) → Σ n ꞉ ℤ , (normalise (pos 1 , predℤ (pr₂ (< χ , b > n))) ≤ ε)
-  c₁ = {!!}
-  c₂ : (n : ℤ) → (η (< χ , b > n) ≤ η (< χ , b > (succℤ n))) -- normalise (x n , n) ≤ normalise (x (n + 1) , (n + 1))
-               × η⁺² (< χ , b > (succℤ n)) ≤ (η⁺² (< χ , b > n))
-  c₂ = {!!}
+<>-is-gbr χ = normalise-ε χ , (λ n → <>-is-gbr-lemma₁ χ n
+                                   , <>-is-gbr-lemma₂ χ n)
   
 <>-gives-odcs : (χ : 𝕋) → is-odcs || < χ > ||
 <>-gives-odcs χ = 𝔾-gives-odcs < χ > (<>-is-gbr χ)
 
-open import Todd.BelowAndAbove fe hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_)
+open import Todd.BelowAndAbove fe hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_ ; Vec)
 
 postulate
  normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z ℤ+ z , succℤ n)
@@ -201,6 +205,11 @@ postulate
 -- FUNCTIONS
 
 -- Lem 1.12
+
+F' : {d : ℕ} → (ℤ → Vec (ℤ[1/2] × ℤ[1/2]) d) → (ℤ → ℤ[1/2] × ℤ[1/2])
+F' {0}      s n with s n
+... | [] = ?
+F' {succ d} s n = {!!}
 
 -- Thm 1.13
 
