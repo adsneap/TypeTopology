@@ -45,7 +45,7 @@ open import Naturals.Order renaming (max to ℕmax)
 ℤmax (negsucc x) (pos y)     = pos y
 ℤmax (negsucc x) (negsucc y) = negsucc (ℕmin x y)
 
-record Collection (n : ℕ) : {!!} ̇ where
+record Collection (n : ℕ) : 𝓤₀  ̇ where
  field
   D : Vec ℤ[1/2] n → ℤ[1/2]
   L R : Vec (ℤ[1/2] × ℤ[1/2]) n → ℤ[1/2]
@@ -386,9 +386,23 @@ addition-collection = record
                         ; Condition-1d = add-condition-1d
                         ; Condition-2 = add-condition-2
                         ; Condition-3 = add-condition-3
-                        ; Condition-4 = ?
+                        ; Condition-4 = {!!}
                         }
 
-open Collection
+
+composition : (n i : ℕ) → Collection n → (Vec (Collection i) n) → Collection i
+composition n i f gs = record
+                         { D = (λ xs → Collection.D f (vec-map (λ Ci → Collection.D Ci xs) gs))
+                         ; L = {!!}
+                         ; R = {!!}
+                         ; Condition-1a = {!!}
+                         ; Condition-1b = {!!}
+                         ; Condition-1c = {!!}
+                         ; Condition-1d = {!!}
+                         ; Condition-2 = {!!}
+                         ; Condition-3 = {!!}
+                         ; Condition-4 = {!!}
+                         }
+
 
 ```

@@ -204,14 +204,8 @@ postulate
 
 -- FUNCTIONS
 
--- Lem 1.12
 
-F' : {d : ℕ} → (ℤ → Vec (ℤ[1/2] × ℤ[1/2]) d) → (ℤ → ℤ[1/2] × ℤ[1/2])
-F' {0}      s n with s n
-... | [] = ?
-F' {succ d} s n = {!!}
 
--- Thm 1.13
 
 -- JOINING
 
@@ -298,9 +292,68 @@ is-normalised ζ = (n : ℤ) → pr₂ (ζ n) ≡ n
 
 -- Thm 1.22
 
+
+
 -- Lem 1.23
 
-norm : (χ : ℤ → ℤ × ℤ) → (ℤ → ℤ × ℤ)
-norm = {!!}
+norm : (χ : ℤ → ℤ × ℤ) → is-prenormalised χ → (ℤ → ℤ × ℤ)
+norm χ ipχ = {!!}
+
+norm-is-normalised : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-normalised (norm χ ipχ)
+norm-is-normalised = {!!}
+
+norm-is-odcs : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-odcs || norm χ ipχ ||
+norm-is-odcs = {!!}
+
+norm-lemma : (χ : ℤ → ℤ × ℤ)
+           → (ipχ : is-prenormalised χ)
+           → ⦅ || χ || , prenorm-is-odcs χ {!!} ⦆ ≡ ⦅ || norm χ ipχ || , (norm-is-odcs χ ipχ) ⦆
+norm-lemma = {!!}
+
+-- Def 1.24
+
+toTB : Σ is-normalised → 𝕋
+toTB (χ , χin) = {!!}
+
+```
+
+To be re-organised and commented.
+
+```agda
+
+sc-is-odcs : (n : ℕ) → Vec (ℤ → ℤ[1/2] × ℤ[1/2]) n → 𝓤₀ ̇
+sc-is-odcs 0        [] = 𝟙
+sc-is-odcs (succ n) (ζ ∷ ζs) = is-odcs ζ × sc-is-odcs n ζs
+
+open import Todd.BuildingBlocks pt fe pe sq
+
+record Approximations : _ where
+ field
+  n : ℕ
+  C : Collection n
+ open Collection C
+
+-- Lem 1.12
+
+ F-prime : Vec (Σ is-odcs) n → ℤ → ℤ[1/2] × ℤ[1/2]
+ F-prime ζs n = (L (vec-map (λ (ζ , odcs) → ζ n) ζs))
+              , (R (vec-map (λ (ζ , odcs) → ζ n) ζs))
+
+ F'-is-odcs : (ζs : Vec (Σ is-odcs) n) → is-odcs (F-prime ζs)
+ F'-is-odcs ζs = I , {!!} , {!!}
+  where
+   I : (n : ℤ) → pr₁ (F-prime ζs n) ≤ℤ[1/2] pr₂ (F-prime ζs n)
+   I n = Condition-4 (vec-map (λ (ζ , odcs) → ζ n) ζs)
+                     (vec-map (λ (ζ , odcs) → ζ n) ζs)
+ 
+-- Thm 1.13
+
+ F-prime-equality : (ζs : Vec (Σ is-odcs) n) → F (vec-map ⦅_⦆ ζs) ≡ ⦅ (F-prime ζs , F'-is-odcs ζs) ⦆
+ F-prime-equality ζs = {!!}
+
+-- Def 1.25
+
+ F* : (κ : ℤ → ℤ) → Vec 𝕋 n → 𝕋
+ F* κ χs = (toTB ∘ (λ χ → (norm χ {!!}) , (norm-is-normalised χ {!!})) ∘ (λ ζ → prenorm ζ (κ , {!!})) ∘ join) (F-prime {!!})
 
 ```
