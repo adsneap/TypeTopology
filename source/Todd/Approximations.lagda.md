@@ -382,7 +382,7 @@ record Approximations : _ where
  F'-same-real : (ζs : Vec (Σ is-odcs) n)
               → (i : is-odcs (F' ζs))
               → F (vec-map ⦅_⦆ ζs) ≡ ⦅ F' ζs , i ⦆
- F'-same-real ζs = {!!}
+ F'-same-real ζs i = {!!}
 
 -- Def 1.25
 
@@ -417,12 +417,12 @@ record Approximations : _ where
              → (pf : prenorm-for vJF' χs)
              → (ip : is-prenormalised (vPJF' χs pf))
              → (isn : is-normalised (vNPJF' χs pf ip))
-             → ⟦ F* χs pf ip isn ⟧' ≡ F (vec-map ⦅_⦆ (vζs χs)) -- ⟦ F* xs ip ⟧' ≡ F (vec-map ⦅_⦆ (vec-map (λ t → || < t > || , (<>-is-odcs t)) xs))
+             → ⟦ F* χs pf ip isn ⟧' ≡ F (vec-map ⦅_⦆ (vζs χs))
  F-same-real χs pf ip isn = ⟦ F* χs pf ip isn ⟧'                   ＝⟨ toTB-same-real (vNPJF' χs pf ip , isn) jNPF'odcs      ⟩
                             ⦅ || vNPJF' χs pf ip || , jNPF'odcs ⦆  ＝⟨ norm-same-real (vPJF' χs pf) jPF'odcs ip jNPF'odcs ⁻¹ ⟩
-                            ⦅ || vPJF' χs pf || , jPF'odcs ⦆       ＝⟨ prenorm-same-real (vJF' χs) jF'odcs pf jPF'odcs ⁻¹    ⟩
-                            ⦅ || vJF' χs || , jF'odcs ⦆            ＝⟨ join-same-real (F' (vζs χs) , F'odcs) jF'odcs ⁻¹      ⟩                            
-                            ⦅ vF' χs , F'-is-odcs (vζs χs) ⦆       ＝⟨ F'-same-real (vζs χs) (F'-is-odcs (vζs χs)) ⁻¹        ⟩
+                            ⦅ || vPJF' χs pf ||     , jPF'odcs  ⦆  ＝⟨ prenorm-same-real (vJF' χs) jF'odcs pf jPF'odcs ⁻¹    ⟩
+                            ⦅ || vJF' χs ||         , jF'odcs   ⦆  ＝⟨ join-same-real (vF' χs , F'odcs) jF'odcs ⁻¹           ⟩                            
+                            ⦅ vF' χs                , F'odcs    ⦆  ＝⟨ F'-same-real (vζs χs) F'odcs ⁻¹                       ⟩
                             F (vec-map ⦅_⦆ (vζs χs))               ∎
   where
    jNPF'odcs : is-odcs || norm (vPJF' χs pf) ip ||
