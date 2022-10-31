@@ -205,14 +205,14 @@ postulate
 -- FUNCTIONS
 
 
-
-
 -- JOINING
 
 -- Def 1.14
 
 J' : 𝔻 × 𝔻 → ℤ × ℤ × ℤ
-J' = {!!}
+J' (((a , p₁) , _) , ((b , p₂) , _)) = rec a downLeft (abs (maxℤ (pos p₁) (pos p₂) ℤ- pos p₁))
+                                     , rec b downRight (abs (maxℤ (pos p₁) (pos p₂) ℤ- pos p₂))
+                                     , maxℤ (pos p₁) (pos p₂)
 
 -- Def 1.15
 
@@ -275,7 +275,7 @@ prenorm-is-prenormalised χ (κ , i) = i
 
 prenorm-is-gbr : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
                → is-gbr (prenorm χ κ)
-prenorm-is-gbr χ = {!!}
+prenorm-is-gbr χ  = {!!}
 
 prenorm-is-odcs : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
                 → is-odcs || prenorm χ κ ||
@@ -288,29 +288,18 @@ prenorm-same-real : (χ : ℤ → ℤ × ℤ)
                    → ⦅ || χ || , i ⦆ ≡ ⦅ || prenorm χ κ || , io ⦆
 prenorm-same-real = {!!}
 
-{-
-prenorm-same-real : (χ : ℤ → ℤ × ℤ)
-                  → (i : is-gbr χ)
-                  → (κ : prenorm-for χ)
-                  → ⦅ || χ || , 𝔾-gives-odcs χ i ⦆ ≡ ⦅ || prenorm χ κ || , prenorm-is-odcs χ κ ⦆
-prenorm-same-real = {!!}
--}
 -- Lem 1.21
 
 is-normalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
 is-normalised ζ = (n : ℤ) → pr₂ (ζ n) ≡ n
 
--- Thm 1.22
-
-
-
 -- Lem 1.23
 
 norm : (χ : ℤ → ℤ × ℤ) → is-prenormalised χ → (ℤ → ℤ × ℤ)
-norm χ ipχ = {!!}
+norm χ ipχ n = rec (pr₁ (χ n)) upRight (abs (n ℤ- pr₂ (χ n))) , n
 
 norm-is-normalised : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-normalised (norm χ ipχ)
-norm-is-normalised = {!!}
+norm-is-normalised χ ipχ = {!!}
 
 normalised-are-prenormalised : (χ : ℤ → ℤ × ℤ) → is-normalised χ → is-prenormalised χ
 normalised-are-prenormalised χ i n = 0 , (i n ⁻¹)
@@ -330,12 +319,6 @@ norm-same-real : (χ : ℤ → ℤ × ℤ)
                → ⦅ || χ || , i ⦆ ≡ ⦅ || norm χ ip || , io ⦆
 norm-same-real = {!!}
 
-{-
-norm-same-real : (χ : ℤ → ℤ × ℤ)
-               → (ip : is-prenormalised χ)
-               → ⦅ || χ || , prenorm-is-odcs χ (id , ip) ⦆ ≡ ⦅ || norm χ ip || , norm-is-odcs χ ip ⦆
-norm-same-real = {!!}
--}
 -- Def 1.24
 
 toTB : Σ is-normalised → 𝕋
@@ -351,14 +334,14 @@ toTB-same-real = {!!}
 To be re-organised and commented.
 
 ```agda
-
+{-
 sc-is-odcs : (n : ℕ) → Vec (ℤ → ℤ[1/2] × ℤ[1/2]) n → 𝓤₀ ̇
 sc-is-odcs 0        [] = 𝟙
 sc-is-odcs (succ n) (ζ ∷ ζs) = is-odcs ζ × sc-is-odcs n ζs
-
+-}
 open import Todd.BuildingBlocks pt fe pe sq
 
-record Approximations : _ where
+record Approximations : 𝓤 ̇ where
  field
   n : ℕ
   C : Collection n
