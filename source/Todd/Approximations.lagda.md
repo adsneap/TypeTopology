@@ -1,6 +1,6 @@
 
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --experimental-lossy-unification #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
@@ -249,7 +249,7 @@ join-is-odcs ζ = 𝔾-gives-odcs (join ζ) (join-is-gbr ζ)
 
 _≡_ = _＝_
 
-join-same-real : ((ζ , i) : Σ is-odcs) → ⦅ ζ , i ⦆ ≡ ⦅ _ , join-is-odcs ζ ⦆
+join-same-real : ((ζ , i) : Σ is-odcs) → (io : is-odcs || join ζ ||) → ⦅ ζ , i ⦆ ≡ ⦅ || join ζ || , io ⦆
 join-same-real = {!!}
 
 -- PRE-NORMALISING
@@ -281,10 +281,20 @@ prenorm-is-odcs : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
                 → is-odcs || prenorm χ κ ||
 prenorm-is-odcs χ κ = 𝔾-gives-odcs (prenorm χ κ) (prenorm-is-gbr χ κ)
 
-prenorm-same-real : (χ : ℤ → ℤ × ℤ) → (i : is-gbr χ) → (κ : prenorm-for χ)
-                  → ⦅ || χ || , 𝔾-gives-odcs χ i ⦆ ≡ ⦅ _ , prenorm-is-odcs χ κ ⦆
+prenorm-same-real : (χ : ℤ → ℤ × ℤ)
+                   → (i : is-odcs || χ ||)
+                   → (κ : prenorm-for χ)
+                   → (io : is-odcs || prenorm χ κ ||)
+                   → ⦅ || χ || , i ⦆ ≡ ⦅ || prenorm χ κ || , io ⦆
 prenorm-same-real = {!!}
 
+{-
+prenorm-same-real : (χ : ℤ → ℤ × ℤ)
+                  → (i : is-gbr χ)
+                  → (κ : prenorm-for χ)
+                  → ⦅ || χ || , 𝔾-gives-odcs χ i ⦆ ≡ ⦅ || prenorm χ κ || , prenorm-is-odcs χ κ ⦆
+prenorm-same-real = {!!}
+-}
 -- Lem 1.21
 
 is-normalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
@@ -302,18 +312,39 @@ norm χ ipχ = {!!}
 norm-is-normalised : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-normalised (norm χ ipχ)
 norm-is-normalised = {!!}
 
+normalised-are-prenormalised : (χ : ℤ → ℤ × ℤ) → is-normalised χ → is-prenormalised χ
+normalised-are-prenormalised χ i n = 0 , (i n ⁻¹)
+
+norm-is-prenormalised : (χ : ℤ → ℤ × ℤ)
+                      → (ip : is-prenormalised χ)
+                      → is-prenormalised (norm χ ip) 
+norm-is-prenormalised χ ip = normalised-are-prenormalised (norm χ ip) (norm-is-normalised χ ip)
+
 norm-is-odcs : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-odcs || norm χ ipχ ||
-norm-is-odcs = {!!}
+norm-is-odcs χ ip = prenorm-is-odcs (norm χ ip) (id , norm-is-prenormalised χ ip)
 
-norm-lemma : (χ : ℤ → ℤ × ℤ)
-           → (ipχ : is-prenormalised χ)
-           → ⦅ || χ || , prenorm-is-odcs χ {!!} ⦆ ≡ ⦅ || norm χ ipχ || , (norm-is-odcs χ ipχ) ⦆
-norm-lemma = {!!}
+norm-same-real : (χ : ℤ → ℤ × ℤ)
+               → (i : is-odcs || χ ||)
+               → (ip : is-prenormalised χ)
+               → (io : is-odcs || norm χ ip ||)
+               → ⦅ || χ || , i ⦆ ≡ ⦅ || norm χ ip || , io ⦆
+norm-same-real = {!!}
 
+{-
+norm-same-real : (χ : ℤ → ℤ × ℤ)
+               → (ip : is-prenormalised χ)
+               → ⦅ || χ || , prenorm-is-odcs χ (id , ip) ⦆ ≡ ⦅ || norm χ ip || , norm-is-odcs χ ip ⦆
+norm-same-real = {!!}
+-}
 -- Def 1.24
 
 toTB : Σ is-normalised → 𝕋
 toTB (χ , χin) = {!!}
+
+toTB-same-real : ((χ , χin) : Σ is-normalised)
+               → (i : is-odcs || χ ||)
+               → ⟦ toTB (χ , χin) ⟧' ≡ ⦅ || χ || , i ⦆
+toTB-same-real = {!!}
 
 ```
 
@@ -335,25 +366,73 @@ record Approximations : _ where
 
 -- Lem 1.12
 
- F-prime : Vec (Σ is-odcs) n → ℤ → ℤ[1/2] × ℤ[1/2]
- F-prime ζs n = (L (vec-map (λ (ζ , odcs) → ζ n) ζs))
-              , (R (vec-map (λ (ζ , odcs) → ζ n) ζs))
+ F' : Vec (Σ is-odcs) n → ℤ → ℤ[1/2] × ℤ[1/2]
+ F' ζs n = (L (vec-map (λ (ζ , odcs) → ζ n) ζs))
+         , (R (vec-map (λ (ζ , odcs) → ζ n) ζs))
 
- F'-is-odcs : (ζs : Vec (Σ is-odcs) n) → is-odcs (F-prime ζs)
+ F'-is-odcs : (ζs : Vec (Σ is-odcs) n) → is-odcs (F' ζs)
  F'-is-odcs ζs = I , {!!} , {!!}
   where
-   I : (n : ℤ) → pr₁ (F-prime ζs n) ≤ℤ[1/2] pr₂ (F-prime ζs n)
+   I : (n : ℤ) → pr₁ (F' ζs n) ≤ℤ[1/2] pr₂ (F' ζs n)
    I n = Condition-4 (vec-map (λ (ζ , odcs) → ζ n) ζs)
                      (vec-map (λ (ζ , odcs) → ζ n) ζs)
  
 -- Thm 1.13
 
- F-prime-equality : (ζs : Vec (Σ is-odcs) n) → F (vec-map ⦅_⦆ ζs) ≡ ⦅ (F-prime ζs , F'-is-odcs ζs) ⦆
- F-prime-equality ζs = {!!}
+ F'-same-real : (ζs : Vec (Σ is-odcs) n)
+              → (i : is-odcs (F' ζs))
+              → F (vec-map ⦅_⦆ ζs) ≡ ⦅ F' ζs , i ⦆
+ F'-same-real ζs = {!!}
 
 -- Def 1.25
 
- F* : (κ : ℤ → ℤ) → Vec 𝕋 n → 𝕋
- F* κ χs = (toTB ∘ (λ χ → (norm χ {!!}) , (norm-is-normalised χ {!!})) ∘ (λ ζ → prenorm ζ (κ , {!!})) ∘ join) (F-prime {!!})
+ vζs : (xs : Vec 𝕋 n) → Vec (Σ is-odcs) n
+ vζs xs = vec-map (λ t → || < t > || , (<>-is-odcs t)) xs
 
+ vF' : (xs : Vec 𝕋 n) → ℤ → ℤ[1/2] × ℤ[1/2]
+ vF' = F' ∘ vζs
+
+ vJF' : (xs : Vec 𝕋 n) → ℤ → ℤ × ℤ
+ vJF' = join ∘ vF'
+
+ vPJF' : (xs : Vec 𝕋 n)
+       → prenorm-for vJF' xs
+       → ℤ → ℤ × ℤ
+ vPJF' xs p = prenorm (vJF' xs) p
+
+ vNPJF' : (xs : Vec 𝕋 n)
+        → (p : prenorm-for vJF' xs)
+        → is-prenormalised (vPJF' xs p)
+        → ℤ → ℤ × ℤ
+ vNPJF' xs p ip = norm (vPJF' xs p) ip
+
+ F* : (xs : Vec 𝕋 n)
+    → (pf : prenorm-for vJF' xs)
+    → (ip : is-prenormalised (vPJF' xs pf))
+    → (isn : is-normalised (vNPJF' xs pf ip))
+    → 𝕋
+ F* xs xsp ip isn = toTB (vNPJF' xs xsp ip , isn)
+
+ F-same-real : (χs : Vec 𝕋 n)
+             → (pf : prenorm-for vJF' χs)
+             → (ip : is-prenormalised (vPJF' χs pf))
+             → (isn : is-normalised (vNPJF' χs pf ip))
+             → ⟦ F* χs pf ip isn ⟧' ≡ F (vec-map ⦅_⦆ (vζs χs)) -- ⟦ F* xs ip ⟧' ≡ F (vec-map ⦅_⦆ (vec-map (λ t → || < t > || , (<>-is-odcs t)) xs))
+ F-same-real χs pf ip isn = ⟦ F* χs pf ip isn ⟧'                   ＝⟨ toTB-same-real (vNPJF' χs pf ip , isn) jNPF'odcs      ⟩
+                            ⦅ || vNPJF' χs pf ip || , jNPF'odcs ⦆  ＝⟨ norm-same-real (vPJF' χs pf) jPF'odcs ip jNPF'odcs ⁻¹ ⟩
+                            ⦅ || vPJF' χs pf || , jPF'odcs ⦆       ＝⟨ prenorm-same-real (vJF' χs) jF'odcs pf jPF'odcs ⁻¹    ⟩
+                            ⦅ || vJF' χs || , jF'odcs ⦆            ＝⟨ join-same-real (F' (vζs χs) , F'odcs) jF'odcs ⁻¹      ⟩                            
+                            ⦅ vF' χs , F'-is-odcs (vζs χs) ⦆       ＝⟨ F'-same-real (vζs χs) (F'-is-odcs (vζs χs)) ⁻¹        ⟩
+                            F (vec-map ⦅_⦆ (vζs χs))               ∎
+  where
+   jNPF'odcs : is-odcs || norm (vPJF' χs pf) ip ||
+   jNPF'odcs = norm-is-odcs (vPJF' χs pf) ip
+   jPF'odcs : is-odcs || prenorm (vJF' χs) pf ||
+   jPF'odcs = prenorm-is-odcs (vJF' χs) pf
+   jF'odcs : is-odcs || join (F' (vζs χs)) ||
+   jF'odcs = join-is-odcs (vF' χs)
+   F'odcs : is-odcs (F' (vζs χs))
+   F'odcs = F'-is-odcs (vζs χs)
+   
 ```
+
