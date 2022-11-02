@@ -26,7 +26,7 @@ module Todd.Approximations2
 open import Todd.RationalsDyadic fe renaming (1/2ℤ[1/2] to 1/2)
 open import Todd.DyadicReals pe pt fe
 open import Todd.TBRFunctions pt fe pe sq
-open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
+open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_ ; ρ)
 open import Todd.TBRDyadicReals pt fe pe sq hiding (⟦_⟧)
 open PropositionalTruncation pt
 
@@ -197,6 +197,19 @@ is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂
 ⟦_⟧ : 𝕋 → ℝ-d
 ⟦ χ ⟧ = ⦅ || < χ > || , <>-gives-odcs χ ⦆
 
+join : (ℤ → 𝔻 × 𝔻) → (ℤ → 𝔻)
+join ζ n = {!!}
+
+join-is-gbr : (ζ : ℤ → 𝔻 × 𝔻) → is-gbr (join ζ)
+join-is-gbr = {!!}
+
+join-is-odcs : (ζ : ℤ → 𝔻 × 𝔻) → is-odcs || join ζ ||
+join-is-odcs = {!!}
+
+join-same-real : ((ζ , i) : Σ is-odcs)
+               →  ⦅ ζ , i ⦆ ＝ ⦅ || join ζ || , join-is-odcs ζ ⦆
+join-same-real = {!!}
+
 is-prenormalised : (ℤ → 𝔻) → 𝓤₀ ̇
 is-prenormalised ζ = Σ κ ꞉ (ℤ → ℤ) , ((n : ℤ) → n ≤ pr₂ ((ζ ∘ κ) n)
                                               × (κ n ≤ κ (succℤ n))
@@ -250,6 +263,9 @@ toTB-same-real : ((χ , inχ) : Σ is-normalised)
                → ⟦ toTB (χ , inχ) ⟧ ＝ ⦅ || χ || , ioχ ⦆
 toTB-same-real = {!!}
 
+ρ : ℤ[1/2] → 𝔻
+ρ ((k , p) , _) = k , pos p 
+
 open import Todd.BuildingBlocks pt fe pe sq
 
 record Approximations : 𝓤 ̇ where
@@ -258,8 +274,64 @@ record Approximations : 𝓤 ̇ where
   C : Collection n
  open Collection C
 
- F' : Vec (Σ is-odcs) n → ℤ → ℤ[1/2] × ℤ[1/2]
- F' ζs n = (L (vec-map (λ (ζ , odcs) → {!!}) ζs))
-         , (R (vec-map (λ (ζ , odcs) → {!!}) ζs))
+ vρ : Σ is-odcs → ℤ → {!!}
+ vρ (ζ , odcs) n = {!!}
 
+ F' : Vec (Σ is-odcs) n → ℤ → 𝔻 × 𝔻
+ F' ζs n = ρ (L (vec-map (λ (ζ , odcs) → ld ζ n , rd ζ n) ζs))
+         , ρ (R (vec-map (λ (ζ , odcs) → ld ζ n , rd ζ n) ζs))
+
+ F'-is-odcs : (ζs : Vec (Σ is-odcs) n) → is-odcs (F' ζs)
+ F'-is-odcs = {!!}
+
+ F'-same-real : (ζs : Vec (Σ is-odcs) n)
+              → (ioζs : is-odcs (F' ζs))
+              → F (vec-map ⦅_⦆ ζs) ＝ ⦅ F' ζs , ioζs ⦆
+ F'-same-real = {!!}
+ 
+ vζs : (xs : Vec 𝕋 n) → Vec (Σ is-odcs) n
+ vζs xs = vec-map (λ t → || < t > || , (<>-gives-odcs t)) xs
+ 
+ vF' : (xs : Vec 𝕋 n) → ℤ → 𝔻 × 𝔻
+ vF' = F' ∘ vζs
+ 
+ vJF' : (xs : Vec 𝕋 n) → ℤ → ℤ × ℤ
+ vJF' = join ∘ vF'
+ 
+ vPJF' : (xs : Vec 𝕋 n)
+       → is-prenormalised (vJF' xs)
+       → ℤ → ℤ × ℤ
+ vPJF' xs p = prenorm (vJF' xs) p
+ 
+ vNPJF' : (xs : Vec 𝕋 n)
+        → (p : is-prenormalised (vJF' xs))
+        → ℤ → ℤ × ℤ
+ vNPJF' xs p = norm (vPJF' xs p)
+ 
+ F* : (xs : Vec 𝕋 n)
+    → (ip : is-prenormalised (vJF' xs))
+    → is-normalised (vNPJF' xs ip)
+    → 𝕋
+ F* xs ip inx = toTB ((vNPJF' xs ip) , inx)
+
+ F-same-real : (xs : Vec 𝕋 n)
+             → (ip : is-prenormalised (vJF' xs))
+             → (inx : is-normalised (vNPJF' xs ip))
+             → ⟦ F* xs ip inx ⟧ ＝ F (vec-map ⦅_⦆ (vζs xs))
+ F-same-real xs ip inx = ⟦ F* xs ip inx ⟧                           ＝⟨ toTB-same-real (vNPJF' xs ip , inx) jNPF'odcs ⟩
+                         ⦅ || norm (vPJF' xs ip) || , jNPF'odcs ⦆   ＝⟨ norm-same-real (vPJF' xs ip) jPF'odcs ⁻¹ ⟩
+                         ⦅ || prenorm (vJF' xs) ip || , jPF'odcs ⦆  ＝⟨ prenorm-same-real (vJF' xs) jF'odcs ip ⁻¹ ⟩
+                         ⦅ || join (F' (vζs xs)) || , jF'odcs ⦆     ＝⟨ join-same-real (vF' xs , F'odcs) ⁻¹ ⟩
+                         ⦅ F' (vζs xs) , F'odcs ⦆                   ＝⟨ F'-same-real (vζs xs) F'odcs ⁻¹ ⟩
+                         F (vec-map ⦅_⦆ (vζs xs))                   ∎
+  where
+   jNPF'odcs : is-odcs || norm (vPJF' xs ip) ||
+   jNPF'odcs = norm-is-odcs (vPJF' xs ip)
+   jPF'odcs : is-odcs || prenorm (vJF' xs) ip ||
+   jPF'odcs = prenorm-is-odcs (vJF' xs) ip
+   jF'odcs : is-odcs || join (vF' xs) ||
+   jF'odcs = join-is-odcs (vF' xs)
+   F'odcs : is-odcs (F' (vζs xs))
+   F'odcs = F'-is-odcs (vζs xs)
+ 
 ```
