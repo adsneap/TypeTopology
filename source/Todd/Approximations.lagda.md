@@ -7,8 +7,10 @@ open import Notation.CanonicalMap
 open import Notation.Order
 open import Integers.Integers
 open import Integers.Addition renaming (_+_ to _ℤ+_;  _-_ to _ℤ-_)
+open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Negation renaming (-_ to ℤ-_ )
 open import Integers.Order
+open import UF.Base
 open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Subsingletons
@@ -175,13 +177,13 @@ is-gbr ξ = ((ϵ : 𝔻) → Σ n ꞉ ℤ , (normalise ((pos 1) , (predℤ (pr�
 < χ , b > n = χ n , n
 
 <>-is-gbr-lemma₁ : ((χ , b) : 𝕋) → (n : ℤ) → normalise (χ n , n) ≤ normalise (χ (succℤ n) , (succℤ n))
-<>-is-gbr-lemma₁ = {!!}
+<>-is-gbr-lemma₁ = {!easy !}
 
 <>-is-gbr-lemma₂ : ((χ , b) : 𝕋) → (n : ℤ) → normalise (succℤ (succℤ (χ (succℤ n))) , (succℤ n)) ≤ normalise (succℤ (succℤ (χ n)) , n)
-<>-is-gbr-lemma₂ = {!!}
+<>-is-gbr-lemma₂ = {!easy!}
 
 normalise-ε : ((χ , b) : 𝕋) → (ε : ℤ[1/2]) → Σ n ꞉ ℤ , (normalise (pos 1 , predℤ (pr₂ (< χ , b > n))) ≤ ε)
-normalise-ε = {!!}
+normalise-ε = {!should be easy!}
 
 <>-is-gbr : (χ : 𝕋) → is-gbr < χ >
 <>-is-gbr χ = normalise-ε χ , (λ n → <>-is-gbr-lemma₁ χ n
@@ -210,7 +212,7 @@ postulate
 -- Def 1.14
 
 J' : 𝔻 × 𝔻 → ℤ × ℤ × ℤ
-J' (((a , p₁) , _) , ((b , p₂) , _)) = rec a downLeft (abs (maxℤ (pos p₁) (pos p₂) ℤ- pos p₁))
+J' (((a , p₁) , _) , ((b , p₂) , _)) = rec a downLeft  (abs (maxℤ (pos p₁) (pos p₂) ℤ- pos p₁))
                                      , rec b downRight (abs (maxℤ (pos p₁) (pos p₂) ℤ- pos p₂))
                                      , maxℤ (pos p₁) (pos p₂)
 
@@ -256,6 +258,10 @@ join-same-real = {!!}
 
 -- Def 1.18
 
+κ-prenorm : (κ : ℤ → ℤ) → 𝓤₀ ̇
+κ-prenorm κ = ((n : ℤ) → κ n ≤ κ (succℤ n))
+            × ((n : ℤ) → n ≤ κ n)
+
 is-prenormalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
 is-prenormalised ζ = (n : ℤ) → pr₂ (ζ n) ≥ n
 
@@ -263,6 +269,8 @@ is-prenormalised ζ = (n : ℤ) → pr₂ (ζ n) ≥ n
 
 prenorm-for_ : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
 prenorm-for χ = Σ κ ꞉ (ℤ → ℤ) , (is-prenormalised (χ ∘ κ))
+                              × ((n : ℤ) → κ n ≤ κ (succℤ n))
+                              × ((n : ℤ) → n ≤ κ n)
 
 -- Lem 1.20
 
@@ -271,22 +279,94 @@ prenorm χ (κ , i) = χ ∘ κ
 
 prenorm-is-prenormalised : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
                          → is-prenormalised (prenorm χ κ)
-prenorm-is-prenormalised χ (κ , i) = i
+prenorm-is-prenormalised χ (κ , κf , κs) = κf
 
-prenorm-is-gbr : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
+normalise-≤-lemma : ((x , a) (y , b) : ℤ × ℤ)
+                  → x ℤ* b ≤ y ℤ* a
+                  → normalise (x , a) ≤ normalise (y , b)
+normalise-≤-lemma = {!easy (but long proof)!}
+
+prenorm-is-gbr-lemma : (a b : ℤ) → a ≤ b → normalise (pos 1 , b) ≤ normalise (pos 1 , a)
+prenorm-is-gbr-lemma a b l =
+ normalise-≤-lemma (pos 1 , b) (pos 1 , a)
+  (transport₂ _≤_ (ℤ-mult-left-id a ⁻¹) (ℤ-mult-left-id b ⁻¹) l)
+
+prenorm-is-gbr : (χ : ℤ → ℤ × ℤ)
+               → (κ : prenorm-for χ)
+               → is-gbr χ
                → is-gbr (prenorm χ κ)
-prenorm-is-gbr χ  = {!!}
+prenorm-is-gbr χ (κ , κf , κs , κ≤) (c₁ , c₂) = c₁' , c₂'
+ where
+  c₁' : (ε : ℤ[1/2]) → Σ n ꞉ ℤ , normalise (pos 1 , predℤ (pr₂ (χ (κ n)))) ≤ ε
+  c₁' ε = I (c₁ ε)
+   where
+    I : (Σ n  ꞉ ℤ , normalise (pos 1 , predℤ (pr₂ (χ n)))      ≤ ε)
+       → Σ n' ꞉ ℤ , normalise (pos 1 , predℤ (pr₂ (χ (κ n')))) ≤ ε
+    I (n , l') = n , trans' (normalise (pos 1 , predℤ (pr₂ (χ (κ n))))) (normalise (pos 1 , predℤ (pr₂ (χ n)))) ε l₂ l'
+     where
+      i : n ≤ κ n
+      i = κ≤ n
+      ii : (n₁ n₂ : ℤ) → n₁ ≤ n₂ → normalise (χ n₁) ≤ normalise (χ n₂) 
+      ii n₁ n₂ l = {!induction using c₂!}
+      iii : normalise (χ n) ≤ normalise (χ (κ n))
+      iii = ii n (κ n) i
+      iv : {!!}
+      iv = {!!}
 
-prenorm-is-odcs : (χ : ℤ → ℤ × ℤ) → (κ : prenorm-for χ)
+      
+      {-
+      i : (n₁ n₂ : ℤ) → n₁ ≤ n₂ → pr₂ (χ n₁) ≤ pr₂ (χ n₂) 
+      i n₁ n₂ n₁≤n₂ = {!!}
+      
+      χn≤χκn : pr₂ (χ n) ≤ pr₂ (χ (κ n))
+      χn≤χκn = i n (κ n) (κ≤ n)
+      -}
+      l₂ : normalise (pos 1 , predℤ (pr₂ (χ (κ n)))) ≤ℤ[1/2] normalise (pos 1 , predℤ (pr₂ (χ n)))
+      l₂ = {!!} -- prenorm-is-gbr-lemma (predℤ (pr₂ (χ n))) (predℤ (pr₂ (χ (κ n))))
+                -- (≤-predℤ' (pr₂ (χ n)) (pr₂ (χ (κ n))) χn≤χκn)
+
+  c₂' : (n : ℤ)
+      → (normalise (prenorm χ (κ , κf , κs , κ≤) n) ≤ normalise (prenorm χ (κ , κf , κs , κ≤) (succℤ n)))
+      × (η⁺² (prenorm χ (κ , κf , κs , κ≤) (succℤ n))) ≤ (η⁺² (prenorm χ (κ , κf , κs , κ≤) n))
+  c₂' n = I , II
+   where
+    induct₁ : (n₁ n₂ : ℤ) → n₁ ≤ n₂ → normalise (χ n₁) ≤ normalise (χ n₂)
+    induct₁ n₁ n₂ n₁≤n₂ = {!--easy induction!}
+
+    induct₂ : (n₁ n₂ : ℤ) → n₁ ≤ n₂ → η⁺² (χ n₂) ≤ η⁺² (χ n₁)
+    induct₂ n₁ n₂ n₁≤n₂ = {!easy induction!}
+    
+    I : normalise (χ (κ n)) ≤ normalise (χ (κ (succℤ n)))
+    I = induct₁ (κ n) (κ (succℤ n)) (κs n)
+
+    II : η⁺² (χ (κ (succℤ n))) ≤ η⁺² (χ (κ n))
+    II = induct₂ (κ n) (κ (succℤ n)) (κs n)
+  
+prenorm-is-odcs : (χ : ℤ → ℤ × ℤ)
+                → (κ : prenorm-for χ)
+                → is-gbr χ
                 → is-odcs || prenorm χ κ ||
-prenorm-is-odcs χ κ = 𝔾-gives-odcs (prenorm χ κ) (prenorm-is-gbr χ κ)
+prenorm-is-odcs χ κ igbr = 𝔾-gives-odcs (prenorm χ κ) (prenorm-is-gbr χ κ igbr)
 
 prenorm-same-real : (χ : ℤ → ℤ × ℤ)
-                   → (i : is-odcs || χ ||)
-                   → (κ : prenorm-for χ)
-                   → (io : is-odcs || prenorm χ κ ||)
-                   → ⦅ || χ || , i ⦆ ≡ ⦅ || prenorm χ κ || , io ⦆
-prenorm-same-real = {!!}
+                  → (i : is-odcs || χ ||)
+                  → (κ : prenorm-for χ)
+                  → (io : is-odcs || prenorm χ κ ||)
+                  → ⦅ || χ || , i ⦆ ≡ ⦅ || prenorm χ κ || , io ⦆
+prenorm-same-real χ i (κ , κps) io = ℝ-d-equality-from-left-cut ltr rtl
+ where
+  ltr : lower-cut-of ⦅ || χ || , i ⦆ ⊆ lower-cut-of ⦅ || prenorm χ (κ , κps) || , io ⦆
+  ltr p = ∥∥-functor I
+   where
+    I : Σ n ꞉ ℤ , (p <ℤ[1/2] η (χ n))
+      → Σ n ꞉ ℤ , (p <ℤ[1/2] η (χ (κ n)))
+    I (n , p<ξn) = n , {!!}
+  rtl : lower-cut-of ⦅ || prenorm χ (κ , κps) || , io ⦆ ⊆ lower-cut-of ⦅ || χ || , i ⦆
+  rtl p = ∥∥-functor I
+   where
+    I : Σ n ꞉ ℤ , (p <ℤ[1/2] η (χ (κ n)))
+      → Σ n ꞉ ℤ , (p <ℤ[1/2] η (χ n))
+    I (n , p<χκn) = {!!}
 
 -- Lem 1.21
 
@@ -299,7 +379,7 @@ norm : (χ : ℤ → ℤ × ℤ) → is-prenormalised χ → (ℤ → ℤ × ℤ
 norm χ ipχ n = rec (pr₁ (χ n)) upRight (abs (n ℤ- pr₂ (χ n))) , n
 
 norm-is-normalised : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-normalised (norm χ ipχ)
-norm-is-normalised χ ipχ = {!!}
+norm-is-normalised χ ipχ n = refl
 
 normalised-are-prenormalised : (χ : ℤ → ℤ × ℤ) → is-normalised χ → is-prenormalised χ
 normalised-are-prenormalised χ i n = 0 , (i n ⁻¹)
@@ -309,20 +389,37 @@ norm-is-prenormalised : (χ : ℤ → ℤ × ℤ)
                       → is-prenormalised (norm χ ip) 
 norm-is-prenormalised χ ip = normalised-are-prenormalised (norm χ ip) (norm-is-normalised χ ip)
 
-norm-is-odcs : (χ : ℤ → ℤ × ℤ) → (ipχ : is-prenormalised χ) → is-odcs || norm χ ipχ ||
-norm-is-odcs χ ip = prenorm-is-odcs (norm χ ip) (id , norm-is-prenormalised χ ip)
+-- (χ : Z → Z x Z) → (ipx : is-prenormalised χ) → ((κ , _) : prenorm-for χ) → κ ∼ id
+-- (χ : Z → Z x Z) → (ipx : is-prenormalised χ) → prenorm-for χ (i.e. id)
+-- (χ : Z → Z x Z) → (ipx : is-prenormalised χ) → (κ : prenorm-for χ) → prenorm χ κ ∼ χ
+
+norm-is-gbr : (χ : ℤ → ℤ × ℤ)
+            → is-gbr χ
+            → (ipχ : is-prenormalised χ)
+            → is-gbr (norm χ ipχ)
+norm-is-gbr χ igbrχ ipχ = {!!}
+
+norm-is-odcs : (χ : ℤ → ℤ × ℤ)
+             → is-gbr χ 
+             → (ipχ : is-prenormalised χ)
+             → is-odcs || norm χ ipχ ||
+norm-is-odcs χ gbrχ ip = prenorm-is-odcs (norm χ ip) κ' (prenorm-is-gbr (norm χ ip) κ' (norm-is-gbr χ gbrχ ip))
+ where
+  κ' : prenorm-for norm χ ip
+  κ' = id , (norm-is-prenormalised χ ip) , (λ n → 1 , refl) , (λ n → 0 , refl)
+                   
 
 norm-same-real : (χ : ℤ → ℤ × ℤ)
                → (i : is-odcs || χ ||)
                → (ip : is-prenormalised χ)
                → (io : is-odcs || norm χ ip ||)
                → ⦅ || χ || , i ⦆ ≡ ⦅ || norm χ ip || , io ⦆
-norm-same-real = {!!}
+norm-same-real χ i ip io = {!!}
 
 -- Def 1.24
 
 toTB : Σ is-normalised → 𝕋
-toTB (χ , χin) = {!!}
+toTB (χ , χin) = (λ n → pr₁ (χ n)) , {!!}
 
 toTB-same-real : ((χ , χin) : Σ is-normalised)
                → (i : is-odcs || χ ||)
@@ -334,11 +431,7 @@ toTB-same-real = {!!}
 To be re-organised and commented.
 
 ```agda
-{-
-sc-is-odcs : (n : ℕ) → Vec (ℤ → ℤ[1/2] × ℤ[1/2]) n → 𝓤₀ ̇
-sc-is-odcs 0        [] = 𝟙
-sc-is-odcs (succ n) (ζ ∷ ζs) = is-odcs ζ × sc-is-odcs n ζs
--}
+
 open import Todd.BuildingBlocks pt fe pe sq
 
 record Approximations : 𝓤 ̇ where
@@ -409,9 +502,9 @@ record Approximations : 𝓤 ̇ where
                             F (vec-map ⦅_⦆ (vζs χs))               ∎
   where
    jNPF'odcs : is-odcs || norm (vPJF' χs pf) ip ||
-   jNPF'odcs = norm-is-odcs (vPJF' χs pf) ip
+   jNPF'odcs = norm-is-odcs (vPJF' χs pf) (prenorm-is-gbr (vJF' χs) pf (join-is-gbr (vF' χs))) ip
    jPF'odcs : is-odcs || prenorm (vJF' χs) pf ||
-   jPF'odcs = prenorm-is-odcs (vJF' χs) pf
+   jPF'odcs = prenorm-is-odcs (vJF' χs) pf (join-is-gbr (vF' χs))
    jF'odcs : is-odcs || join (F' (vζs χs)) ||
    jF'odcs = join-is-odcs (vF' χs)
    F'odcs : is-odcs (F' (vζs χs))
