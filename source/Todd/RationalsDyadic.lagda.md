@@ -453,6 +453,8 @@ record OrderProperties : 𝓤₁ ̇ where
   ℤ[1/2]-1/2-< : (x : ℤ[1/2]) → 0ℤ[1/2] < x → (1/2ℤ[1/2] ℤ[1/2]* x) < x
   normalise-< : ((k , p) : ℤ × ℤ) → normalise (k , p) < normalise ((k +pos 2) , p)
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
+  ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)
+  normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
 
 -- normalise-pos
 normalise-≤ : ((k , δ) : ℤ × ℕ) → ((m , ε) : ℤ × ℕ)

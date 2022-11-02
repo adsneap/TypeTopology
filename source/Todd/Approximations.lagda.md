@@ -61,9 +61,6 @@ is-odcs-c₃-lemma : (ζ : (ℤ → ℤ[1/2] × ℤ[1/2])) → ((c₁ , c₂ , c
                  → (n₁ n₂ : ℤ) → n₁ ≤ n₂ → (pr₁ (ζ n₁) ≤ℤ[1/2] pr₁ (ζ n₂)) × (pr₂ (ζ n₂) ≤ℤ[1/2] pr₂ (ζ n₁))
 is-odcs-c₃-lemma ζ c n₁ n₂ (k , e) = is-odcs-c₃-lemma-ns ζ c n₁ n₂ k e
 
-postulate
- ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a - b) < (c - d) → (a < c) ∔ (d < b)
-
 -- Lem 1.6
 ⦅_⦆ : Σ is-odcs → ℝ-d
 ⦅ ζ , (c₁ , c₂ , c₃) ⦆
@@ -193,9 +190,6 @@ normalise-ε = {!should be easy!}
 <>-gives-odcs χ = 𝔾-gives-odcs < χ > (<>-is-gbr χ)
 
 open import Todd.BelowAndAbove fe hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_ ; Vec)
-
-postulate
- normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z ℤ+ z , succℤ n)
 
 <>-is-odcs : (χ : 𝕋) → is-odcs || < χ > ||
 <>-is-odcs (χ , b) = <>-gives-odcs (χ , b)
