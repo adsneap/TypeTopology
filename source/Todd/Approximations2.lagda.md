@@ -220,18 +220,21 @@ prenorm χ (κ , _) = χ ∘ κ
 
 prenorm-is-gbr : (χ : ℤ → 𝔻)
                → (ipχ : is-prenormalised χ)
+               → is-gbr χ
                → is-gbr (prenorm χ ipχ)
-prenorm-is-gbr = {!!}
+prenorm-is-gbr χ (κ , f) = {!!}
 
 prenorm-is-odcs : (χ : ℤ → 𝔻)
                 → (ipχ : is-prenormalised χ)
+                → is-gbr χ
                 → is-odcs || prenorm χ ipχ ||
-prenorm-is-odcs χ ipχ = 𝔾-gives-odcs (prenorm χ ipχ) (prenorm-is-gbr χ ipχ)
+prenorm-is-odcs χ ipχ igbrχ = 𝔾-gives-odcs (prenorm χ ipχ) (prenorm-is-gbr χ ipχ igbrχ)
 
 prenorm-same-real : (χ : ℤ → 𝔻)
                   → (ioχ : is-odcs || χ ||)
                   → (ipχ : is-prenormalised χ)
-                  → ⦅ || χ || , ioχ ⦆ ＝ ⦅ || prenorm χ ipχ || , prenorm-is-odcs χ ipχ ⦆
+                  → (iopχ : is-odcs || prenorm χ ipχ ||)
+                  → ⦅ || χ || , ioχ ⦆ ＝ ⦅ || prenorm χ ipχ || , iopχ ⦆
 prenorm-same-real χ ioχ ipχ = {!!}
 
 is-normalised : (χ : ℤ → 𝔻) → 𝓤₀ ̇
@@ -248,7 +251,7 @@ norm-is-prenormalised χ = id , (λ n → (0 , refl) , (1 , refl) , (0 , refl))
 
 norm-is-odcs : (χ : ℤ → 𝔻)
              → is-odcs || norm χ ||
-norm-is-odcs χ = prenorm-is-odcs (norm χ) (norm-is-prenormalised χ)
+norm-is-odcs χ = prenorm-is-odcs (norm χ) (norm-is-prenormalised χ) {!!}
 
 norm-same-real : (χ : ℤ → 𝔻)
                → (inχ : is-odcs || χ ||)
@@ -273,9 +276,6 @@ record Approximations : 𝓤 ̇ where
   n : ℕ
   C : Collection n
  open Collection C
-
- vρ : Σ is-odcs → ℤ → {!!}
- vρ (ζ , odcs) n = {!!}
 
  F' : Vec (Σ is-odcs) n → ℤ → 𝔻 × 𝔻
  F' ζs n = ρ (L (vec-map (λ (ζ , odcs) → ld ζ n , rd ζ n) ζs))
@@ -320,7 +320,7 @@ record Approximations : 𝓤 ̇ where
              → ⟦ F* xs ip inx ⟧ ＝ F (vec-map ⦅_⦆ (vζs xs))
  F-same-real xs ip inx = ⟦ F* xs ip inx ⟧                           ＝⟨ toTB-same-real (vNPJF' xs ip , inx) jNPF'odcs ⟩
                          ⦅ || norm (vPJF' xs ip) || , jNPF'odcs ⦆   ＝⟨ norm-same-real (vPJF' xs ip) jPF'odcs ⁻¹ ⟩
-                         ⦅ || prenorm (vJF' xs) ip || , jPF'odcs ⦆  ＝⟨ prenorm-same-real (vJF' xs) jF'odcs ip ⁻¹ ⟩
+                         ⦅ || prenorm (vJF' xs) ip || , jPF'odcs ⦆  ＝⟨ prenorm-same-real (vJF' xs) jF'odcs ip jPF'odcs ⁻¹ ⟩
                          ⦅ || join (F' (vζs xs)) || , jF'odcs ⦆     ＝⟨ join-same-real (vF' xs , F'odcs) ⁻¹ ⟩
                          ⦅ F' (vζs xs) , F'odcs ⦆                   ＝⟨ F'-same-real (vζs xs) F'odcs ⁻¹ ⟩
                          F (vec-map ⦅_⦆ (vζs xs))                   ∎
@@ -328,7 +328,7 @@ record Approximations : 𝓤 ̇ where
    jNPF'odcs : is-odcs || norm (vPJF' xs ip) ||
    jNPF'odcs = norm-is-odcs (vPJF' xs ip)
    jPF'odcs : is-odcs || prenorm (vJF' xs) ip ||
-   jPF'odcs = prenorm-is-odcs (vJF' xs) ip
+   jPF'odcs = prenorm-is-odcs (vJF' xs) ip (join-is-gbr (vF' xs))
    jF'odcs : is-odcs || join (vF' xs) ||
    jF'odcs = join-is-odcs (vF' xs)
    F'odcs : is-odcs (F' (vζs xs))
