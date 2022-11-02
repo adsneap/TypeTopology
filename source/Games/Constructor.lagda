@@ -7,16 +7,13 @@ This module has functions to build games.
 {-# OPTIONS --without-K --safe --auto-inline --exact-split #-}
 
 open import MLTT.Spartan hiding (J)
-open import UF.Base
+
+module Games.Constructor (R : Type) where
+
 open import UF.FunExt
 
-module Games.Constructor
-        (R : Type)
-        (fe : Fun-Ext)
-       where
-
 open import Games.TypeTrees
-open import Games.FiniteHistoryDependent R fe
+open import Games.FiniteHistoryDependent R
 
 \end{code}
 
@@ -27,8 +24,8 @@ than to give a game directly.
 \begin{code}
 
 data GameJ : Type₁ where
-  leaf   : R → GameJ
-  branch : (X : Type) (Xf : X → GameJ) (ε : J X) → GameJ
+ leaf   : R → GameJ
+ branch : (X : Type) (Xf : X → GameJ) (ε : J X) → GameJ
 
 dtt : GameJ → 𝕋
 dtt (leaf x)        = []
@@ -52,16 +49,17 @@ Game-from-GameJ Γ = game (dtt Γ) (predicate Γ) (quantifiers Γ)
 strategyJ : (Γ : GameJ) → Strategy (dtt Γ)
 strategyJ Γ = selection-strategy (selections Γ) (predicate Γ)
 
-Selection-Strategy-TheoremJ : (Γ : GameJ)
+Selection-Strategy-TheoremJ : Fun-Ext
+                            → (Γ : GameJ)
                             → is-optimal (Game-from-GameJ Γ) (strategyJ Γ)
-Selection-Strategy-TheoremJ Γ = γ
+Selection-Strategy-TheoremJ fe Γ = γ
  where
   δ : (Γ : GameJ) → (selections Γ) are-selections-of (quantifiers Γ)
   δ (leaf r)        = ⟨⟩
   δ (branch X Xf ε) = (λ p → refl) , (λ x → δ (Xf x))
 
   γ : is-optimal (Game-from-GameJ Γ) (strategyJ Γ)
-  γ = Selection-Strategy-Theorem (Game-from-GameJ Γ) (selections Γ) (δ Γ)
+  γ = Selection-Strategy-Theorem fe (Game-from-GameJ Γ) (selections Γ) (δ Γ)
 
 \end{code}
 
@@ -70,31 +68,31 @@ in a convenient way.
 
 \begin{code}
 
-build-GameJ : (draw       : R)
-              (Board      : Type)
-              (transition : Board → R + (Σ M ꞉ Type , (M → Board) × J M))
-              (n          : ℕ)
-              (b          : Board)
+build-GameJ : (r     : R)
+              (Board : Type)
+              (τ     : Board → R + (Σ M ꞉ Type , (M → Board) × J M))
+              (n     : ℕ)
+              (b     : Board)
             → GameJ
-build-GameJ draw Board transition n b = h n b
+build-GameJ r Board τ n b = h n b
  where
   h : ℕ → Board → GameJ
-  h 0        b = leaf draw
-  h (succ n) b = g (transition b) refl
+  h 0        b = leaf r
+  h (succ n) b = g (τ b)
    where
-    g : (f : R + (Σ M ꞉ Type , (M → Board) × J M)) → transition b ＝ f → GameJ
-    g (inl r)              p = leaf r
-    g (inr (M , play , ε)) p = branch M Xf ε
+    g : (f : R + (Σ M ꞉ Type , (M → Board) × J M)) → GameJ
+    g (inl r)              = leaf r
+    g (inr (M , play , ε)) = branch M Xf ε
      where
       Xf : M → GameJ
       Xf m = h n (play m)
 
-build-Game : (draw       : R)
-             (Board      : Type)
-             (transition : Board → R + (Σ M ꞉ Type , (M → Board) × J M))
-             (n          : ℕ)
-             (b          : Board)
+build-Game : (r  : R)
+             (Board : Type)
+             (τ     : Board → R + (Σ M ꞉ Type , (M → Board) × J M))
+             (n     : ℕ)
+             (b     : Board)
            → Game
-build-Game draw Board transition n b = Game-from-GameJ (build-GameJ draw Board transition n b)
+build-Game r Board τ n b = Game-from-GameJ (build-GameJ r Board τ n b)
 
 \end{code}
