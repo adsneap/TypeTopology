@@ -6,7 +6,7 @@ open import MLTT.Spartan hiding (_+_)
 
 open import Naturals.Addition
 open import Notation.Order
-open import Integers.Integers
+open import Integers.Type
 open import Integers.Addition renaming (_+_ to _ℤ+_ ; _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Order renaming (max₃ to ℤmax₃ ; min₃ to ℤmin₃)

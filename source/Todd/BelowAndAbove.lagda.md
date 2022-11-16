@@ -8,7 +8,7 @@ open import MLTT.Spartan
 open import MLTT.Two-Properties hiding (zero-is-not-one)
 open import Naturals.Order
 open import Integers.Order
-open import Integers.Integers
+open import Integers.Type
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
 open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Integers.Negation renaming (-_  to  −ℤ_)

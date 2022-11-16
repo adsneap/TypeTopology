@@ -8,7 +8,7 @@ Dedekind reals defined using subsets of dyadic rationals.
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
 open import Notation.Order
-open import Integers.Integers
+open import Integers.Type
 open import Integers.Addition
 open import Integers.Order
 open import Integers.Multiplication

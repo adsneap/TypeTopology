@@ -7,7 +7,7 @@ open import UF.Subsingletons
 open import MLTT.Spartan
 open import Naturals.Order
 open import Integers.Order
-open import Integers.Integers
+open import Integers.Type
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
 open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Notation.Order

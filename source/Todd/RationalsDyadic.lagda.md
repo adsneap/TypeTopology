@@ -9,7 +9,7 @@ aim is to provide specific implementations of these postulates.
 
 open import MLTT.Spartan renaming (_+_ to _∔_) -- TypeTopology
 
-open import Integers.Integers
+open import Integers.Type
 open import Integers.Abs
 open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Integers.Multiplication 
@@ -538,7 +538,7 @@ rationals into rationals.
 open import Notation.CanonicalMap
 open import Naturals.Division
 open import Rationals.Fractions
-open import Rationals.Rationals
+open import Rationals.Type
 open import Rationals.Multiplication renaming (_*_ to _ℚ*_)
 
 ```
