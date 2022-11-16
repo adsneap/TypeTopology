@@ -10,23 +10,22 @@ There is also a proof in Egbert Rijke's book (to appear).
 
 {-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
 
+open import Fin.Bishop
+open import Fin.Type
 open import MLTT.Spartan
-open import MLTT.Fin
-open import MLTT.Fin-Properties
-open import Utilities.PairFun
-
-open import UF.Subsingletons renaming (⊤Ω to ⊤)
+open import UF.Embeddings
 open import UF.Equiv
 open import UF.EquivalenceExamples
-open import UF.PropTrunc
-open import UF.ImageAndSurjection
-open import UF.Embeddings
-open import UF.UniverseEmbedding
 open import UF.FunExt
-open import UF.Univalence
+open import UF.ImageAndSurjection
+open import UF.PairFun
+open import UF.PropTrunc
+open import UF.Subsingletons renaming (⊤Ω to ⊤)
 open import UF.UA-FunExt
+open import UF.Univalence
+open import UF.UniverseEmbedding
 
-module UF.Finiteness-Universe-Invariance
+module Fin.UniverseInvariance
         (pt : propositional-truncations-exist)
         (ua : Univalence)
        where
@@ -34,6 +33,7 @@ module UF.Finiteness-Universe-Invariance
 fe : Fun-Ext
 fe = Univalence-gives-Fun-Ext ua
 
+open PropositionalTruncation pt
 open ImageAndSurjection pt
 open finiteness pt
 

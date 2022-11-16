@@ -87,6 +87,7 @@ import DomainTheory.index             -- by Tom de Jong
 import Dyadics.index                  -- by Andrew Sneap
 import DyadicsInductive.index         -- by Tom de Jong
 import Field.index                    -- by Andrew Sneap
+import Fin.index
 import Games.index                    -- by Martin Escardo and Paulo Oliva
 import Groups.index                   -- originally by Martin Escardo with many additions
                                       -- by Ettore Aldrovandi and Keri D'Angelo
@@ -109,10 +110,7 @@ import TWA.index                      -- by Todd Waugh Ambridge
 import Taboos.index
 import TypeTopology.index
 import UF.index
-import Uncatalogued.index
-import Utilities.index
-
-
+import Various.index
 
 \end{code}
 
