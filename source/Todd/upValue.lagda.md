@@ -45,7 +45,16 @@ ceilog2 (succ n) with ceilog2 n
   II : succ (succ (succ n)) ≤ℕ (2 ℕ^ succ (succ m))
   II = transport (_≤ 2 ℕ^ succ (succ m)) (is-equal ⁻¹) (exponents-of-two-ordered (succ m))
 
+-- fun x = ceil(log2(x+1))
+
 clog2 : ℕ → ℕ
-clog2 n = pr₁ (ceilog2 (pred (pred n)))
+clog2 0 = 0
+clog2 (succ n) = succ (pr₁ (ceilog2 n))
+
+open import Integers.Type
+open import Integers.Order
+
+upValue : (a b : ℤ) → a ≤ b → ℕ
+upValue a b (n , a≤b) = clog2 n
 
 ```
