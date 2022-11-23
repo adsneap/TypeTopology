@@ -57,6 +57,12 @@ intersected ζ = (n m : ℤ) → min (pr₂ (ζ n)) (pr₂ (ζ m)) ≤ max (pr�
 nested-gives-intersected : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → intersected ζ
 nested-gives-intersected ζ η n m = {!!}
 
+sequence-intervalled-every-level : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
+                                 → (n n' : ℤ) → n ≤ n'
+                                 → (ld (ζ n) ≤ ld (ζ n'))
+                                 × (rd (ζ n') ≤ rd (ζ n))
+sequence-intervalled-every-level = {!!}
+
 ⦅_⦆ : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
       → intervalled ζ → intersected ζ → located ζ
       → ℝ-d
@@ -120,11 +126,11 @@ nested-gives-intersected ζ η n m = {!!}
     I : (Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) × (Σ n' ꞉ ℤ , (rd (ζ n') <ℤ[1/2] q))
       → p <ℤ[1/2] q
     I ((n , p<l) , (n' , r<q)) with ℤ-dichotomous n n'
-    ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l {!!} -- (pr₁ (is-odcs-c₃-lemma ζ (c₁ , c₂ , c₃) n n' n≤n'))
+    ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l (pr₁ (sequence-intervalled-every-level ζ n n' n≤n'))
                          l<q' = ℤ[1/2]≤-< (ld (ζ n')) (rd (ζ n')) q (ζinv n') r<q 
                      in trans p (ld (ζ n')) q p<l' l<q'
     ... | inr n'≤n = let p<r' = ℤ[1/2]<-≤ p (ld (ζ n)) (rd (ζ n)) p<l (ζinv n)
-                         r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q {!!} {!!} -- (pr₂ (is-odcs-c₃-lemma ζ (c₁ , c₂ , c₃) n' n n'≤n)) r<q
+                         r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q (pr₂ (sequence-intervalled-every-level ζ n' n n'≤n)) r<q
                      in trans p (rd (ζ n)) q p<r' r<q'
  
   is-located : located' L R
