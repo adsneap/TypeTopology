@@ -335,10 +335,10 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 
 -- Approximators and continuity oracles
 
-map₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ } {n : ℕ}
-     → (X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-map₂ f [] [] = []
-map₂ f (x ∷ xs) (y ∷ ys) = f x y ∷ map₂ f xs ys
+map₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
+      → Vec (X → Y) n → Vec X n → Vec Y n
+map₂ [] [] = []
+map₂ (x ∷ χs) (k ∷ ks) = x k ∷ map₂ χs ks
 
 vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦 ̇ 
 vec-satisfy p [] = 𝟙
@@ -354,7 +354,7 @@ vec-satisfy-preserved-by : {X : 𝓤 ̇ }
                          → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
                          → (p : X → 𝓦 ̇ )
                          → vec-satisfy (λ x → ∀ (n : ℤ) → p (x n)) xs
-                         → vec-satisfy p (map₂ id xs ks)
+                         → vec-satisfy p (map₂ xs ks)
 vec-satisfy-preserved-by [] [] p ⋆ = ⋆
 vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
  = px k , vec-satisfy-preserved-by xs ks p pxs
@@ -369,11 +369,13 @@ vec-map-lift : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (p : X → 𝓦 ̇ ) (f : Y →
 vec-map-lift p f Πpf [] = ⋆
 vec-map-lift p f Πpf (y ∷ ys) = Πpf y , vec-map-lift p f Πpf ys
 
-vec-map-≡ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
-          → {n : ℕ} → (xs : Vec X n)
+vec-map-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
+          → {n : ℕ}
           → (f : X → Y) → (g : Y → Z)
+          → (xs : Vec X n)
           → vec-map (g ∘ f) xs ≡ vec-map g (vec-map f xs)
-vec-map-≡ = {!!}
+vec-map-∼ f g [] = refl
+vec-map-∼ f g (x ∷ xs) = ap (g (f x) ∷_) (vec-map-∼ f g xs)
 
 record FunctionMachine : 𝓤₁  ̇ where
   field
@@ -383,14 +385,16 @@ record FunctionMachine : 𝓤₁  ̇ where
     κ' : Vec 𝕋 d → ℤ → Vec ℤ d
     κ-is-coracle
       : (χs : Vec 𝕋 d) → (ϵ : ℤ)
-      → pr₂ (join' (A (map₂ id (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ' χs ϵ)))) ≥ ϵ
+      → pr₂ (join' (A (map₂ (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ' χs ϵ)))) ≥ ϵ
   f̂'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
-  f̂'  χs k n = A (map₂ id χs (k n))
+  f̂'  χs k n = A (map₂ χs (k n))
+  g'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
+  g'  χs k n = A (map₂ χs (k n))
   f̂'' : Vec (ℤ → 𝕀s) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀s)
   f̂'' χs k = join (f̂' (vec-map seq-sw-to-vw χs) k)
   κ'-is-coracle : (χs : Vec 𝕋 d) → is-prenormalised (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
-  κ'-is-coracle χs ϵ = transport (λ ■ → ϵ ≤ pr₂ (join' (A (map₂ id ■ (κ' χs ϵ)))))
-                         (vec-map-≡ χs TBR-to-sw-seq seq-sw-to-vw)
+  κ'-is-coracle χs ϵ = transport (λ ■ → ϵ ≤ pr₂ (join' (A (map₂ ■ (κ' χs ϵ)))))
+                         (vec-map-∼ TBR-to-sw-seq seq-sw-to-vw χs)
                          (κ-is-coracle χs ϵ)
   f̂   : Vec 𝕋 d → 𝕋
   f̂   χs   = prenormalised-seq-to-TBR (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
@@ -401,9 +405,26 @@ Negation : FunctionMachine
 FunctionMachine.d Negation = 1
 FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
-                           = ((ℤ- r , ℤ- l) , i) , ℤ≤-swap l r l≤r
-FunctionMachine.κ' Negation _ _ = [ pos 0 ]
-FunctionMachine.κ-is-coracle Negation χs ϵ = {!!}
+                           = ((ℤ- r , ℤ- l) , i)
+                           , ℤ≤-swap l r l≤r
+FunctionMachine.κ' Negation _ ϵ = [ ϵ ]
+FunctionMachine.κ-is-coracle Negation [ χ ] ϵ = 0 , refl
+
+_-min_ : ℤ → ℤ → ℕ
+x -min y with ℤ-dichotomous x y
+... | inl x≤y = 0
+... | inr (n , refl) = n
+
+Addition : FunctionMachine
+FunctionMachine.d Addition = 2
+FunctionMachine.f Addition (x ∷ [ y ]) = x ℝd+ y
+FunctionMachine.A Addition ((((l₁ , r₁) , i₁) , l≤₁r) ∷ [ (((l₂ , r₂) , i₂) , l≤₂r) ])
+                           = ((pos (2^ (i₂  -min i₁)) ℤ* l₁ ℤ+ pos (2^ (i₁ -min i₂)) ℤ* l₂
+                             , (pos (2^ (i₂  -min i₁)) ℤ* r₁ ℤ+ pos (2^ (i₁ -min i₂)) ℤ* r₂))
+                           , maxℤ i₁ i₂)
+                           , {!!}
+FunctionMachine.κ' Addition _ ϵ = (ϵ +pos 2) ∷ [ ϵ +pos 2 ]
+FunctionMachine.κ-is-coracle Addition (χ ∷ [ γ ]) ϵ = {!!} , {!!}
 
 𝕋-_ : 𝕋 → 𝕋
 𝕋- x = FunctionMachine.f̂ Negation [ x ]

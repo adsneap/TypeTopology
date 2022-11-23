@@ -39,8 +39,9 @@ clog2 (succ n) = succ (pr₁ (ceilog2 n))
 
 open import Integers.Type
 open import Integers.Order
+open import Integers.Addition
 
 upValue : (a b : ℤ) → a ≤ b → ℕ
-upValue a b (n , a≤b) = clog2 n
+upValue a b (n , a≤b) = clog2 (pred (pred n))
 
 ```
