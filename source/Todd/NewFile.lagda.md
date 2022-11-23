@@ -33,7 +33,8 @@ open import Todd.upValue
 open PropositionalTruncation pt
 
 open OrderProperties DyOrPr
-open DyadicProperties Dp renaming (_ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_ ; _ℤ[1/2]*_ to _*_)
+open DyadicProperties Dp
+  renaming (_ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_ ; _ℤ[1/2]*_ to _*_)
                                     
 open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans)
 
@@ -41,12 +42,15 @@ _≡_ = Id
 
 -- Dyadic interval properties and sequences
 
-_covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
-(k , i) covers (c , j) = {!!}
-
 ld rd : ℤ[1/2] × ℤ[1/2] → ℤ[1/2]
 ld (l , r) = l
 rd (l , r) = r
+
+_covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
+a covers b = (ld a ≤ ld b) × (rd b ≤ rd a)
+
+covers-trans : (a b c : ℤ[1/2] × ℤ[1/2]) → a covers b → b covers c → a covers c
+covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂) = {!!} , {!!}
 
 intervalled nested located intersected : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
@@ -54,14 +58,23 @@ nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
 located     ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , (pr₂ (ζ n) - pr₁ (ζ n)) ≤ ϵ
 intersected ζ = (n m : ℤ) → min (pr₂ (ζ n)) (pr₂ (ζ m)) ≤ max (pr₁ (ζ n)) (pr₁ (ζ m))
 
+fully-nested' : (ℤ → ℤ[1/2] × ℤ[1/2]) → ℕ → 𝓤₀ ̇
+fully-nested' ζ k = (n : ℤ) → (ζ n) covers (ζ (n +pos k))
+
+fully-nested : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
+fully-nested ζ = (n m : ℤ) → n ≤ m → (ζ n) covers (ζ m)
+
+nested-implies-fully-nested' : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → Π (fully-nested' ζ)
+nested-implies-fully-nested' ζ ρ 0 n = (0 , refl) , (0 , refl)
+nested-implies-fully-nested' ζ ρ (succ k) n
+ = covers-trans (ζ n) (ζ (succℤ n)) (ζ (succℤ (n +pos k))) (ρ n)
+     (nested-implies-fully-nested' (ζ ∘ succℤ) (ρ ∘ succℤ) k n)
+
+nested-implies-fully-nested : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → fully-nested ζ
+nested-implies-fully-nested ζ ρ n m (k , refl) = nested-implies-fully-nested' ζ ρ k n
+
 nested-gives-intersected : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → intersected ζ
 nested-gives-intersected ζ η n m = {!!}
-
-sequence-intervalled-every-level : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
-                                 → (n n' : ℤ) → n ≤ n'
-                                 → (ld (ζ n) ≤ ld (ζ n'))
-                                 × (rd (ζ n') ≤ rd (ζ n))
-sequence-intervalled-every-level = {!!}
 
 ⦅_⦆ : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
       → intervalled ζ → intersected ζ → located ζ
@@ -126,11 +139,13 @@ sequence-intervalled-every-level = {!!}
     I : (Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) × (Σ n' ꞉ ℤ , (rd (ζ n') <ℤ[1/2] q))
       → p <ℤ[1/2] q
     I ((n , p<l) , (n' , r<q)) with ℤ-dichotomous n n'
-    ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l (pr₁ (sequence-intervalled-every-level ζ n n' n≤n'))
+    ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l
+                                  (pr₁ (nested-implies-fully-nested ζ {!!} n n' n≤n'))
                          l<q' = ℤ[1/2]≤-< (ld (ζ n')) (rd (ζ n')) q (ζinv n') r<q 
                      in trans p (ld (ζ n')) q p<l' l<q'
     ... | inr n'≤n = let p<r' = ℤ[1/2]<-≤ p (ld (ζ n)) (rd (ζ n)) p<l (ζinv n)
-                         r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q (pr₂ (sequence-intervalled-every-level ζ n' n n'≤n)) r<q
+                         r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q
+                                  (pr₂ (nested-implies-fully-nested ζ {!!} n' n n'≤n)) r<q
                      in trans p (rd (ζ n)) q p<r' r<q'
  
   is-located : located' L R
@@ -197,18 +212,24 @@ preserves-trans f g A B C p₁ p₂ x Ax = p₂ (f x) (p₁ x Ax)
 -- Variable width sequence properties
 
 v-left v-right v-prec : 𝕀v → ℤ
-v-left  = pr₁ ∘ pr₁ ∘ pr₁
-v-right = pr₂ ∘ pr₁ ∘ pr₁
-v-prec  = pr₂ ∘ pr₁
-v-l≤r : (z : 𝕀v) → v-left z ≤ v-right z
-v-l≤r = pr₂
+v-left   = pr₁ ∘ pr₁ ∘ pr₁
+v-right  = pr₂ ∘ pr₁ ∘ pr₁
+v-prec   = pr₂ ∘ pr₁
+v-l≤r  : (z : 𝕀v) → v-left z ≤ v-right z
+v-l≤r    = pr₂
+v-dist : 𝕀v → ℕ
+v-dist z = pr₁ (v-l≤r z)
 
 vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
 vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
-vw-located     ζ = (ϵ : ℤ[1/2])
-                 → Σ n ꞉ ℤ
-                 , l (v-right (ζ n) ℤ- v-left (ζ n) , v-prec (ζ n)) ≤ ϵ
+vw-located     ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pos (v-dist (ζ n)) , v-prec (ζ n)) ≤ ϵ
+
+vw-is-intervalled : Π vw-intervalled
+vw-is-intervalled = v-l≤r ∘_
+
+vw-intervalled-preserves : seq-of-vw-intervals preserves vw-intervalled as intervalled
+vw-intervalled-preserves = {!!}
 
 vw-located-preserves : seq-of-vw-intervals preserves vw-located as located
 vw-located-preserves = {!!}
@@ -220,15 +241,15 @@ sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
 sw-located ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
 
-sw-is-intervalled : (ζ : ℤ → ℤ × ℤ) → sw-intervalled ζ
+sw-is-intervalled : Π sw-intervalled
 sw-is-intervalled ζ n = 2 , refl
 
 sw-located-preserves-vw : seq-sw-to-vw preserves sw-located as vw-located
-sw-located-preserves-vw ζ ρ ϵ = {!!}
+sw-located-preserves-vw ζ ρ ϵ = {!!} , {!!}
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
- = preserves-trans _ _ _ _ located sw-located-preserves-vw vw-located-preserves
+ = preserves-trans seq-sw-to-vw _ _ _ located sw-located-preserves-vw vw-located-preserves
 
 -- Prenormalised and normalised
 
@@ -243,9 +264,11 @@ normalised-implies-prenormalised : (ζ : ℤ → 𝕀s)
                                  → is-prenormalised ζ 
 normalised-implies-prenormalised ζ ρ n = 0 , (ρ n ⁻¹)
 
+go-up' : ℕ → 𝕀s → 𝕀s
+go-up' k (c , i) = (upRight ^ k) c , i ℤ- pos k
+
 go-up : (ℤ → ℕ) → (ζ : ℤ → 𝕀s) → (ℤ → 𝕀s)
-go-up ρ ζ n = (upRight ^ k) (pr₁ (ζ n)) , pr₂ (ζ n) ℤ- pos k
- where k = ρ n
+go-up ρ ζ n = go-up' (ρ n) (ζ n)
 
 normalise : (ζ : ℤ → 𝕀s) → is-prenormalised ζ → (ℤ → 𝕀s)
 normalise ζ ρ = go-up (λ n → pr₁ (ρ n)) ζ
@@ -303,8 +326,8 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 
 ⟦_⟧' : 𝕋 → ℝ-d
 ⟦ χ  ⟧' = ⦅ seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)) ⦆
-              {!!} -- (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
-                -- (sw-is-intervalled (TBR-to-sw-seq χ)))
+              (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
+                (sw-is-intervalled (TBR-to-sw-seq χ)))
               (nested-gives-intersected (seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)))
                 (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ)))
               (sw-located-preserves (TBR-to-sw-seq χ)
@@ -321,9 +344,11 @@ vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦
 vec-satisfy p [] = 𝟙
 vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
+join' : 𝕀v → 𝕀s
+join' z = go-up' (upValue (v-left z) (v-right z) (v-l≤r z)) (v-left z , v-prec z)
+
 join : (ℤ → 𝕀v) → (ℤ → 𝕀s)
-join ζ = go-up (λ n → upValue (v-left  (ζ n)) (v-right (ζ n)) (v-l≤r (ζ n)))
-               (λ n → (v-left (ζ n)) , (v-prec (ζ n)))
+join = join' ∘_
 
 vec-satisfy-preserved-by : {X : 𝓤 ̇ }
                          → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
@@ -344,27 +369,41 @@ vec-map-lift : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (p : X → 𝓦 ̇ ) (f : Y →
 vec-map-lift p f Πpf [] = ⋆
 vec-map-lift p f Πpf (y ∷ ys) = Πpf y , vec-map-lift p f Πpf ys
 
+vec-map-≡ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
+          → {n : ℕ} → (xs : Vec X n)
+          → (f : X → Y) → (g : Y → Z)
+          → vec-map (g ∘ f) xs ≡ vec-map g (vec-map f xs)
+vec-map-≡ = {!!}
+
 record FunctionMachine : 𝓤₁  ̇ where
   field
-    n  : ℕ
-    f  : Vec ℝ-d n → ℝ-d
-    A  : Vec 𝕀v n → 𝕀v
-    κ' : Vec 𝕋 n → ℤ → Vec ℤ n
-  f̂'  : Vec (ℤ → 𝕀v) n → (k : ℤ → Vec ℤ n) → (ℤ → 𝕀v)
+    d  : ℕ
+    f  : Vec ℝ-d d → ℝ-d
+    A  : Vec 𝕀v d → 𝕀v
+    κ' : Vec 𝕋 d → ℤ → Vec ℤ d
+    κ-is-coracle
+      : (χs : Vec 𝕋 d) → (ϵ : ℤ)
+      → pr₂ (join' (A (map₂ id (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ' χs ϵ)))) ≥ ϵ
+  f̂'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
   f̂'  χs k n = A (map₂ id χs (k n))
-  f̂'' : Vec (ℤ → 𝕀s) n → (k : ℤ → Vec ℤ n) → (ℤ → 𝕀s)
+  f̂'' : Vec (ℤ → 𝕀s) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀s)
   f̂'' χs k = join (f̂' (vec-map seq-sw-to-vw χs) k)
-  f̂   : Vec 𝕋 n → 𝕋
+  κ'-is-coracle : (χs : Vec 𝕋 d) → is-prenormalised (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
+  κ'-is-coracle χs ϵ = transport (λ ■ → ϵ ≤ pr₂ (join' (A (map₂ id ■ (κ' χs ϵ)))))
+                         (vec-map-≡ χs TBR-to-sw-seq seq-sw-to-vw)
+                         (κ-is-coracle χs ϵ)
+  f̂   : Vec 𝕋 d → 𝕋
   f̂   χs   = prenormalised-seq-to-TBR (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
-                 {!!}
+                 (κ'-is-coracle χs)
                  {!!}
 
 Negation : FunctionMachine
-FunctionMachine.n Negation = 1
+FunctionMachine.d Negation = 1
 FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
                            = ((ℤ- r , ℤ- l) , i) , ℤ≤-swap l r l≤r
 FunctionMachine.κ' Negation _ _ = [ pos 0 ]
+FunctionMachine.κ-is-coracle Negation χs ϵ = {!!}
 
 𝕋-_ : 𝕋 → 𝕋
 𝕋- x = FunctionMachine.f̂ Negation [ x ]
