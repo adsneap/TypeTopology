@@ -355,10 +355,10 @@ record FunctionMachine : 𝓤₁  ̇ where
 
 Negation : FunctionMachine
 FunctionMachine.n Negation = 1
-FunctionMachine.f Negation (x ∷ []) = ℝd- x
-FunctionMachine.A Negation ((((l , r) , i) , l≤r) ∷ [])
+FunctionMachine.f Negation [ x ] = ℝd- x
+FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
                            = ((ℤ- r , ℤ- l) , i) , ℤ≤-swap l r l≤r
-FunctionMachine.κ' Negation _ _ = pos 0 ∷ []
+FunctionMachine.κ' Negation _ _ = [ pos 0 ]
 
 𝕋-_ : 𝕋 → 𝕋
-𝕋- x = FunctionMachine.f̂ Negation (x ∷ [])
+𝕋- x = FunctionMachine.f̂ Negation [ x ]
