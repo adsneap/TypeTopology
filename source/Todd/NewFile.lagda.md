@@ -25,7 +25,7 @@ module Todd.NewFile
  where
 
 open import Todd.RationalsDyadic fe renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
-open import Todd.DyadicReals pe pt fe hiding (located)
+open import Todd.DyadicReals pe pt fe renaming (located to located')
 open import Todd.TBRFunctions pt fe pe sq
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 open import Todd.TBRDyadicReals pt fe pe sq
@@ -44,6 +44,10 @@ _≡_ = Id
 _covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
 (k , i) covers (c , j) = {!!}
 
+ld rd : ℤ[1/2] × ℤ[1/2] → ℤ[1/2]
+ld (l , r) = l
+rd (l , r) = r
+
 intervalled nested located intersected : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
 nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
@@ -56,7 +60,86 @@ nested-gives-intersected ζ η n m = {!!}
 ⦅_⦆ : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
       → intervalled ζ → intersected ζ → located ζ
       → ℝ-d
-⦅_⦆ = {!!}
+⦅ ζ ⦆ ζinv ζins ζloc = (L , R)
+ , inhabited-l , inhabited-r
+ , rounded-l   , rounded-r
+ , is-disjoint , is-located
+ where
+  L R : 𝓟 ℤ[1/2]
+  L p = (∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) , ∃-is-prop
+  R q = (∃ n ꞉ ℤ , (rd (ζ n) <ℤ[1/2] q)) , ∃-is-prop
+  
+  inhabited-l : inhabited-left L
+  inhabited-l = ∣ ld (ζ (pos 0)) - 1ℤ[1/2] , ∣ (pos 0) , (ℤ[1/2]<-neg (ld (ζ (pos 0))) 1ℤ[1/2] 0<1ℤ[1/2]) ∣ ∣
+  
+  inhabited-r : inhabited-right R
+  inhabited-r = ∣ (rd (ζ (pos 0)) + 1ℤ[1/2])
+              , ∣ pos 0  , ℤ[1/2]<-+ (rd (ζ (pos 0))) 1ℤ[1/2] 0<1ℤ[1/2] ∣ ∣
+  
+  rounded-l : rounded-left L
+  rounded-l p = ltr , rtl
+   where
+    ltr : ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n)) → ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n')))
+    ltr = ∥∥-functor I
+     where
+      I : Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n)) → Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n')))
+      I (n , p<ζn) = let (p' , p<p' , p'<ζn) = dense p (ld (ζ n)) p<ζn
+                     in p' , (p<p' , ∣ n , p'<ζn ∣)
+    rtl : ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)))
+        → ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
+    rtl = ∥∥-rec ∃-is-prop I
+     where
+      I : Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)))
+        → ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
+      I (p' , p<p' , te) = ∥∥-functor II te
+       where
+        II : Σ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)) → Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
+        II (n  , p'<ζn) = n , (trans p p' (ld (ζ n)) p<p' p'<ζn)
+      
+  rounded-r : rounded-right R
+  rounded-r q = ltr , rtl
+   where
+    ltr : ∃ n ꞉ ℤ , rd (ζ n) < q → ∃ q' ꞉ ℤ[1/2] , q' < q × q' ∈ R
+    ltr = ∥∥-functor I
+     where
+      I : Σ n ꞉ ℤ , rd (ζ n) < q → Σ q' ꞉ ℤ[1/2] , q' < q × q' ∈ R
+      I (n , ζn<q) = let (q' , ζn<q' , q'<q) = dense (rd (ζ n)) q ζn<q
+                     in q' , (q'<q , ∣ n , ζn<q' ∣)
+    rtl : ∃ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
+    rtl = ∥∥-rec ∃-is-prop I
+     where
+      I : Σ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
+      I (q' , q'<q , te) = ∥∥-functor II te
+       where
+        II : Σ n ꞉ ℤ , (rd (ζ n) < q') → Σ n ꞉ ℤ , (rd (ζ n) <ℤ[1/2] q)
+        II (n , ζ<q') = n , (trans (rd (ζ n)) q' q ζ<q' q'<q)
+  
+  is-disjoint : disjoint L R
+  is-disjoint p q (tp<x , tx<q) = ∥∥-rec (<ℤ[1/2]-is-prop p q) I (binary-choice tp<x tx<q)
+   where
+    I : (Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) × (Σ n' ꞉ ℤ , (rd (ζ n') <ℤ[1/2] q))
+      → p <ℤ[1/2] q
+    I ((n , p<l) , (n' , r<q)) with ℤ-dichotomous n n'
+    ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l {!!} -- (pr₁ (is-odcs-c₃-lemma ζ (c₁ , c₂ , c₃) n n' n≤n'))
+                         l<q' = ℤ[1/2]≤-< (ld (ζ n')) (rd (ζ n')) q (ζinv n') r<q 
+                     in trans p (ld (ζ n')) q p<l' l<q'
+    ... | inr n'≤n = let p<r' = ℤ[1/2]<-≤ p (ld (ζ n)) (rd (ζ n)) p<l (ζinv n)
+                         r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q {!!} {!!} -- (pr₂ (is-odcs-c₃-lemma ζ (c₁ , c₂ , c₃) n' n n'≤n)) r<q
+                     in trans p (rd (ζ n)) q p<r' r<q'
+ 
+  is-located : located' L R
+  is-located p q p<q = I (ζloc (1/2 * (q - p)))
+   where
+    0<ε : 0ℤ[1/2] < (1/2 * (q - p))
+    0<ε = <-pos-mult' 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)
+    I : (Σ n ꞉ ℤ , ((rd (ζ n) - ld (ζ n)) ≤ℤ[1/2] (1/2 * (q - p)))) → (L p holds) ∨ (R q holds)
+    I (n , l₁) = II (ℤ[1/2]-ordering-property (rd (ζ n)) (ld (ζ n)) q p l₂)
+     where
+      l₂ :(rd (ζ n) - ld (ζ n)) < (q - p)
+      l₂ = ℤ[1/2]≤-< (rd (ζ n) - ld (ζ n)) (1/2 * (q - p)) (q - p) l₁ (ℤ[1/2]-1/2-< (q - p) (diff-positive p q p<q))
+      II : rd (ζ n) < q ∔ p < ld (ζ n) → (L p holds) ∨ (R q holds)
+      II (inl ζ<q) = ∣ inr ∣ n , ζ<q ∣ ∣
+      II (inr p<ζ) = ∣ inl ∣ n , p<ζ ∣ ∣
 
 l r : ℤ × ℤ → ℤ[1/2]
 l (k , i) = quotient (k        , i)
