@@ -1,6 +1,3 @@
-
-
-
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --experimental-lossy-unification #-}
 
@@ -17,17 +14,6 @@ module Todd.upValue where
 
 ceilog2-type : 𝓤₀ ̇
 ceilog2-type = (n : ℕ) → Σ m ꞉ ℕ , 2 ℕ^ m < (succ (succ n)) × (succ (succ n)) ≤ 2 ℕ^ (succ m)
-
-exponents-of-two-ordered : (m : ℕ) → 2 ℕ^ m < 2 ℕ^ (succ m)
-exponents-of-two-ordered 0        = ⋆
-exponents-of-two-ordered (succ m) = transport₂ _<_ I II (multiplication-preserves-strict-order (2 ℕ^ m) (2 ℕ^ succ m) 1 IH)
- where 
-  IH : 2 ℕ^ m < 2 ℕ^ succ m
-  IH = exponents-of-two-ordered m
-  I : 2 ℕ^ m * 2 ＝ 2 ℕ^ succ m
-  I = mult-commutativity (2 ℕ^ m) 2
-  II : 2 ℕ^ succ m * 2 ＝ 2 ℕ^ succ (succ m)
-  II = mult-commutativity (2 ℕ^ succ m) 2
 
 -- (ceilog2 n refers to ceiling log2 of (n - 2))
 ceilog2 : ceilog2-type

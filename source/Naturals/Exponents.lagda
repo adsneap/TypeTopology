@@ -3,9 +3,12 @@
 {-# OPTIONS --without-K --exact-split --safe  --auto-inline #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
+open import Notation.Order
 open import Naturals.Addition
 open import Naturals.Properties
 open import Naturals.Multiplication
+open import Naturals.Order
+open import UF.Base
 
 module Naturals.Exponents where
 
@@ -48,5 +51,16 @@ power-of-power n a (succ b) = I
 exponents-not-zero : (n : ℕ) → ¬ (2^ n ＝ 0)
 exponents-not-zero 0        e = positive-not-zero 0 e
 exponents-not-zero (succ n) e = exponents-not-zero n (mult-left-cancellable (2^ n) 0 1 e)
+
+exponents-of-two-ordered : (m : ℕ) → 2 ℕ^ m < 2 ℕ^ (succ m)
+exponents-of-two-ordered 0        = ⋆
+exponents-of-two-ordered (succ m) = transport₂ _<_ I II (multiplication-preserves-strict-order (2 ℕ^ m) (2 ℕ^ succ m) 1 IH)
+ where 
+  IH : 2 ℕ^ m < 2 ℕ^ succ m
+  IH = exponents-of-two-ordered m
+  I : 2 ℕ^ m * 2 ＝ 2 ℕ^ succ m
+  I = mult-commutativity (2 ℕ^ m) 2
+  II : 2 ℕ^ succ m * 2 ＝ 2 ℕ^ succ (succ m)
+  II = mult-commutativity (2 ℕ^ succ m) 2
 
 \end{code}
