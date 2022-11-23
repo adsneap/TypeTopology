@@ -64,23 +64,30 @@ r (k , i) = quotient (k +pos 2 , i)
 
 -- Variable and specific width sequences
 
-variable-width-interval : (ℤ × ℤ) × ℤ → ℤ[1/2] × ℤ[1/2]
-variable-width-interval ((k , c) , i) = l (k , i) , l (c , i)
+𝕀v 𝕀s : 𝓤₀  ̇
+𝕀v = Σ ((l , r) , i) ꞉ ((ℤ × ℤ) × ℤ) , l ≤ r 
+𝕀s = ℤ × ℤ
 
-specific-width-interval :     ℤ × ℤ → ℤ[1/2] × ℤ[1/2]
+variable-width-interval : 𝕀v → ℤ[1/2] × ℤ[1/2]
+variable-width-interval (((k , c) , i) , _) = l (k , i) , l (c , i)
+
+specific-width-interval : 𝕀s → ℤ[1/2] × ℤ[1/2]
 specific-width-interval (k     , i) = l (k , i) , r (k , i)
 
-sw-to-vw : (ℤ × ℤ) → (ℤ × ℤ) × ℤ
-sw-to-vw (k , i) = (k , k +pos 2) , i
+sw-to-vw : 𝕀s → 𝕀v
+sw-to-vw (k , i) = ((k , k +pos 2) , i) , (2 , refl)
 
-seq-sw-to-vw : (ℤ → ℤ × ℤ) → (ℤ → (ℤ × ℤ) × ℤ)
+seq-sw-to-vw : (ℤ → 𝕀s) → (ℤ → 𝕀v)
 seq-sw-to-vw = sw-to-vw ∘_
 
-seq-of-vw-intervals : (ℤ → (ℤ × ℤ) × ℤ) → ℤ → ℤ[1/2] × ℤ[1/2]
+seq-of-vw-intervals : (ℤ → 𝕀v) → ℤ → ℤ[1/2] × ℤ[1/2]
 seq-of-vw-intervals = variable-width-interval ∘_
 
-seq-of-sw-intervals : (ℤ →      ℤ × ℤ)  → ℤ → ℤ[1/2] × ℤ[1/2]
+seq-of-sw-intervals : (ℤ → 𝕀s)  → ℤ → ℤ[1/2] × ℤ[1/2]
 seq-of-sw-intervals = specific-width-interval ∘_
+
+seq-convert-≡ : seq-of-sw-intervals ≡ (seq-of-vw-intervals ∘ seq-sw-to-vw)
+seq-convert-≡ = refl
 
 -- Preserve definitions
 
@@ -100,29 +107,39 @@ preserves-trans f g A B C p₁ p₂ x Ax = p₂ (f x) (p₁ x Ax)
 
 -- Variable width sequence properties
 
-vw-intervalled vw-located : (ℤ → (ℤ × ℤ) × ℤ) → 𝓤₀ ̇ 
-vw-intervalled ζ = (n : ℤ) → pr₁ (pr₁ (ζ n)) ≤ pr₂ (pr₁ (ζ n))
-vw-located     ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pr₂ (pr₁ (ζ n)) ℤ- pr₁ (pr₁ (ζ n)) , pr₂ (ζ n)) ≤ ϵ
+v-left v-right v-prec : 𝕀v → ℤ
+v-left  = pr₁ ∘ pr₁ ∘ pr₁
+v-right = pr₂ ∘ pr₁ ∘ pr₁
+v-prec  = pr₂ ∘ pr₁
+v-l≤r : (z : 𝕀v) → v-left z ≤ v-right z
+v-l≤r = pr₂
 
-vw-intervalled-preserves : seq-of-vw-intervals preserves vw-intervalled as intervalled
-vw-intervalled-preserves ζ ρ n = pr₁ (ρ n) , ({!!} ∙ pr₂ (ρ n) ∙ {!!})
+vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
+vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
+vw-nested        = nested ∘ seq-of-vw-intervals
+vw-located     ζ = (ϵ : ℤ[1/2])
+                 → Σ n ꞉ ℤ
+                 , l (v-right (ζ n) ℤ- v-left (ζ n) , v-prec (ζ n)) ≤ ϵ
 
 vw-located-preserves : seq-of-vw-intervals preserves vw-located as located
 vw-located-preserves = {!!}
 
 -- Specific width sequence properties
 
-sw-is-intervalled : (ζ : ℤ → ℤ × ℤ) → vw-intervalled (seq-sw-to-vw ζ)
-sw-is-intervalled ζ n = 2 , refl
-
-sw-located : (ℤ → ℤ × ℤ) → 𝓤₀ ̇ 
+sw-intervalled sw-nested sw-located : (ℤ → ℤ × ℤ) → 𝓤₀ ̇ 
+sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
+sw-nested      = vw-nested      ∘ seq-sw-to-vw
 sw-located ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
+
+sw-is-intervalled : (ζ : ℤ → ℤ × ℤ) → sw-intervalled ζ
+sw-is-intervalled ζ n = 2 , refl
 
 sw-located-preserves-vw : seq-sw-to-vw preserves sw-located as vw-located
 sw-located-preserves-vw ζ ρ ϵ = {!!}
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
-sw-located-preserves = preserves-trans _ _ _ _ located sw-located-preserves-vw vw-located-preserves
+sw-located-preserves
+ = preserves-trans _ _ _ _ located sw-located-preserves-vw vw-located-preserves
 
 -- Prenormalised and normalised
 
@@ -132,19 +149,19 @@ is-normalised    ζ = (n : ℤ) → pr₂ (ζ n) ≡ n
 is-prenormalised : (ℤ → ℤ × ℤ) → 𝓤₀ ̇
 is-prenormalised ζ = (n : ℤ) → pr₂ (ζ n) ≥ n
 
-normalised-implies-prenormalised : (ζ : ℤ → ℤ × ℤ)
+normalised-implies-prenormalised : (ζ : ℤ → 𝕀s)
                                  → is-normalised ζ
                                  → is-prenormalised ζ 
 normalised-implies-prenormalised ζ ρ n = 0 , (ρ n ⁻¹)
 
-go-up : (ℤ → ℕ) → (ζ : ℤ → ℤ × ℤ) → (ℤ → ℤ × ℤ)
+go-up : (ℤ → ℕ) → (ζ : ℤ → 𝕀s) → (ℤ → 𝕀s)
 go-up ρ ζ n = (upRight ^ k) (pr₁ (ζ n)) , pr₂ (ζ n) ℤ- pos k
  where k = ρ n
 
-normalise : (ζ : ℤ → ℤ × ℤ) → is-prenormalised ζ → (ℤ → ℤ × ℤ)
+normalise : (ζ : ℤ → 𝕀s) → is-prenormalised ζ → (ℤ → 𝕀s)
 normalise ζ ρ = go-up (λ n → pr₁ (ρ n)) ζ
 
-normalise-yields-normalised : (ζ : ℤ → ℤ × ℤ) → (ρ : is-prenormalised ζ)
+normalise-yields-normalised : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                             → is-normalised (normalise ζ ρ)
 normalise-yields-normalised ζ ρ n
   = ap (_ℤ- pos k) (pr₂ (ρ n) ⁻¹)
@@ -154,52 +171,51 @@ normalise-yields-normalised ζ ρ n
 
 -- Normalised sequence properties
 
-normalised-is-located : (ζ : ℤ → ℤ × ℤ) → (ρ : is-normalised ζ) → sw-located ζ
+normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
 normalised-is-located ζ ρ ϵ = {!clog₂ ϵ!} , {!!}
 
-normalise-preserves-nested : (ζ : ℤ → ℤ × ℤ) → (ρ : is-prenormalised ζ)
-                           → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) ζ)
-                           → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) (normalise ζ ρ))
+normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
+                           → sw-nested ζ
+                           → sw-nested (normalise ζ ρ)
 normalise-preserves-nested = {!!}
 
-go-up-covers : (ζ : ℤ → ℤ × ℤ) → (μ : ℤ → ℕ) → (n : ℤ)
+go-up-covers : (ζ : ℤ → 𝕀s) → (μ : ℤ → ℕ) → (n : ℤ)
              →        seq-of-sw-intervals (go-up μ ζ) n
                covers seq-of-sw-intervals          ζ  n 
 go-up-covers ζ μ n = {!refl!}
 
 -- Ternary boehm reals
 
-TBR-to-sw-seq : 𝕋 → ℤ → ℤ × ℤ
+TBR-to-sw-seq : 𝕋 → (ℤ → 𝕀s)
 TBR-to-sw-seq (χ , b) n = χ n , n
 
 TBR-to-sw-is-normalised : (χ : 𝕋) → is-normalised (TBR-to-sw-seq χ)
 TBR-to-sw-is-normalised χ n = refl
 
-normalised-nested-seq-yields-belowness : (χ : ℤ → ℤ × ℤ) → is-normalised χ
-                                       → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) χ) 
-                                       → (n : ℤ) → pr₁ (χ (succℤ n)) below pr₁ (χ n)
+normalised-nested-seq-yields-belowness : (χ : ℤ → 𝕀s) → is-normalised χ
+                                       → sw-nested χ
+                                       → (n : ℤ)
+                                       → pr₁ (χ (succℤ n)) below pr₁ (χ n)
 normalised-nested-seq-yields-belowness χ η = {!!}                           
 
-belowness-yields-nested-seq : (χ : ℤ → ℤ × ℤ)
+belowness-yields-nested-seq : (χ : ℤ → 𝕀s)
                             → ((n : ℤ) → pr₁ (χ (succℤ n)) below pr₁ (χ n))
-                            → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) χ) 
+                            → sw-nested χ
 belowness-yields-nested-seq = {!!}
 
-normalised-seq-to-TBR : (χ : ℤ → ℤ × ℤ) → is-normalised χ
-                      → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) χ) → 𝕋
+normalised-seq-to-TBR : (χ : ℤ → 𝕀s) → is-normalised χ → sw-nested χ → 𝕋
 normalised-seq-to-TBR χ η₁ η₂ = (pr₁ ∘ χ) , normalised-nested-seq-yields-belowness χ η₁ η₂
 
 prenormalised-seq-to-TBR : (χ : ℤ → ℤ × ℤ) → is-prenormalised χ
-                         → nested ((seq-of-vw-intervals ∘ seq-sw-to-vw) χ)
-                         → 𝕋
+                         → sw-nested χ → 𝕋
 prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η₁)
                                      (normalise-yields-normalised χ η₁)
                                      (normalise-preserves-nested χ η₁ η₂)
 
 ⟦_⟧' : 𝕋 → ℝ-d
 ⟦ χ  ⟧' = ⦅ seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)) ⦆
-              (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
-                (sw-is-intervalled (TBR-to-sw-seq χ)))
+              {!!} -- (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
+                -- (sw-is-intervalled (TBR-to-sw-seq χ)))
               (nested-gives-intersected (seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)))
                 (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ)))
               (sw-located-preserves (TBR-to-sw-seq χ)
@@ -216,17 +232,21 @@ vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦
 vec-satisfy p [] = 𝟙
 vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
-join : (ζ : ℤ → (ℤ × ℤ) × ℤ) → vw-intervalled ζ → ℤ → ℤ × ℤ
-join ζ η = go-up (λ n → upValue (pr₁ (pr₁ (ζ n))) (pr₂ (pr₁ (ζ n))) (η n))
-             (λ n → (pr₁ (pr₁ (ζ n))) , (pr₂ (ζ n)))
+join : (ℤ → 𝕀v) → (ℤ → 𝕀s)
+join ζ = go-up (λ n → upValue (v-left  (ζ n)) (v-right (ζ n)) (v-l≤r (ζ n)))
+               (λ n → (v-left (ζ n)) , (v-prec (ζ n)))
 
-vec-satisfy-preserved-by : {X : 𝓤 ̇ } {n : ℕ} → (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
-                         → (p : X → 𝓦 ̇ ) → vec-satisfy (λ x → ∀ (n : ℤ) → p (x n)) xs
+vec-satisfy-preserved-by : {X : 𝓤 ̇ }
+                         → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
+                         → (p : X → 𝓦 ̇ )
+                         → vec-satisfy (λ x → ∀ (n : ℤ) → p (x n)) xs
                          → vec-satisfy p (map₂ id xs ks)
 vec-satisfy-preserved-by [] [] p ⋆ = ⋆
-vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs) = px k , vec-satisfy-preserved-by xs ks p pxs
+vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
+ = px k , vec-satisfy-preserved-by xs ks p pxs
 
-vec-lift : {X : 𝓤 ̇ } → (p : X → 𝓦 ̇ ) → Π p → {n : ℕ} → (xs : Vec X n) → vec-satisfy p xs
+vec-lift : {X : 𝓤 ̇ } → (p : X → 𝓦 ̇ ) → Π p
+         → {n : ℕ} → (xs : Vec X n) → vec-satisfy p xs
 vec-lift p Πp [] = ⋆
 vec-lift p Πp (x ∷ xs) = Πp x , vec-lift p Πp xs
 
@@ -239,27 +259,22 @@ record FunctionMachine : 𝓤₁  ̇ where
   field
     n  : ℕ
     f  : Vec ℝ-d n → ℝ-d
-    A  : Vec ((ℤ × ℤ) × ℤ) n → ((ℤ × ℤ) × ℤ)
-    A-interval : ∀ xs → vec-satisfy (λ ((l , r) , i) → l ≤ r) xs → pr₁ (pr₁ (A xs)) ≤ pr₂ (pr₁ (A xs))
+    A  : Vec 𝕀v n → 𝕀v
     κ' : Vec 𝕋 n → ℤ → Vec ℤ n
-  f̂'  : Vec (ℤ → (ℤ × ℤ) × ℤ) n → (k : ℤ → Vec ℤ n) → (ℤ → (ℤ × ℤ) × ℤ)
+  f̂'  : Vec (ℤ → 𝕀v) n → (k : ℤ → Vec ℤ n) → (ℤ → 𝕀v)
   f̂'  χs k n = A (map₂ id χs (k n))
-  f̂'-intervalled : (χs : Vec (ℤ → (ℤ × ℤ) × ℤ) n) → vec-satisfy vw-intervalled χs → (k : ℤ → Vec ℤ n)
-                 → vw-intervalled (f̂' χs k) 
-  f̂'-intervalled χs ηs k n = A-interval (map₂ (λ χᵢ → χᵢ) χs (k n))
-                               (vec-satisfy-preserved-by χs (k n) (λ ((l , r) , i) → l ≤ r) ηs)
-  f̂'' : Vec (ℤ → ℤ × ℤ)       n → (k : ℤ → Vec ℤ n) → (ℤ → ℤ × ℤ)
+  f̂'' : Vec (ℤ → 𝕀s) n → (k : ℤ → Vec ℤ n) → (ℤ → 𝕀s)
   f̂'' χs k = join (f̂' (vec-map seq-sw-to-vw χs) k)
-                  (f̂'-intervalled _ (vec-map-lift vw-intervalled seq-sw-to-vw sw-is-intervalled χs) k)
   f̂   : Vec 𝕋 n → 𝕋
-  f̂   χs     = prenormalised-seq-to-TBR (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
-                 {!!} {!!}
+  f̂   χs   = prenormalised-seq-to-TBR (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
+                 {!!}
+                 {!!}
 
 Negation : FunctionMachine
 FunctionMachine.n Negation = 1
 FunctionMachine.f Negation (x ∷ []) = ℝd- x
-FunctionMachine.A Negation (((l , r) , i) ∷ []) = ((ℤ- r , ℤ- l) , i)
-FunctionMachine.A-interval Negation (((l , r) , i) ∷ []) (l≤r , ⋆) = ℤ≤-swap l r l≤r
+FunctionMachine.A Negation ((((l , r) , i) , l≤r) ∷ [])
+                           = ((ℤ- r , ℤ- l) , i) , ℤ≤-swap l r l≤r
 FunctionMachine.κ' Negation _ _ = pos 0 ∷ []
 
 𝕋-_ : 𝕋 → 𝕋
