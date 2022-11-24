@@ -262,147 +262,147 @@ negation-collection = record
                         ; Condition-4 = {!!}
                         }
 
-add-D : Vec ℤ[1/2] 2 → ℤ[1/2]
-add-D (x ∷ y ∷ [])= x + y
+-- add-D : Vec ℤ[1/2] 2 → ℤ[1/2]
+-- add-D (x ∷ y ∷ []) = x + y
 
-add-L : Vec (ℤ[1/2] × ℤ[1/2]) 2 → ℤ[1/2]
-add-L ((a₁ , b₁) ∷ (a₂ , b₂) ∷ []) = a₁ + a₂
+-- add-L : Vec (ℤ[1/2] × ℤ[1/2]) 2 → ℤ[1/2]
+-- add-L ((a₁ , b₁) ∷ (a₂ , b₂) ∷ []) = a₁ + a₂
 
-add-R : Vec (ℤ[1/2] × ℤ[1/2]) 2 → ℤ[1/2]
-add-R ((a₁ , b₁) ∷ (a₂ , b₂) ∷ []) = b₁ + b₂
+-- add-R : Vec (ℤ[1/2] × ℤ[1/2]) 2 → ℤ[1/2]
+-- add-R ((a₁ , b₁) ∷ (a₂ , b₂) ∷ []) = b₁ + b₂
 
-add-condition-1a : (a c x d b : Vec ℤ[1/2] 2)
-                 → (a Vecℤ[1/2]≤ c) × (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d) × (d Vecℤ[1/2]≤ b)
-                 → add-L (zip (a , b)) ≤ℤ[1/2] add-L (zip (c , d))
-add-condition-1a (a₁ ∷ a₂ ∷ []) (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ []) (b₁ ∷ b₂ ∷ [])
-                 ((a₁≤c₁ , a₂≤c₂ , ⋆) , (c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆) , (d₁≤b₁ , d₂≤b₂ , ⋆))
- = ℤ[1/2]≤-adding a₁ c₁ a₂ c₂ a₁≤c₁ a₂≤c₂
+-- add-condition-1a : (a c x d b : Vec ℤ[1/2] 2)
+--                  → (a Vecℤ[1/2]≤ c) × (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d) × (d Vecℤ[1/2]≤ b)
+--                  → add-L (zip (a , b)) ≤ℤ[1/2] add-L (zip (c , d))
+-- add-condition-1a (a₁ ∷ a₂ ∷ []) (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ []) (b₁ ∷ b₂ ∷ [])
+--                  ((a₁≤c₁ , a₂≤c₂ , ⋆) , (c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆) , (d₁≤b₁ , d₂≤b₂ , ⋆))
+--  = ℤ[1/2]≤-adding a₁ c₁ a₂ c₂ a₁≤c₁ a₂≤c₂
 
-add-condition-1b : (c x d : Vec ℤ[1/2] 2)
-                 → (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d)
-                 → add-L (zip (c , d)) ≤ℤ[1/2] add-D x
-add-condition-1b (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ [])
-                 ((c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆))
- = ℤ[1/2]≤-adding c₁ x₁ c₂ x₂ c₁≤x₁ c₂≤x₂
+-- add-condition-1b : (c x d : Vec ℤ[1/2] 2)
+--                  → (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d)
+--                  → add-L (zip (c , d)) ≤ℤ[1/2] add-D x
+-- add-condition-1b (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ [])
+--                  ((c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆))
+--  = ℤ[1/2]≤-adding c₁ x₁ c₂ x₂ c₁≤x₁ c₂≤x₂
 
-add-condition-1c : (c x d : Vec ℤ[1/2] 2)
-                 → (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d)
-                 → add-D x ≤ℤ[1/2] add-R (zip (c , d))
-add-condition-1c (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ [])
-                 ((c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆)) = ℤ[1/2]≤-adding x₁ d₁ x₂ d₂ x₁≤d₁ x₂≤d₂
+-- add-condition-1c : (c x d : Vec ℤ[1/2] 2)
+--                  → (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d)
+--                  → add-D x ≤ℤ[1/2] add-R (zip (c , d))
+-- add-condition-1c (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ [])
+--                  ((c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆)) = ℤ[1/2]≤-adding x₁ d₁ x₂ d₂ x₁≤d₁ x₂≤d₂
 
-add-condition-1d : (a c x d b : Vec ℤ[1/2] 2)
-                 → (a Vecℤ[1/2]≤ c) × (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d) × (d Vecℤ[1/2]≤ b)
-                 → add-R (zip (c , d)) ≤ℤ[1/2] add-R (zip (a , b))
-add-condition-1d (a₁ ∷ a₂ ∷ []) (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ []) (b₁ ∷ b₂ ∷ [])
-                 ((a₁≤c₁ , a₂≤c₂ , ⋆) , (c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆) , (d₁≤b₁ , d₂≤b₂ , ⋆))
- = ℤ[1/2]≤-adding d₁ b₁ d₂ b₂ d₁≤b₁ d₂≤b₂
+-- add-condition-1d : (a c x d b : Vec ℤ[1/2] 2)
+--                  → (a Vecℤ[1/2]≤ c) × (c Vecℤ[1/2]≤ x) × (x Vecℤ[1/2]≤ d) × (d Vecℤ[1/2]≤ b)
+--                  → add-R (zip (c , d)) ≤ℤ[1/2] add-R (zip (a , b))
+-- add-condition-1d (a₁ ∷ a₂ ∷ []) (c₁ ∷ c₂ ∷ []) (x₁ ∷ x₂ ∷ []) (d₁ ∷ d₂ ∷ []) (b₁ ∷ b₂ ∷ [])
+--                  ((a₁≤c₁ , a₂≤c₂ , ⋆) , (c₁≤x₁ , c₂≤x₂ , ⋆) , (x₁≤d₁ , x₂≤d₂ , ⋆) , (d₁≤b₁ , d₂≤b₂ , ⋆))
+--  = ℤ[1/2]≤-adding d₁ b₁ d₂ b₂ d₁≤b₁ d₂≤b₂
 
-add-condition-2 : (x : Vec ℤ[1/2] 2) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε)
-                → Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (add-L (zip (a , b))) (add-D x) ε 0<ε
-add-condition-2 (x₁ ∷ x₂ ∷ []) ε l = I 
- where
-  l₂ : 0ℤ[1/2] < (1/2 * ε)
-  l₂ = <-pos-mult' 1/2 ε 0<1/2ℤ[1/2] l
-  I : Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< (x₁ ∷ x₂ ∷ [])) × ((x₁ ∷ x₂ ∷ []) Vecℤ[1/2]< b) × Bℤ[1/2] (add-L (zip (a , b))) (add-D (x₁ ∷ x₂ ∷ [])) ε l
-  I with dense (x₁ - (1/2 * ε)) x₁ (ℤ[1/2]<-neg x₁ (1/2 * ε) l₂)
-  ... | a₁ , (x-ε/2<a₁ , a₁<x₁) with dense (x₂ - (1/2 * ε)) x₂ (ℤ[1/2]<-neg x₂ (1/2 * ε) l₂)
-  ... | a₂ , (x-ε/2<a₂ , a₂<x₂) with no-max x₁
-  ... | b₁ , x₁<b₁ with no-max x₂
-  ... | b₂ , x₂<b₂ = ((a₁ ∷ a₂ ∷ []) , b₁ ∷ b₂ ∷ []) , ((a₁<x₁ , a₂<x₂ , ⋆) , (x₁<b₁ , x₂<b₂ , ⋆) , goal)
-   where
-    l₁ : ((x₁ + x₂) - ε) < (a₁ + a₂)
-    l₁ = transport (_< (a₁ + a₂)) e₁ (ℤ[1/2]<-adding (x₁ - (1/2 * ε)) a₁ (x₂ - (1/2 * ε)) a₂ x-ε/2<a₁ x-ε/2<a₂)
-     where
-      e₁ : (x₁ - (1/2 * ε)) + (x₂ - (1/2 * ε)) ＝ ((x₁ + x₂) - ε)
-      e₁ = ((x₁ - (1/2 * ε)) + (x₂ - (1/2 * ε)))         ＝⟨ ℤ[1/2]+-assoc (x₁ - (1/2 * ε)) x₂ (- (1/2 * ε)) ⁻¹ ⟩
-           (((x₁ - (1/2 * ε)) + x₂) + (- (1/2 * ε)))     ＝⟨ ap (_+ (- (1/2 * ε))) (ℤ[1/2]+-assoc x₁ (- (1/2 * ε)) x₂) ⟩
-           ((x₁ + ((- (1/2 * ε)) + x₂)) + (- (1/2 * ε))) ＝⟨ ap (λ z → ((x₁ + z) + (- (1/2 * ε)))) (ℤ[1/2]+-comm (- (1/2 * ε)) x₂) ⟩
-           ((x₁ + (x₂ + (- (1/2 * ε)))) + (- (1/2 * ε))) ＝⟨ ap (_+ (- (1/2 * ε))) (ℤ[1/2]+-assoc x₁ x₂ (- (1/2 * ε)) ⁻¹) ⟩
-           (((x₁ + x₂) + (- (1/2 * ε))) + (- (1/2 * ε))) ＝⟨ ℤ[1/2]+-assoc (x₁ + x₂) (- (1/2 * ε)) (- (1/2 * ε)) ⟩
-           ((x₁ + x₂) + ((- (1/2 * ε)) - (1/2 * ε)))     ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-minus-dist (1/2 * ε) (1/2 * ε) ⁻¹) ⟩
-           ((x₁ + x₂) - ((1/2 * ε) + (1/2 * ε)))         ＝⟨ ap (λ z → ((x₁ + x₂) - z)) (ℤ[1/2]-dist 1/2 1/2 ε) ⟩
-           (x₁ + x₂) - ((1/2 + 1/2) * ε)                       ＝⟨ ap (λ z → (x₁ + x₂) - (z * ε)) 1/2+1/2ℤ[1/2] ⟩
-           (x₁ + x₂) - (1ℤ[1/2] * ε)                           ＝⟨ ap (λ z → (x₁ + x₂) - z) (ℤ[1/2]-mult-left-id ε) ⟩
-           ((x₁ + x₂) - ε) ∎
+-- add-condition-2 : (x : Vec ℤ[1/2] 2) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε)
+--                 → Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (add-L (zip (a , b))) (add-D x) ε 0<ε
+-- add-condition-2 (x₁ ∷ x₂ ∷ []) ε l = I 
+--  where
+--   l₂ : 0ℤ[1/2] < (1/2 * ε)
+--   l₂ = <-pos-mult' 1/2 ε 0<1/2ℤ[1/2] l
+--   I : Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< (x₁ ∷ x₂ ∷ [])) × ((x₁ ∷ x₂ ∷ []) Vecℤ[1/2]< b) × Bℤ[1/2] (add-L (zip (a , b))) (add-D (x₁ ∷ x₂ ∷ [])) ε l
+--   I with dense (x₁ - (1/2 * ε)) x₁ (ℤ[1/2]<-neg x₁ (1/2 * ε) l₂)
+--   ... | a₁ , (x-ε/2<a₁ , a₁<x₁) with dense (x₂ - (1/2 * ε)) x₂ (ℤ[1/2]<-neg x₂ (1/2 * ε) l₂)
+--   ... | a₂ , (x-ε/2<a₂ , a₂<x₂) with no-max x₁
+--   ... | b₁ , x₁<b₁ with no-max x₂
+--   ... | b₂ , x₂<b₂ = ((a₁ ∷ a₂ ∷ []) , b₁ ∷ b₂ ∷ []) , ((a₁<x₁ , a₂<x₂ , ⋆) , (x₁<b₁ , x₂<b₂ , ⋆) , goal)
+--    where
+--     l₁ : ((x₁ + x₂) - ε) < (a₁ + a₂)
+--     l₁ = transport (_< (a₁ + a₂)) e₁ (ℤ[1/2]<-adding (x₁ - (1/2 * ε)) a₁ (x₂ - (1/2 * ε)) a₂ x-ε/2<a₁ x-ε/2<a₂)
+--      where
+--       e₁ : (x₁ - (1/2 * ε)) + (x₂ - (1/2 * ε)) ＝ ((x₁ + x₂) - ε)
+--       e₁ = ((x₁ - (1/2 * ε)) + (x₂ - (1/2 * ε)))         ＝⟨ ℤ[1/2]+-assoc (x₁ - (1/2 * ε)) x₂ (- (1/2 * ε)) ⁻¹ ⟩
+--            (((x₁ - (1/2 * ε)) + x₂) + (- (1/2 * ε)))     ＝⟨ ap (_+ (- (1/2 * ε))) (ℤ[1/2]+-assoc x₁ (- (1/2 * ε)) x₂) ⟩
+--            ((x₁ + ((- (1/2 * ε)) + x₂)) + (- (1/2 * ε))) ＝⟨ ap (λ z → ((x₁ + z) + (- (1/2 * ε)))) (ℤ[1/2]+-comm (- (1/2 * ε)) x₂) ⟩
+--            ((x₁ + (x₂ + (- (1/2 * ε)))) + (- (1/2 * ε))) ＝⟨ ap (_+ (- (1/2 * ε))) (ℤ[1/2]+-assoc x₁ x₂ (- (1/2 * ε)) ⁻¹) ⟩
+--            (((x₁ + x₂) + (- (1/2 * ε))) + (- (1/2 * ε))) ＝⟨ ℤ[1/2]+-assoc (x₁ + x₂) (- (1/2 * ε)) (- (1/2 * ε)) ⟩
+--            ((x₁ + x₂) + ((- (1/2 * ε)) - (1/2 * ε)))     ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-minus-dist (1/2 * ε) (1/2 * ε) ⁻¹) ⟩
+--            ((x₁ + x₂) - ((1/2 * ε) + (1/2 * ε)))         ＝⟨ ap (λ z → ((x₁ + x₂) - z)) (ℤ[1/2]-dist 1/2 1/2 ε) ⟩
+--            (x₁ + x₂) - ((1/2 + 1/2) * ε)                       ＝⟨ ap (λ z → (x₁ + x₂) - (z * ε)) 1/2+1/2ℤ[1/2] ⟩
+--            (x₁ + x₂) - (1ℤ[1/2] * ε)                           ＝⟨ ap (λ z → (x₁ + x₂) - z) (ℤ[1/2]-mult-left-id ε) ⟩
+--            ((x₁ + x₂) - ε) ∎
 
-    l₃ : (a₁ + a₂) < ((x₁ + x₂) + ε)
-    l₃ = trans (a₁ + a₂) (x₁ + x₂) ((x₁ + x₂) + ε) (ℤ[1/2]<-adding a₁ x₁ a₂ x₂ a₁<x₁ a₂<x₂) (ℤ[1/2]<-+ (x₁ + x₂) ε l)
+--     l₃ : (a₁ + a₂) < ((x₁ + x₂) + ε)
+--     l₃ = trans (a₁ + a₂) (x₁ + x₂) ((x₁ + x₂) + ε) (ℤ[1/2]<-adding a₁ x₁ a₂ x₂ a₁<x₁ a₂<x₂) (ℤ[1/2]<-+ (x₁ + x₂) ε l)
 
-    l₄ : ((a₁ + a₂) - (x₁ + x₂)) < ε
-    l₄ = ℤ[1/2]<-+' (a₁ + a₂) (x₁ + x₂) ε l₃
+--     l₄ : ((a₁ + a₂) - (x₁ + x₂)) < ε
+--     l₄ = ℤ[1/2]<-+' (a₁ + a₂) (x₁ + x₂) ε l₃
     
-    l₅ : (- ε) < (((a₁ + a₂) - (x₁ + x₂)))
-    l₅ = ℤ[1/2]<-rearrange (x₁ + x₂) (- ε) (a₁ + a₂) l₁
+--     l₅ : (- ε) < (((a₁ + a₂) - (x₁ + x₂)))
+--     l₅ = ℤ[1/2]<-rearrange (x₁ + x₂) (- ε) (a₁ + a₂) l₁
 
-    goal : Bℤ[1/2] (a₁ + a₂) (x₁ + x₂) ε l
-    goal = ℤ[1/2]<-to-abs ((a₁ + a₂) - (x₁ + x₂)) ε (l₅ , l₄)
+--     goal : Bℤ[1/2] (a₁ + a₂) (x₁ + x₂) ε l
+--     goal = ℤ[1/2]<-to-abs ((a₁ + a₂) - (x₁ + x₂)) ε (l₅ , l₄)
 
-add-condition-3 : (x : Vec ℤ[1/2] 2) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε)
-                → Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (add-R (zip (a , b))) (add-D x) ε 0<ε
-add-condition-3 (x₁ ∷ x₂ ∷ []) ε l = I
- where
-  l₂ : 0ℤ[1/2] < (1/2 * ε)
-  l₂ = <-pos-mult' 1/2 ε 0<1/2ℤ[1/2] l
-  I : Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< (x₁ ∷ x₂ ∷ [])) × ((x₁ ∷ x₂ ∷ []) Vecℤ[1/2]< b) × Bℤ[1/2] (add-R (zip (a , b))) (add-D (x₁ ∷ x₂ ∷ [])) ε l
-  I with dense x₁ (x₁ + (1/2 * ε)) (ℤ[1/2]<-+ x₁ (1/2 * ε) l₂)
-  ... | b₁ , (x₁<b₁ , b₁<x₁+ε/2) with dense x₂ (x₂ + (1/2 * ε)) (ℤ[1/2]<-+ x₂ (1/2 * ε) l₂)
-  ... | b₂ , (x₂<b₂ , b₂<x₂+ε/2) with no-min x₁
-  ... | a₁ , a₁<x₁ with no-min x₂
-  ... | a₂ , a₂<x₂ = ((a₁ ∷ a₂ ∷ []) , (b₁ ∷ b₂ ∷ [])) , ((a₁<x₁ , a₂<x₂ , ⋆) , ((x₁<b₁ , x₂<b₂ , ⋆) , goal))
-   where
-    l₅ :(b₁ + b₂) < ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε)))
-    l₅ = ℤ[1/2]<-adding b₁ (x₁ + (1/2 * ε)) b₂ (x₂ + (1/2 * ε)) b₁<x₁+ε/2 b₂<x₂+ε/2
-    l₆ : (b₁ + b₂) < ((x₁ + x₂) + ε)
-    l₆ = transport ((b₁ + b₂) <_) e₁ (ℤ[1/2]<-adding b₁ (x₁ + (1/2 * ε)) b₂ (x₂ + (1/2 * ε)) b₁<x₁+ε/2 b₂<x₂+ε/2)
-     where
-      e₁ : ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε))) ＝ ((x₁ + x₂) + ε)
-      e₁ = ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε)))  ＝⟨ ℤ[1/2]+-assoc (x₁ + (1/2 * ε)) x₂ (1/2 * ε) ⁻¹ ⟩
-            (((x₁ + (1/2 * ε)) + x₂) + (1/2 * ε)) ＝⟨ ap (_+ (1/2 * ε)) (ℤ[1/2]+-assoc x₁ (1/2 * ε) x₂) ⟩
-            ((x₁ + ((1/2 * ε) + x₂)) + (1/2 * ε)) ＝⟨ ap (λ z → (x₁ + z) + (1/2 * ε)) (ℤ[1/2]+-comm (1/2 * ε) x₂) ⟩
-            ((x₁ + (x₂ + (1/2 * ε))) + (1/2 * ε)) ＝⟨ ap (_+ (1/2 * ε)) (ℤ[1/2]+-assoc x₁ x₂ (1/2 * ε) ⁻¹) ⟩
-            (((x₁ + x₂) + (1/2 * ε)) + (1/2 * ε)) ＝⟨ ℤ[1/2]+-assoc (x₁ + x₂) (1/2 * ε) (1/2 * ε) ⟩
-            ((x₁ + x₂) + ((1/2 * ε) + (1/2 * ε))) ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-dist 1/2 1/2 ε) ⟩
-            ((x₁ + x₂) + ((1/2 + 1/2) * ε))       ＝⟨ ap (λ z → (x₁ + x₂) + (z * ε)) 1/2+1/2ℤ[1/2] ⟩
-            ((x₁ + x₂) + (1ℤ[1/2] * ε))           ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-mult-left-id ε) ⟩
-            ((x₁ + x₂) + ε) ∎
-    l₃ : (- ε) < ((b₁ + b₂) - (x₁ + x₂))
-    l₃ = trans (- ε) 0ℤ[1/2] ((b₁ + b₂) - (x₁ + x₂))
-          (transport ((- ε) <_) (ℤ[1/2]-minus-zero ⁻¹) (<-swap 0ℤ[1/2] ε l))
-           (diff-positive (x₁ + x₂) (b₁ + b₂) (ℤ[1/2]<-adding x₁ b₁ x₂ b₂ x₁<b₁ x₂<b₂))
-    l₄ : ((b₁ + b₂) - (x₁ + x₂)) < ε
-    l₄ = <-swap-consequence (b₁ + b₂) (x₁ + x₂) ε l₆
-    goal : Bℤ[1/2] (b₁ + b₂) (x₁ + x₂) ε l
-    goal = ℤ[1/2]<-to-abs ((b₁ + b₂) - (x₁ + x₂)) ε (l₃ , l₄)
+-- add-condition-3 : (x : Vec ℤ[1/2] 2) → (ε : ℤ[1/2]) → (0<ε : 0ℤ[1/2] <ℤ[1/2] ε)
+--                 → Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< x) × (x Vecℤ[1/2]< b) × Bℤ[1/2] (add-R (zip (a , b))) (add-D x) ε 0<ε
+-- add-condition-3 (x₁ ∷ x₂ ∷ []) ε l = I
+--  where
+--   l₂ : 0ℤ[1/2] < (1/2 * ε)
+--   l₂ = <-pos-mult' 1/2 ε 0<1/2ℤ[1/2] l
+--   I : Σ (a , b) ꞉ Vec ℤ[1/2] 2 × Vec ℤ[1/2] 2 , (a Vecℤ[1/2]< (x₁ ∷ x₂ ∷ [])) × ((x₁ ∷ x₂ ∷ []) Vecℤ[1/2]< b) × Bℤ[1/2] (add-R (zip (a , b))) (add-D (x₁ ∷ x₂ ∷ [])) ε l
+--   I with dense x₁ (x₁ + (1/2 * ε)) (ℤ[1/2]<-+ x₁ (1/2 * ε) l₂)
+--   ... | b₁ , (x₁<b₁ , b₁<x₁+ε/2) with dense x₂ (x₂ + (1/2 * ε)) (ℤ[1/2]<-+ x₂ (1/2 * ε) l₂)
+--   ... | b₂ , (x₂<b₂ , b₂<x₂+ε/2) with no-min x₁
+--   ... | a₁ , a₁<x₁ with no-min x₂
+--   ... | a₂ , a₂<x₂ = ((a₁ ∷ a₂ ∷ []) , (b₁ ∷ b₂ ∷ [])) , ((a₁<x₁ , a₂<x₂ , ⋆) , ((x₁<b₁ , x₂<b₂ , ⋆) , goal))
+--    where
+--     l₅ :(b₁ + b₂) < ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε)))
+--     l₅ = ℤ[1/2]<-adding b₁ (x₁ + (1/2 * ε)) b₂ (x₂ + (1/2 * ε)) b₁<x₁+ε/2 b₂<x₂+ε/2
+--     l₆ : (b₁ + b₂) < ((x₁ + x₂) + ε)
+--     l₆ = transport ((b₁ + b₂) <_) e₁ (ℤ[1/2]<-adding b₁ (x₁ + (1/2 * ε)) b₂ (x₂ + (1/2 * ε)) b₁<x₁+ε/2 b₂<x₂+ε/2)
+--      where
+--       e₁ : ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε))) ＝ ((x₁ + x₂) + ε)
+--       e₁ = ((x₁ + (1/2 * ε)) + (x₂ + (1/2 * ε)))  ＝⟨ ℤ[1/2]+-assoc (x₁ + (1/2 * ε)) x₂ (1/2 * ε) ⁻¹ ⟩
+--             (((x₁ + (1/2 * ε)) + x₂) + (1/2 * ε)) ＝⟨ ap (_+ (1/2 * ε)) (ℤ[1/2]+-assoc x₁ (1/2 * ε) x₂) ⟩
+--             ((x₁ + ((1/2 * ε) + x₂)) + (1/2 * ε)) ＝⟨ ap (λ z → (x₁ + z) + (1/2 * ε)) (ℤ[1/2]+-comm (1/2 * ε) x₂) ⟩
+--             ((x₁ + (x₂ + (1/2 * ε))) + (1/2 * ε)) ＝⟨ ap (_+ (1/2 * ε)) (ℤ[1/2]+-assoc x₁ x₂ (1/2 * ε) ⁻¹) ⟩
+--             (((x₁ + x₂) + (1/2 * ε)) + (1/2 * ε)) ＝⟨ ℤ[1/2]+-assoc (x₁ + x₂) (1/2 * ε) (1/2 * ε) ⟩
+--             ((x₁ + x₂) + ((1/2 * ε) + (1/2 * ε))) ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-dist 1/2 1/2 ε) ⟩
+--             ((x₁ + x₂) + ((1/2 + 1/2) * ε))       ＝⟨ ap (λ z → (x₁ + x₂) + (z * ε)) 1/2+1/2ℤ[1/2] ⟩
+--             ((x₁ + x₂) + (1ℤ[1/2] * ε))           ＝⟨ ap ((x₁ + x₂) +_) (ℤ[1/2]-mult-left-id ε) ⟩
+--             ((x₁ + x₂) + ε) ∎
+--     l₃ : (- ε) < ((b₁ + b₂) - (x₁ + x₂))
+--     l₃ = trans (- ε) 0ℤ[1/2] ((b₁ + b₂) - (x₁ + x₂))
+--           (transport ((- ε) <_) (ℤ[1/2]-minus-zero ⁻¹) (<-swap 0ℤ[1/2] ε l))
+--            (diff-positive (x₁ + x₂) (b₁ + b₂) (ℤ[1/2]<-adding x₁ b₁ x₂ b₂ x₁<b₁ x₂<b₂))
+--     l₄ : ((b₁ + b₂) - (x₁ + x₂)) < ε
+--     l₄ = <-swap-consequence (b₁ + b₂) (x₁ + x₂) ε l₆
+--     goal : Bℤ[1/2] (b₁ + b₂) (x₁ + x₂) ε l
+--     goal = ℤ[1/2]<-to-abs ((b₁ + b₂) - (x₁ + x₂)) ε (l₃ , l₄)
     
-addition-collection : Collection 2
-addition-collection = record
-                        { D = add-D
-                        ; L = add-L
-                        ; R = add-R
-                        ; Condition-1a = add-condition-1a
-                        ; Condition-1b = add-condition-1b
-                        ; Condition-1c = add-condition-1c
-                        ; Condition-1d = add-condition-1d
-                        ; Condition-2 = add-condition-2
-                        ; Condition-3 = add-condition-3
-                        ; Condition-4 = {!!}
-                        }
+-- addition-collection : Collection 2
+-- addition-collection = record
+--                         { D = add-D
+--                         ; L = add-L
+--                         ; R = add-R
+--                         ; Condition-1a = add-condition-1a
+--                         ; Condition-1b = add-condition-1b
+--                         ; Condition-1c = add-condition-1c
+--                         ; Condition-1d = add-condition-1d
+--                         ; Condition-2 = add-condition-2
+--                         ; Condition-3 = add-condition-3
+--                         ; Condition-4 = {!!}
+--                         }
 
 
-composition : (n i : ℕ) → Collection n → (Vec (Collection i) n) → Collection i
-composition n i f gs = record
-                         { D = (λ xs → Collection.D f (vec-map (λ Ci → Collection.D Ci xs) gs))
-                         ; L = {!!}
-                         ; R = {!!}
-                         ; Condition-1a = {!!}
-                         ; Condition-1b = {!!}
-                         ; Condition-1c = {!!}
-                         ; Condition-1d = {!!}
-                         ; Condition-2 = {!!}
-                         ; Condition-3 = {!!}
-                         ; Condition-4 = {!!}
-                         }
+-- composition : (n i : ℕ) → Collection n → (Vec (Collection i) n) → Collection i
+-- composition n i f gs = record
+--                          { D = (λ xs → Collection.D f (vec-map (λ Ci → Collection.D Ci xs) gs))
+--                          ; L = {!!}
+--                          ; R = {!!}
+--                          ; Condition-1a = {!!}
+--                          ; Condition-1b = {!!}
+--                          ; Condition-1c = {!!}
+--                          ; Condition-1d = {!!}
+--                          ; Condition-2 = {!!}
+--                          ; Condition-3 = {!!}
+--                          ; Condition-4 = {!!}
+--                          }
 
 
-```
+-- ```
