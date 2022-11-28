@@ -46,16 +46,22 @@ module _
  idtoiso : {a b : ob} → a ＝ b → a ≅ b
  idtoiso refl = 1ₐ , 1ₐ , (unit-l 1ₐ) , (unit-r 1ₐ)
 
-cSet : FunExt → precategory {𝓤 ⁺}
-cSet {𝓤} fe = record
-            { ob = hSet 𝓤
-            ; hom = λ (A , _) (B , _) → A → B
-            ; hom-set = λ { {(A , A-is-set)} {B , B-is-set} → Π-is-set (fe 𝓤 𝓤) λ _ → B-is-set }
-            ; 1ₐ = id
-            ; _∘_ = _∘'_
-            ; unit-l = λ _ → refl
-            ; unit-r = λ _ → refl
-            ; assoc = λ _ _ _ → refl
-            }
+ _≅∘_ : {a b c : ob} → a ≅ b → b ≅ c → a ≅ c
+ (f , g , η , ε) ≅∘ (f' , g' , η' , ε') = f' ∘ f , (g ∘ g') , I , II
+  where
+   I : (g ∘ g') ∘ (f' ∘ f) ＝ 1ₐ
+   I = (g ∘ g') ∘ (f' ∘ f)      ＝⟨ assoc f f' (g ∘ g') ⟩
+       ((g ∘ g') ∘ f') ∘ f      ＝⟨ ap (_∘ f) (assoc f' g' g ⁻¹) ⟩
+       (g ∘ (g' ∘ f')) ∘ f      ＝⟨ ap (λ - → (g ∘ -) ∘ f) η' ⟩
+       (g ∘ 1ₐ) ∘ f             ＝⟨ ap (_∘ f) (unit-r g) ⟩
+       g ∘ f                    ＝⟨ η ⟩
+       1ₐ  ∎
+   II : (f' ∘ f) ∘ (g ∘ g') ＝ 1ₐ
+   II = (f' ∘ f) ∘ (g ∘ g')   ＝⟨ assoc g' g (f' ∘ f) ⟩
+        ((f' ∘ f) ∘ g) ∘ g'   ＝⟨ ap (_∘ g') (assoc g f f' ⁻¹) ⟩
+        ((f' ∘ (f ∘ g)) ∘ g') ＝⟨ ap (λ - → (f' ∘ -) ∘ g') ε ⟩
+        (f' ∘ 1ₐ) ∘ g'        ＝⟨ ap (_∘ g') (unit-r f') ⟩
+        f' ∘ g'               ＝⟨ ε' ⟩
+        1ₐ ∎
 
 \end{code}
