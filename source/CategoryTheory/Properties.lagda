@@ -5,6 +5,7 @@ open import MLTT.Spartan renaming (_∘_ to _∘'_)
 open import CategoryTheory.Type
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
+open import UF.FunExt
 
 module CategoryTheory.Properties where
 
@@ -32,21 +33,29 @@ module _
  _≅_ : (a b : ob) → 𝓥 ̇
  a ≅ b = Σ f ꞉ hom a b , isomorphism f
 
+ {-
+ Isomorphisms are sets, because they are a subset of the space of homsets, and homsets are sets.
+ -}
+
  isomorphism-is-set : {a b : ob} → is-set (a ≅ b) 
  isomorphism-is-set {a} {b} = subsets-of-sets-are-sets (hom a b) isomorphism hom-set isomorphism-is-prop
 
-cSet : precategory {𝓤 ⁺}
-cSet {𝓤} = record
-          { ob = hSet 𝓤
-          ; hom = λ (A , _) (B , _) → A → B
-          ; hom-set = λ { {(A , A-is-set)} {B , B-is-set} → Π-is-set {!!} λ _ → B-is-set }
-          ; 1ₐ = id
-          ; _∘_ = _∘'_
-          ; unit-l = λ f → refl
-          ; unit-r = λ f → refl
-          ; assoc = λ f g h → refl
-          }
+ ! : {a b : ob} → a ≅ b → b ≅ a
+ ! (f , g , p1 , p2) = g , f , p2 , p1
 
+ idtoiso : {a b : ob} → a ＝ b → a ≅ b
+ idtoiso refl = 1ₐ , 1ₐ , (unit-l 1ₐ) , (unit-r 1ₐ)
 
+cSet : FunExt → precategory {𝓤 ⁺}
+cSet {𝓤} fe = record
+            { ob = hSet 𝓤
+            ; hom = λ (A , _) (B , _) → A → B
+            ; hom-set = λ { {(A , A-is-set)} {B , B-is-set} → Π-is-set (fe 𝓤 𝓤) λ _ → B-is-set }
+            ; 1ₐ = id
+            ; _∘_ = _∘'_
+            ; unit-l = λ _ → refl
+            ; unit-r = λ _ → refl
+            ; assoc = λ _ _ _ → refl
+            }
 
 \end{code}
