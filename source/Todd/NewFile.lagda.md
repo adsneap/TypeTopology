@@ -36,7 +36,7 @@ open OrderProperties DyOrPr
 open DyadicProperties Dp
   renaming (_ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_ ; _ℤ[1/2]*_ to _*_)
                                     
-open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans)
+open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans ; ≤-split)
 
 _≡_ = Id
 
@@ -220,6 +220,23 @@ v-l≤r    = pr₂
 v-dist : 𝕀v → ℕ
 v-dist z = pr₁ (v-l≤r z)
 
+v-dist-lemma : (ζ : ℤ → 𝕀v) → (n : ℤ) → l (pos (v-dist (ζ n)) , v-prec (ζ n)) ＝ (l (v-right (ζ n) , v-prec (ζ n)) - l (v-left (ζ n) , v-prec (ζ n)))
+v-dist-lemma ζ n = II
+ where
+  get-e : v-left (ζ n) ℤ+ pos (v-dist (ζ n)) ＝ v-right (ζ n)
+  get-e = pr₂ (v-l≤r (ζ n))
+  I : pos (v-dist (ζ n)) ＝ v-right (ζ n) ℤ- v-left (ζ n)
+  I = pos (v-dist (ζ n)) ＝⟨ ℤ-zero-right-neutral (pos (v-dist (ζ n))) ⁻¹ ⟩
+      pos (v-dist (ζ n)) ℤ+ pos 0 ＝⟨ ap (pos (v-dist (ζ n)) ℤ+_) (ℤ-sum-of-inverse-is-zero (v-left (ζ n)) ⁻¹) ⟩
+      pos (v-dist (ζ n)) ℤ+ (v-left (ζ n) ℤ- v-left (ζ n)) ＝⟨ ℤ+-assoc (pos (v-dist (ζ n))) (v-left (ζ n)) (ℤ- v-left (ζ n)) ⁻¹ ⟩
+      pos (v-dist (ζ n)) ℤ+ v-left (ζ n) ℤ- v-left (ζ n) ＝⟨ ap (_ℤ- v-left (ζ n)) (ℤ+-comm (pos (v-dist (ζ n))) (v-left (ζ n))) ⟩
+      v-left (ζ n) ℤ+ pos (v-dist (ζ n)) ℤ- v-left (ζ n) ＝⟨ ap (_ℤ- v-left (ζ n)) (pr₂ (v-l≤r (ζ n))) ⟩
+      v-right (ζ n) ℤ- v-left (ζ n) ∎
+  II : l (pos (v-dist (ζ n)) , v-prec (ζ n)) ＝ l (v-right (ζ n) , v-prec (ζ n)) - l (v-left (ζ n) , v-prec (ζ n))
+  II = l (pos (v-dist (ζ n)) , v-prec (ζ n))              ＝⟨ ap (λ z →  l (z , v-prec (ζ n))) I ⟩
+      l (v-right (ζ n) ℤ- v-left (ζ n) , (v-prec (ζ n))) ＝⟨ normalise-negation (v-right (ζ n)) (v-left (ζ n)) (v-prec (ζ n)) ⁻¹ ⟩
+      l (v-right (ζ n) , v-prec (ζ n)) - l (v-left (ζ n) , v-prec (ζ n)) ∎
+
 vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
 vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
@@ -229,10 +246,11 @@ vw-is-intervalled : Π vw-intervalled
 vw-is-intervalled = v-l≤r ∘_
 
 vw-intervalled-preserves : seq-of-vw-intervals preserves vw-intervalled as intervalled
-vw-intervalled-preserves ζ vwi n = {!!}
+vw-intervalled-preserves ζ vwi n = normalise-≤2 (v-left (ζ n)) (v-right (ζ n)) (v-prec (ζ n)) (v-l≤r (ζ n))
 
 vw-located-preserves : seq-of-vw-intervals preserves vw-located as located
-vw-located-preserves = λ x x₁ ϵ x₂ → {!!}
+vw-located-preserves ζ vwl ε ϵ-is-positive with vwl ε ϵ-is-positive
+... | (n , l) = n , (transport (_≤ ε) (v-dist-lemma ζ n) l)
 
 -- Specific width sequence properties
 
@@ -245,7 +263,7 @@ sw-is-intervalled : Π sw-intervalled
 sw-is-intervalled ζ n = 2 , refl
 
 sw-located-preserves-vw : seq-sw-to-vw preserves sw-located as vw-located
-sw-located-preserves-vw ζ ρ ϵ ϵ-is-positive = {!!} , {!!}
+sw-located-preserves-vw ζ ρ ϵ ϵ-is-positive = {!!}
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
@@ -290,7 +308,7 @@ normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-
 normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                            → sw-nested ζ
                            → sw-nested (normalise ζ ρ)
-normalise-preserves-nested = {!!}
+normalise-preserves-nested ζ ρ swn n = {!!}
 
 go-up-covers : (ζ : ℤ → 𝕀s) → (μ : ℤ → ℕ) → (n : ℤ)
              →        seq-of-sw-intervals (go-up μ ζ) n

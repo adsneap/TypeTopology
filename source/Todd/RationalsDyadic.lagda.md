@@ -468,12 +468,15 @@ record OrderProperties : 𝓤₁ ̇ where
   ℤ[1/2]<-to-abs : (x y : ℤ[1/2]) → ((ℤ[1/2]- y) < x) × (x < y) → ℤ[1/2]-abs x < y
   ℤ[1/2]-abs-lemma : (x y : ℤ[1/2]) → ℤ[1/2]-abs (x ℤ[1/2]- y) ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
   ℤ[1/2]-1/2-< : (x : ℤ[1/2]) → 0ℤ[1/2] < x → (1/2ℤ[1/2] ℤ[1/2]* x) < x
-  normalise-< : ((k , p) : ℤ × ℤ) → normalise (k , p) < normalise ((k +pos 2) , p)
+--   normalise-< : ((k , p) : ℤ × ℤ) → normalise (k , p) < normalise ((k +pos 2) , p)
+  -- normalise-≤2 : ∀ n → ((k , p) : ℤ × ℤ) → normalise (k , p) ≤ normalise ((k +pos n) , p)
+  normalise-≤2 : ∀ l r p → l ≤ r → normalise (l , p) ≤ normalise (r , p) 
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
   ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)
   normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
   ℤ[1/2]<-positive-mult : (a b : ℤ[1/2]) → is-positive a → is-positive b → is-positive (a ℤ[1/2]* b)
   ℤ[1/2]-find-lower : ∀ ε → is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
+  normalise-negation : ∀ a b c → normalise (a , c) ℤ[1/2]- normalise (b , c) ＝ normalise (a - b , c)
 
 -- normalise-pos
 normalise-≤ : ((k , δ) : ℤ × ℕ) → ((m , ε) : ℤ × ℕ)

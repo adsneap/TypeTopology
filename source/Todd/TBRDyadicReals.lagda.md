@@ -288,6 +288,7 @@ lim₄ x' x n (inl x'＝2x)         = transport (λ z → x * pos (2^ (succ n)) 
 lim₄ x' x n (inr (inl x'＝2x+1)) = transport (λ z → x * pos (2^ (succ n)) ≤ z * pos (2^ n)) (x'＝2x+1 ⁻¹) (lim₂ x n)
 lim₄ x' x n (inr (inr x'＝2x+2)) = transport (λ z → x * pos (2^ (succ n)) ≤ z * pos (2^ n)) (x'＝2x+2 ⁻¹) (lim₃ x n)
 
+{-
 left-interval-monotonic' : (t : 𝕋) → (n : ℤ) → lb t n ≤ lb t (succℤ n)
 left-interval-monotonic' (x , b) (pos n) = normalise-≤ ((x (pos n)) , n) (x (pos (succ n)) , succ n)
                                   (lim₄ (x (pos (succ n))) (x (pos n)) n
@@ -299,7 +300,7 @@ left-interval-monotonic' (x , b) (negsucc 0) with below-implies-below' (x (pos 0
 left-interval-monotonic' (x , b) (negsucc (succ n)) = normalise-≤' (x (negsucc (succ n)) , (succ n)) (x (negsucc n) , n)
                                                        (lim₄ (x (negsucc n)) (x (negsucc (succ n))) (succ n)
                                                         (below-implies-below' (x (negsucc n)) (x (negsucc (succ n))) (b (negsucc (succ n)))))
-
+-}
 ```
 
 With the above lemmas we can prove that for any TBR, the bound
@@ -308,10 +309,10 @@ increase.
 
 
 ```agda
-
+{-
 left-interval-monotonic : (x : ℤ[1/2]) → (n : ℤ) → lb (map x) n ≤ lb (map x) (succℤ n)
 left-interval-monotonic x n = left-interval-monotonic' (map x) n
-
+-}
 ```
 
 We also prove that the left bound on each level is never greater than
@@ -334,7 +335,7 @@ For a precision level n+k, simply prove inductively using the above argument.
 
 
 ```agda
-
+{-
 left-interval-is-minimum-lemma : (x : ℤ[1/2]) → (n : ℤ) (m : ℕ) → succℤ n + pos m ＝ pos (layer x) → lb (map x) n ≤ x 
 left-interval-is-minimum-lemma x n 0 e = transport (lb (map x) n ≤_) I II
  where
@@ -352,7 +353,7 @@ left-interval-is-minimum ((x , δ) , p) n with ℤ-trichotomous (pos δ) n
 ... | inl δ<n = transport (_≤ ((x , δ) , p)) (map-lemma ((x , δ) , p) n δ<n ⁻¹) (≤-refl ((x , δ) , p))
 ... | inr (inl refl) = transport (_≤ ((x , δ) , p)) (map-lemma-≤ (((x , δ) , p)) n (ℤ≤-refl (pos δ)) ⁻¹) (≤-refl ((x , δ) , p))
 ... | inr (inr (m , e)) = left-interval-is-minimum-lemma (((x , δ) , p)) n m e
-
+-}
 ```
 
 With these lemmas, we can finally prove that the encodings agree with the reals.
@@ -361,7 +362,7 @@ that the left cut of each real is equal, and proving that two sets are
 equals means proving that (z ∈ Lx ⇔ z ∈ Ly) for any z ∈ Lx ∪ Ly.
 
 ```agda
-
+{-
 encodings-agree-with-reals : (x : ℤ[1/2]) → ⟦ map x ⟧ ＝ ι x
 encodings-agree-with-reals x = ℝ-d-equality-from-left-cut left right
  where
@@ -369,7 +370,7 @@ encodings-agree-with-reals x = ℝ-d-equality-from-left-cut left right
   left y = ∥∥-rec (<ℤ[1/2]-is-prop y x) λ (n , y<l) → trans<≤ y (lb (map x) n) x y<l (left-interval-is-minimum x n) 
   right : (y : ℤ[1/2]) → y < x → ∃ n ꞉ ℤ , y < lb (map x) n
   right y y<x = ∣ (pos (layer x) , (transport (y <_) (map-lemma-≤ x (pos (layer x) ) (ℤ≤-refl (pos (layer x))) ⁻¹) y<x)) ∣
-
+-}
 ```
 
 Now, we define negation, addition and multiplication of ternary Boehm reals.
