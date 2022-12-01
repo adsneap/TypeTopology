@@ -55,7 +55,7 @@ covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂) = {!!} , {!!}
 intervalled nested located intersected : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
 nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
-located     ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , (pr₂ (ζ n) - pr₁ (ζ n)) ≤ ϵ
+located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , (pr₂ (ζ n) - pr₁ (ζ n)) ≤ ϵ
 intersected ζ = (n m : ℤ) → min (pr₂ (ζ n)) (pr₂ (ζ m)) ≤ max (pr₁ (ζ n)) (pr₁ (ζ m))
 
 fully-nested' : (ℤ → ℤ[1/2] × ℤ[1/2]) → ℕ → 𝓤₀ ̇
@@ -149,7 +149,7 @@ nested-gives-intersected ζ η n m = {!!}
                      in trans p (rd (ζ n)) q p<r' r<q'
  
   is-located : located' L R
-  is-located p q p<q = I (ζloc (1/2 * (q - p)))
+  is-located p q p<q = I (ζloc (1/2 * (q - p)) (ℤ[1/2]<-positive-mult 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)))
    where
     0<ε : 0ℤ[1/2] < (1/2 * (q - p))
     0<ε = <-pos-mult' 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)
@@ -282,6 +282,8 @@ normalise-yields-normalised ζ ρ n
  where k = pr₁ (ρ n)
 
 -- Normalised sequence properties
+
+
 
 normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
 normalised-is-located ζ ρ ϵ = {!clog₂ ϵ!} , {!!}
