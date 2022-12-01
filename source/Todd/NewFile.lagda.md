@@ -223,29 +223,29 @@ v-dist z = pr₁ (v-l≤r z)
 vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
 vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
-vw-located     ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pos (v-dist (ζ n)) , v-prec (ζ n)) ≤ ϵ
+vw-located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , l (pos (v-dist (ζ n)) , v-prec (ζ n)) ≤ ϵ
 
 vw-is-intervalled : Π vw-intervalled
 vw-is-intervalled = v-l≤r ∘_
 
 vw-intervalled-preserves : seq-of-vw-intervals preserves vw-intervalled as intervalled
-vw-intervalled-preserves = {!!}
+vw-intervalled-preserves ζ vwi n = {!!}
 
 vw-located-preserves : seq-of-vw-intervals preserves vw-located as located
-vw-located-preserves = {!!}
+vw-located-preserves = λ x x₁ ϵ x₂ → {!!}
 
 -- Specific width sequence properties
 
 sw-intervalled sw-nested sw-located : (ℤ → ℤ × ℤ) → 𝓤₀ ̇ 
 sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
-sw-located ζ = (ϵ : ℤ[1/2]) → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
+sw-located ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
 
 sw-is-intervalled : Π sw-intervalled
 sw-is-intervalled ζ n = 2 , refl
 
 sw-located-preserves-vw : seq-sw-to-vw preserves sw-located as vw-located
-sw-located-preserves-vw ζ ρ ϵ = {!!} , {!!}
+sw-located-preserves-vw ζ ρ ϵ ϵ-is-positive = {!!} , {!!}
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
@@ -283,10 +283,9 @@ normalise-yields-normalised ζ ρ n
 
 -- Normalised sequence properties
 
-
-
 normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
-normalised-is-located ζ ρ ϵ = {!clog₂ ϵ!} , {!!}
+normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
+... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ) (ρ k ⁻¹) l))
 
 normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                            → sw-nested ζ

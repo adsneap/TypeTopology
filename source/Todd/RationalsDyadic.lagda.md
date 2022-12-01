@@ -324,12 +324,29 @@ _<ℤ[1/2]_ _≤ℤ[1/2]_ : ℤ[1/2] → ℤ[1/2] → 𝓤₀ ̇
 ≤ℤ[1/2]-is-prop : (x y : ℤ[1/2]) → is-prop (x ≤ℤ[1/2] y)
 ≤ℤ[1/2]-is-prop ((x , a) , _) ((y , b) , _) = ℤ≤-is-prop (x * pos (2^ b)) (y * pos (2^ a))
 
+ℤ[1/2]⁺ : 𝓤₀ ̇
+ℤ[1/2]⁺ = Σ x ꞉ ℤ[1/2] , 0ℤ[1/2] <ℤ[1/2] x
+
+_<ℤ[1/2]⁺_ _≤ℤ[1/2]⁺_ : ℤ[1/2]⁺ → ℤ[1/2]⁺ → 𝓤₀ ̇
+(x , l) <ℤ[1/2]⁺ (y , l') = x <ℤ[1/2] y
+(x , l) ≤ℤ[1/2]⁺ (y , l') = x ≤ℤ[1/2] y
+
+is-positive : ℤ[1/2] -> 𝓤₀ ̇
+is-positive x = 0ℤ[1/2] <ℤ[1/2] x
+
 instance
  Order-ℤ[1/2]-ℤ[1/2] : Order ℤ[1/2] ℤ[1/2]
  _≤_ {{Order-ℤ[1/2]-ℤ[1/2]}} = _≤ℤ[1/2]_
 
  Strict-Order-ℤ[1/2]-ℤ[1/2] : Strict-Order ℤ[1/2] ℤ[1/2]
  _<_ {{Strict-Order-ℤ[1/2]-ℤ[1/2]}} = _<ℤ[1/2]_
+
+instance
+ Order-ℤ[1/2]⁺-ℤ[1/2]⁺ : Order ℤ[1/2]⁺ ℤ[1/2]⁺
+ _≤_ {{Order-ℤ[1/2]⁺-ℤ[1/2]⁺}} = _≤ℤ[1/2]⁺_
+
+ Strict-Order-ℤ[1/2]⁺-ℤ[1/2]⁺ : Strict-Order ℤ[1/2]⁺ ℤ[1/2]⁺
+ _<_ {{Strict-Order-ℤ[1/2]⁺-ℤ[1/2]⁺}} = _<ℤ[1/2]⁺_
 
 ```
 The following records define all the properties of dyadic rationals we
@@ -455,6 +472,8 @@ record OrderProperties : 𝓤₁ ̇ where
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
   ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)
   normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
+  ℤ[1/2]<-positive-mult : (a b : ℤ[1/2]) → is-positive a → is-positive b → is-positive (a ℤ[1/2]* b)
+  ℤ[1/2]-find-lower : ∀ ε → is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
 
 -- normalise-pos
 normalise-≤ : ((k , δ) : ℤ × ℕ) → ((m , ε) : ℤ × ℕ)
@@ -567,40 +586,6 @@ instance
  ι {{canonical-map-ℤ[1/2]-to-ℚ}} = ℤ[1/2]-to-ℚ
 
 ```
-
-ℕ-even ℕ-odd : ℕ → 𝓤₀ ̇
-ℕ-odd 0 = 𝟘
-ℕ-odd 1 = 𝟙
-ℕ-odd (succ (succ n)) = ℕ-odd n
-ℕ-even n = ¬ ℕ-odd n
-
-odd→ℕ-odd : (z : ℤ) → odd z → ℕ-odd (abs z)
-odd→ℕ-odd (pos (succ 0))            o = ⋆
-odd→ℕ-odd (pos (succ (succ x)))     o = odd→ℕ-odd (pos x) o
-odd→ℕ-odd (negsucc 0)               o = ⋆
-odd→ℕ-odd (negsucc (succ (succ x))) o = odd→ℕ-odd (negsucc x) o
-
-odd-even-gives-hcf-1 : (a b : ℕ) → ℕ-odd a → ℕ-even b → coprime a b
-odd-even-gives-hcf-1 (succ a) b odd-a even-b = ((1-divides-all (succ a)) , 1-divides-all b) , I
- where
-  I : (f : ℕ) → is-common-divisor f (succ a) b → f ∣ 1
-  I 0 ((k , e) , _) = 𝟘-elim (zero-not-positive a (zero-left-is-zero k ⁻¹ ∙ e))
-  I 1 icd = 1-divides-all 1
-  I (succ (succ f)) ((k , α) , l , β) = {!!}
-
-positive-powers-of-two-not-zero : (n : ℕ) → ¬ (2^ (succ n) ＝ 0)
-positive-powers-of-two-not-zero (succ n) e = positive-powers-of-two-not-zero n (mult-left-cancellable (2^ (succ n)) 0 1 e)
-
-succ-succ-even : (n : ℕ) → ℕ-even n → ℕ-even (2 + n)
-succ-succ-even zero even-n ()
-succ-succ-even (succ zero) even-n = λ _ → even-n ⋆
-succ-succ-even (succ (succ n)) even-n = succ-succ-even n even-n
-
-times-two-even : (n : ℕ) → ℕ-even (2 * n)
-times-two-even 0 ()
-times-two-even (succ n) = succ-succ-even (2 * n) (times-two-even n)
-
--- incorrect, odd-even-gives-hcf-1 not true
 
 
 
