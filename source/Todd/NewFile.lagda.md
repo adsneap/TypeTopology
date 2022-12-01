@@ -263,7 +263,7 @@ sw-is-intervalled : Π sw-intervalled
 sw-is-intervalled ζ n = 2 , refl
 
 sw-located-preserves-vw : seq-sw-to-vw preserves sw-located as vw-located
-sw-located-preserves-vw ζ ρ ϵ ϵ-is-positive = {!!}
+sw-located-preserves-vw ζ = id
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
