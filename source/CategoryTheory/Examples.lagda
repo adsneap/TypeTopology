@@ -43,9 +43,8 @@ module Set where
     I : is-equiv (idtoeq a b)
     I = ua a b
     II : a ＝ b
-    II = eqtoid ua a b (f , (g , λ x → {!!}) , g , {!!})
-    lll : {!!}
-    lll = {!fg ?!}
+    II = eqtoid ua a b (f , (g , λ x → ap (λ id → id x) fg)
+                          ,  g , λ x → ap (λ id → id x) gf)
 
   Setcomp1 : {a b : hSet 𝓤} → (iso : _≅_ (𝓤 ⁺) (pcSet fe) a b) → idtoiso-Set {a} {b} (isotoid-Set iso) ＝ iso
   Setcomp1 {a , a-is-set} {b , b-is-set} (f , g , fg , gf) = {!!}
