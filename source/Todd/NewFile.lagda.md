@@ -50,7 +50,8 @@ _covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
 a covers b = (ld a ≤ ld b) × (rd b ≤ rd a)
 
 covers-trans : (a b c : ℤ[1/2] × ℤ[1/2]) → a covers b → b covers c → a covers c
-covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂) = {!!} , {!!}
+covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂) = trans' (ld a) (ld b) (ld c) l≤₁ l≤₂
+                                           , trans' (rd c ) (rd b) (rd a) r≤₂ r≤₁
 
 intervalled nested located intersected : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
