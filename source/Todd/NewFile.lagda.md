@@ -289,6 +289,9 @@ go-up' k (c , i) = (upRight ^ k) c , i ℤ- pos k
 go-up : (ℤ → ℕ) → (ζ : ℤ → 𝕀s) → (ℤ → 𝕀s)
 go-up ρ ζ n = go-up' (ρ n) (ζ n)
 
+-- go up preserves fully nested
+-- prenormed function is increasing if sequence nested
+
 normalise : (ζ : ℤ → 𝕀s) → is-prenormalised ζ → (ℤ → 𝕀s)
 normalise ζ ρ = go-up (λ n → pr₁ (ρ n)) ζ
 
@@ -306,15 +309,43 @@ normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-
 normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
 ... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ) (ρ k ⁻¹) l))
 
+
+normalise-preserves-fully-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
+                                 → fully-nested (seq-of-sw-intervals ζ)
+                                 → fully-nested (seq-of-sw-intervals (normalise ζ ρ))
+normalise-preserves-fully-nested ζ ρ swfn n m n≤m = γ where
+  norm-≡ : ∀ k → Σ k' ꞉ ℤ , (normalise ζ ρ k ≡ ζ k')
+  norm-≡ (pos 0) = {!!} , {!!}
+  norm-≡ (pos (succ x)) = {!!}
+  norm-≡ (negsucc x) = {!!}
+  norm-≡-≤ : ∀ k₁ k₂ → k₁ ≤ k₂ → pr₁ (norm-≡ k₁) ≤ pr₁ (norm-≡ k₂)
+  norm-≡-≤ = {!!}
+  n' m' : ℤ
+  n' = pr₁ (norm-≡ n)
+  m' = pr₁ (norm-≡ m)
+  n'≤m' : n' ≤ m'
+  n'≤m' = norm-≡-≤ n m n≤m
+  γ : specific-width-interval (normalise ζ ρ n) covers specific-width-interval (normalise ζ ρ m)
+  γ = transport₂
+        (λ ■₁ ■₂ →
+           specific-width-interval ■₁ covers
+           specific-width-interval ■₂)
+        (pr₂ (norm-≡ n) ⁻¹)
+        (pr₂ (norm-≡ m) ⁻¹)
+        (swfn n' m' n'≤m')
+
+fully-nested-implies-nested : ∀ ζ → fully-nested ζ → nested ζ
+fully-nested-implies-nested ζ fn = λ n → fn n (succℤ n) (1 , refl)
+
 normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                            → sw-nested ζ
                            → sw-nested (normalise ζ ρ)
-normalise-preserves-nested ζ ρ swn n = {!!}
+normalise-preserves-nested ζ ρ swn = fully-nested-implies-nested (seq-of-vw-intervals (seq-sw-to-vw (normalise ζ ρ))) (normalise-preserves-fully-nested ζ ρ (nested-implies-fully-nested (seq-of-sw-intervals ζ) swn))
 
 go-up-covers : (ζ : ℤ → 𝕀s) → (μ : ℤ → ℕ) → (n : ℤ)
              →        seq-of-sw-intervals (go-up μ ζ) n
                covers seq-of-sw-intervals          ζ  n 
-go-up-covers ζ μ n = {!refl!}
+go-up-covers ζ μ n = {!!}
 
 -- Ternary boehm reals
 
