@@ -5,6 +5,7 @@
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
 open import Notation.Order
+open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Integers.Type
 open import Integers.Addition renaming (_+_ to _ℤ+_;  _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
@@ -53,11 +54,11 @@ covers-trans : (a b c : ℤ[1/2] × ℤ[1/2]) → a covers b → b covers c → 
 covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂) = trans' (ld a) (ld b) (ld c) l≤₁ l≤₂
                                            , trans' (rd c ) (rd b) (rd a) r≤₂ r≤₁
 
-intervalled nested located intersected : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
+intervalled nested located : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
 nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
 located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , (pr₂ (ζ n) - pr₁ (ζ n)) ≤ ϵ
-intersected ζ = (n m : ℤ) → min (pr₂ (ζ n)) (pr₂ (ζ m)) ≤ max (pr₁ (ζ n)) (pr₁ (ζ m))
+-- intersected ζ = (n m : ℤ) → min (pr₂ (ζ n)) (pr₂ (ζ m)) ≤ max (pr₁ (ζ n)) (pr₁ (ζ m))
 
 fully-nested' : (ℤ → ℤ[1/2] × ℤ[1/2]) → ℕ → 𝓤₀ ̇
 fully-nested' ζ k = (n : ℤ) → (ζ n) covers (ζ (n +pos k))
@@ -74,13 +75,16 @@ nested-implies-fully-nested' ζ ρ (succ k) n
 nested-implies-fully-nested : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → fully-nested ζ
 nested-implies-fully-nested ζ ρ n m (k , refl) = nested-implies-fully-nested' ζ ρ k n
 
-nested-gives-intersected : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → intersected ζ
-nested-gives-intersected ζ η n m = {!!}
+fully-nested-implies-nested : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → fully-nested ζ → nested ζ
+fully-nested-implies-nested ζ ρ n = ρ n (succℤ n) (1 , refl)
+
+{- nested-gives-intersected : (ζ : ℤ → ℤ[1/2] × ℤ[1/2]) → nested ζ → intersected ζ
+nested-gives-intersected ζ η n m = {!!} -}
 
 ⦅_⦆ : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
-      → intervalled ζ → intersected ζ → located ζ
+      → intervalled ζ → nested ζ → located ζ
       → ℝ-d
-⦅ ζ ⦆ ζinv ζins ζloc = (L , R)
+⦅ ζ ⦆ ζinv ζnes ζloc = (L , R)
  , inhabited-l , inhabited-r
  , rounded-l   , rounded-r
  , is-disjoint , is-located
@@ -141,12 +145,12 @@ nested-gives-intersected ζ η n m = {!!}
       → p <ℤ[1/2] q
     I ((n , p<l) , (n' , r<q)) with ℤ-dichotomous n n'
     ... | inl n≤n' = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l
-                                  (pr₁ (nested-implies-fully-nested ζ {!!} n n' n≤n'))
+                                  (pr₁ (nested-implies-fully-nested ζ ζnes n n' n≤n'))
                          l<q' = ℤ[1/2]≤-< (ld (ζ n')) (rd (ζ n')) q (ζinv n') r<q 
                      in trans p (ld (ζ n')) q p<l' l<q'
     ... | inr n'≤n = let p<r' = ℤ[1/2]<-≤ p (ld (ζ n)) (rd (ζ n)) p<l (ζinv n)
                          r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q
-                                  (pr₂ (nested-implies-fully-nested ζ {!!} n' n n'≤n)) r<q
+                                  (pr₂ (nested-implies-fully-nested ζ ζnes n' n n'≤n)) r<q
                      in trans p (rd (ζ n)) q p<r' r<q'
  
   is-located : located' L R
@@ -243,6 +247,9 @@ vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
 vw-located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , l (pos (v-dist (ζ n)) , v-prec (ζ n)) ≤ ϵ
 
+vw-fully-nested : (ℤ → 𝕀v) → 𝓤₀ ̇
+vw-fully-nested = fully-nested ∘ seq-of-vw-intervals
+
 vw-is-intervalled : Π vw-intervalled
 vw-is-intervalled = v-l≤r ∘_
 
@@ -255,10 +262,13 @@ vw-located-preserves ζ vwl ε ϵ-is-positive with vwl ε ϵ-is-positive
 
 -- Specific width sequence properties
 
-sw-intervalled sw-nested sw-located : (ℤ → ℤ × ℤ) → 𝓤₀ ̇ 
+sw-intervalled sw-nested sw-located : (ℤ → 𝕀s) → 𝓤₀ ̇ 
 sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
 sw-located ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
+
+sw-fully-nested : (ℤ → 𝕀s) → 𝓤₀ ̇
+sw-fully-nested = vw-fully-nested ∘ seq-sw-to-vw
 
 sw-is-intervalled : Π sw-intervalled
 sw-is-intervalled ζ n = 2 , refl
@@ -283,11 +293,65 @@ normalised-implies-prenormalised : (ζ : ℤ → 𝕀s)
                                  → is-prenormalised ζ 
 normalised-implies-prenormalised ζ ρ n = 0 , (ρ n ⁻¹)
 
-go-up' : ℕ → 𝕀s → 𝕀s
-go-up' k (c , i) = (upRight ^ k) c , i ℤ- pos k
+upRight* : 𝕀s → 𝕀s
+upRight* (c , i) = upRight c , predℤ i
+
+upRight-𝕀s : ℕ → 𝕀s → 𝕀s
+upRight-𝕀s 0 = id
+upRight-𝕀s (succ k) = upRight-𝕀s k ∘ upRight*
+
+-- surely this is somewhere else
+pred-shift : ∀ a b → predℤ a ℤ- b ≡ a ℤ- succℤ b
+pred-shift a b = ℤ-left-pred a (ℤ- b)
+               ∙ ℤ-right-pred a (ℤ- b) ⁻¹
+               ∙ ap (a ℤ+_) (succℤ-lc (succpredℤ _ ∙ succpredℤ _ ⁻¹ ∙ ap succℤ (negation-dist b (pos 1))))
+
+upRight-𝕀s-≡ : ∀ k c i → pr₂ (upRight-𝕀s k (c , i)) ≡ i ℤ- pos k
+upRight-𝕀s-≡ zero c i = refl
+upRight-𝕀s-≡ (succ k) c i = upRight-𝕀s-≡ k (upRight c) (predℤ i)
+                          ∙ pred-shift i (pos k)
+
+covers-refl : (ab : ℤ[1/2] × ℤ[1/2]) → ab covers ab
+covers-refl (a , b) = ≤-refl a , ≤-refl b
+
+vwi = variable-width-interval
+swi = specific-width-interval
+
+upRight-covers : (ci : 𝕀s) → swi (upRight* ci) covers swi ci
+upRight-covers (c , i) = {!!} , {!!}
+
+upRight-preserves-covering : (ci kj : 𝕀s) → swi ci covers swi kj → swi (upRight* ci) covers swi (upRight* kj)
+upRight-preserves-covering (c , i) (k , j) (v₁ , v₂) = {!!} , {!!}
+
+upRight-covers-lemma : ((c , i) (k , j) : 𝕀s) → i < j → swi (c , i) covers swi (k , j) → swi (c , i) covers swi (upRight* (k , j))
+upRight-covers-lemma (c , i) (k , j) i<j v = {!!} , {!!}
+
+upRight-covers' : (ci kj : 𝕀s) → swi ci covers swi kj → swi (upRight* ci) covers swi kj
+upRight-covers' _ _ = covers-trans _ _ _ (upRight-covers _)
+
+upRightⁿ-covers : (k : ℕ) → (ci : 𝕀s) → swi (upRight-𝕀s k ci) covers swi ci
+upRightⁿ-covers 0 _ = covers-refl _
+upRightⁿ-covers (succ k) ci = covers-trans _ _ _ (upRightⁿ-covers k (upRight* ci)) (upRight-covers ci)
+
+upRightⁿ-covers' : (k : ℕ) → (ci kj : 𝕀s) → swi ci covers swi kj → swi (upRight-𝕀s k ci) covers swi kj
+upRightⁿ-covers' _ _ _ = covers-trans _ _ _ (upRightⁿ-covers _ _)
+
+upRight-≤'-covers : (k₁ k₂ : ℕ) → ((c , i) (k , j) : 𝕀s) → i ℤ- pos k₁ ≤ j ℤ- pos k₂
+                  → swi (c , i) covers swi (k , j) → swi (upRight-𝕀s k₁ (c , i)) covers swi (upRight-𝕀s k₂ (k , j))
+upRight-≤'-covers k₁ zero (c , i) (k , j) k≤
+ = upRightⁿ-covers' k₁ (c , i) (k , j)
+upRight-≤'-covers zero (succ k₂) (c , i) (k , j) k≤ v
+ = upRight-≤'-covers 0 k₂ (c , i) (upRight* (k , j)) (ℤ≤-trans _ _ _ k≤ (1 , (ap succℤ {!!} ∙ succpredℤ _)))
+     (upRight-covers-lemma (c , i) (k , j) {!!} v)
+upRight-≤'-covers (succ k₁) (succ k₂) (c , i) (k , j) k≤ v
+ = upRight-≤'-covers k₁ k₂ (upRight* (c , i)) (upRight* (k , j))
+     (transport₂ _≤_
+        (pred-shift i (pos k₁) ⁻¹)
+        (pred-shift j (pos k₂) ⁻¹) k≤)
+     (upRight-preserves-covering (c , i) (k , j) v)
 
 go-up : (ℤ → ℕ) → (ζ : ℤ → 𝕀s) → (ℤ → 𝕀s)
-go-up ρ ζ n = go-up' (ρ n) (ζ n)
+go-up k ζ n = upRight-𝕀s (k n) (ζ n)
 
 -- go up preserves fully nested
 -- prenormed function is increasing if sequence nested
@@ -297,8 +361,9 @@ normalise ζ ρ = go-up (λ n → pr₁ (ρ n)) ζ
 
 normalise-yields-normalised : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                             → is-normalised (normalise ζ ρ)
-normalise-yields-normalised ζ ρ n
-  = ap (_ℤ- pos k) (pr₂ (ρ n) ⁻¹)
+normalise-yields-normalised ζ ρ n 
+  = upRight-𝕀s-≡ (pr₁ (ρ n)) (pr₁ (ζ n)) (pr₂ (ζ n))
+  ∙ ap (_ℤ- pos k) (pr₂ (ρ n) ⁻¹)
   ∙ ℤ+-assoc _ _ _
   ∙ ap (n ℤ+_) (ℤ-sum-of-inverse-is-zero₀ k)
  where k = pr₁ (ρ n)
@@ -309,43 +374,37 @@ normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-
 normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
 ... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ) (ρ k ⁻¹) l))
 
+go-up-preserves-fully-nested : (k : ℤ → ℕ) (ζ : ℤ → 𝕀s)
+                             → ((n m : ℤ) → n ≤ m → (pr₂ (ζ n) ℤ- pos (k n)) ≤ (pr₂ (ζ m) ℤ- pos (k m)))
+                             → sw-fully-nested ζ
+                             → sw-fully-nested (go-up k ζ)
+go-up-preserves-fully-nested k ζ f ρ n m n≤m = upRight-≤'-covers (k n) (k m) (ζ n) (ζ m) (f n m n≤m) (ρ n m n≤m)
 
 normalise-preserves-fully-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
-                                 → fully-nested (seq-of-sw-intervals ζ)
-                                 → fully-nested (seq-of-sw-intervals (normalise ζ ρ))
-normalise-preserves-fully-nested ζ ρ swfn n m n≤m = γ where
-  norm-≡ : ∀ k → Σ k' ꞉ ℤ , (normalise ζ ρ k ≡ ζ k')
-  norm-≡ (pos 0) = {!!} , {!!}
-  norm-≡ (pos (succ x)) = {!!}
-  norm-≡ (negsucc x) = {!!}
-  norm-≡-≤ : ∀ k₁ k₂ → k₁ ≤ k₂ → pr₁ (norm-≡ k₁) ≤ pr₁ (norm-≡ k₂)
-  norm-≡-≤ = {!!}
-  n' m' : ℤ
-  n' = pr₁ (norm-≡ n)
-  m' = pr₁ (norm-≡ m)
-  n'≤m' : n' ≤ m'
-  n'≤m' = norm-≡-≤ n m n≤m
-  γ : specific-width-interval (normalise ζ ρ n) covers specific-width-interval (normalise ζ ρ m)
-  γ = transport₂
-        (λ ■₁ ■₂ →
-           specific-width-interval ■₁ covers
-           specific-width-interval ■₂)
-        (pr₂ (norm-≡ n) ⁻¹)
-        (pr₂ (norm-≡ m) ⁻¹)
-        (swfn n' m' n'≤m')
-
-fully-nested-implies-nested : ∀ ζ → fully-nested ζ → nested ζ
-fully-nested-implies-nested ζ fn = λ n → fn n (succℤ n) (1 , refl)
+                                 → sw-fully-nested ζ
+                                 → sw-fully-nested (normalise ζ ρ)
+normalise-preserves-fully-nested ζ ρ = go-up-preserves-fully-nested (λ n → pr₁ (ρ n)) ζ γ
+ where
+   γ : _
+   γ n m = transport₂ (λ ■₁ ■₂ → ■₁ ℤ- pos (pr₁ (ρ n)) ≤ ■₂ ℤ- pos (pr₁ (ρ m)))
+            (pr₂ (ρ n)) (pr₂ (ρ m))
+            ∘ (transport₂ _≤_ (e n (pos (pr₁ (ρ n))) ⁻¹) (e m (pos (pr₁ (ρ m))) ⁻¹))
+    where
+      e : ∀ a b → ((a ℤ+ b) ℤ- b) ≡ a
+      e a b = ℤ+-assoc _ _ _ ∙ ap (a ℤ+_) (ℤ-sum-of-inverse-is-zero b)
 
 normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                            → sw-nested ζ
                            → sw-nested (normalise ζ ρ)
-normalise-preserves-nested ζ ρ swn = fully-nested-implies-nested (seq-of-vw-intervals (seq-sw-to-vw (normalise ζ ρ))) (normalise-preserves-fully-nested ζ ρ (nested-implies-fully-nested (seq-of-sw-intervals ζ) swn))
-
+normalise-preserves-nested ζ ρ swn
+ = fully-nested-implies-nested _
+     (normalise-preserves-fully-nested ζ ρ (nested-implies-fully-nested _ swn))
+{-
 go-up-covers : (ζ : ℤ → 𝕀s) → (μ : ℤ → ℕ) → (n : ℤ)
              →        seq-of-sw-intervals (go-up μ ζ) n
                covers seq-of-sw-intervals          ζ  n 
-go-up-covers ζ μ n = {!!}
+go-up-covers ζ μ n = {!refl!}
+-}
 
 -- Ternary boehm reals
 
@@ -379,8 +438,7 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 ⟦ χ  ⟧' = ⦅ seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)) ⦆
               (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
                 (sw-is-intervalled (TBR-to-sw-seq χ)))
-              (nested-gives-intersected (seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)))
-                (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ)))
+              (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ))
               (sw-located-preserves (TBR-to-sw-seq χ)
                 (normalised-is-located (TBR-to-sw-seq χ) (TBR-to-sw-is-normalised χ)))
 
@@ -396,10 +454,37 @@ vec-satisfy p [] = 𝟙
 vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
 join' : 𝕀v → 𝕀s
-join' z = go-up' (upValue (v-left z) (v-right z) (v-l≤r z)) (v-left z , v-prec z)
+join' z = upRight-𝕀s (upValue (v-left z) (v-right z) (v-l≤r z)) (v-left z , v-prec z)
 
 join : (ℤ → 𝕀v) → (ℤ → 𝕀s)
 join = join' ∘_
+
+andrew-hole : (ζn ζm : 𝕀v) → variable-width-interval ζn covers variable-width-interval ζm
+            → let up-n = upValue (v-left ζn) (v-right ζn) (v-l≤r ζn)
+                  up-m = upValue (v-left ζm) (v-right ζm) (v-l≤r ζm) in
+              v-prec ζn ℤ- (pos up-n) ≤ v-prec ζm ℤ- (pos up-m)
+andrew-hole (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm) v
+ = {!γ!}
+ where
+   γ : pn ℤ- pos (upValue ln rn l≤rn) ≤ pm ℤ- pos (upValue lm rm l≤rm)
+   γ = {!!}
+              
+join-preserves-fully-nested : (ζ : ℤ → 𝕀v) → vw-fully-nested ζ → sw-fully-nested (join ζ)
+join-preserves-fully-nested ζ v n m n≤m
+ = upRight-≤'-covers (upValue (v-left (ζ n)) (v-right (ζ n)) (v-l≤r (ζ n)))
+                     (upValue (v-left (ζ m)) (v-right (ζ m)) (v-l≤r (ζ m)))
+                     (v-left (ζ n) , v-prec (ζ n))
+                     (v-left (ζ m) , v-prec (ζ m))
+                     (andrew-hole _ _ (v n m n≤m))
+                     {!!} -- Todd
+
+join-preserves-nested : (ζ : ℤ → 𝕀v) → vw-nested ζ → sw-nested (join ζ)
+join-preserves-nested ζ v
+ = fully-nested-implies-nested
+     (seq-of-sw-intervals (join ζ))
+     (join-preserves-fully-nested ζ
+       (nested-implies-fully-nested
+         (seq-of-vw-intervals ζ) v))
 
 vec-satisfy-preserved-by : {X : 𝓤 ̇ }
                          → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
@@ -450,7 +535,8 @@ record FunctionMachine : 𝓤₁  ̇ where
   f̂   : Vec 𝕋 d → 𝕋
   f̂   χs   = prenormalised-seq-to-TBR (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
                  (κ'-is-coracle χs)
-                 {!!}
+                 (join-preserves-nested (f̂' (vec-map (seq-sw-to-vw) (vec-map TBR-to-sw-seq χs)) (κ' χs))
+                   {!!})
 
 Negation : FunctionMachine
 FunctionMachine.d Negation = 1
