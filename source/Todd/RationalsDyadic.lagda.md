@@ -451,6 +451,13 @@ record OrderProperties : 𝓤₁ ̇ where
  0<1ℤ[1/2] : 0ℤ[1/2] < 1ℤ[1/2]
  0<1ℤ[1/2] = 0 , refl
 
+ numerator-≤ : (((a , x) , l₁) ((b , y) , l₂) : ℤ[1/2])
+             → x ＝ y → a ≤ b → ((a , x) , l₁) ≤ ((b , y) , l₂)
+ numerator-≤ ((a , x) , l₁) ((b , y) , l₂) e l = transport (λ z → a * pos (2^ z) ≤ b * pos (2^ x)) e I
+  where
+   I : a * pos (2^ x) ≤ b * pos (2^ x)
+   I = positive-multiplication-preserves-order' a b (pos (2^ x)) (power-of-pos-positive x) l
+
  postulate
   ℤ[1/2]<-+ : (x y : ℤ[1/2]) → 0ℤ[1/2] < y → x < (x ℤ[1/2]+ y)
   ℤ[1/2]<-+' : (x y z : ℤ[1/2]) → x < (y ℤ[1/2]+ z) → (x ℤ[1/2]- y) < z
