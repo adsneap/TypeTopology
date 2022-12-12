@@ -37,6 +37,9 @@ module Set where
   idtoiso-Set : {a b : hSet 𝓤} → a ＝ b → _≅_ (𝓤 ⁺) (pcSet fe) a b
   idtoiso-Set refl = id , id , refl , refl
 
+  idtoiso-Set' : {(a , _) (b , _) : hSet 𝓤} → a ＝ b → a ≃ b
+  idtoiso-Set' refl = ≃-refl _
+
   isotoid-Set : {a b : hSet 𝓤}  → _≅_ (𝓤 ⁺) (pcSet fe) a b → a ＝ b
   isotoid-Set {a , a-is-set} {b , b-is-set} (f , g , gf , fg) = to-Σ-＝ (II , being-set-is-prop (fe 𝓤 𝓤) (transport is-set II a-is-set) b-is-set)
    where
@@ -49,11 +52,11 @@ module Set where
   Setcomp1 : {a b : hSet 𝓤} → (iso : _≅_ (𝓤 ⁺) (pcSet fe) a b) → idtoiso-Set {a} {b} (isotoid-Set iso) ＝ iso
   Setcomp1 {a , a-is-set} {b , b-is-set} (f , g , fg , gf) = {!!}
 
-  Setcomp2 : {a b : hSet 𝓤} → (e : a ＝ b) → isotoid-Set (idtoiso (𝓤 ⁺) (pcSet fe) e) ＝ e 
-  Setcomp2 {a} {.a} refl = {!!}
+  Setcomp2 : {!!}
+  Setcomp2 = {!!}
 
   idtoiso-Set-has-section : {a b : hSet 𝓤} → has-section (idtoiso-Set {a} {b})
-  idtoiso-Set-has-section {a} {b} = isotoid-Set , Setcomp1 {a} {b}
+  idtoiso-Set-has-section {a} {b} = isotoid-Set , {!!}
 
   idtoiso-Set-is-section : {a b : hSet 𝓤} → is-section (idtoiso-Set {a} {b})
   idtoiso-Set-is-section {a} {b} = isotoid-Set , {!!}
@@ -67,7 +70,7 @@ module Set where
   cSet : (fe : FunExt)
        → is-univalent (𝓤 ⁺)
        → category {𝓤 ⁺} { _ } (pcSet fe)
-  cSet fe u = record { idtoiso-is-equiv = univalent-set-satisfies-equivalence }
+  cSet fe u = record { idtoiso-is-equiv = {!!} }
 
 module Preorder
  (A : 𝓤 ̇)
