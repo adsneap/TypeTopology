@@ -31,6 +31,7 @@ open import Todd.TBRFunctions pt fe pe sq
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 open import Todd.TBRDyadicReals pt fe pe sq
 open import Todd.upValue
+open import Todd.BelowAndAbove fe using (downLeft-upRight ; downRight-upRight)
 open PropositionalTruncation pt
 
 open OrderProperties DyOrPr
@@ -317,8 +318,38 @@ covers-refl (a , b) = ≤-refl a , ≤-refl b
 vwi = variable-width-interval
 swi = specific-width-interval
 
+leftproof : ∀ c n → quotient (upRight c , predℤ n) ≤ quotient (c , n) 
+leftproof c n = transport (_≤ quotient (c , n)) II I
+ where
+  I : quotient (pos 2 ℤ* upRight c , n) ≤ quotient (c , n)
+  I = normalise-≤2 (pos 2 ℤ* upRight c) c n (transport (_≤ c) (ℤ*-comm (upRight c) (pos 2)) (downLeft-upRight c))
+
+  II : quotient (pos 2 ℤ* upRight c , n) ＝ quotient (upRight c , predℤ n)
+  II = normalise-pred' (upRight c) n ⁻¹
+
+rightproof : ∀ c n → quotient (c ℤ+ pos 2 , n) ≤ quotient (upRight c ℤ+ pos 2 , predℤ n)
+rightproof c n = transport (quotient (c ℤ+ pos 2 , n) ≤_) II I
+ where
+  II : quotient (pos 2 ℤ* (upRight c ℤ+ pos 2) , n) ＝ quotient (upRight c ℤ+ pos 2 , predℤ n)
+  II = normalise-pred' (upRight c ℤ+ pos 2) n ⁻¹
+
+  IV : c ℤ+ pos 2 ≤ (upRight c ℤ* pos 2 ℤ+ pos 2) ℤ+ pos 2
+  IV = ℤ≤-adding' c (upRight c ℤ* pos 2 ℤ+ pos 2) (pos 2) (downRight-upRight c)
+
+  V : upRight c ℤ* pos 2 ℤ+ pos 2 ℤ+ pos 2 ＝ pos 2 ℤ* (upRight c ℤ+ pos 2)
+  V = upRight c ℤ* pos 2 ℤ+ pos 2 ℤ+ pos 2   ＝⟨ ℤ+-assoc (upRight c ℤ* pos 2) (pos 2) (pos 2) ⟩
+      upRight c ℤ* pos 2 ℤ+ (pos 2 ℤ* pos 2) ＝⟨ distributivity-mult-over-ℤ (upRight c) (pos 2) (pos 2) ⁻¹ ⟩
+      (upRight c ℤ+ pos 2) ℤ* pos 2          ＝⟨ ℤ*-comm (upRight c ℤ+ pos 2) (pos 2) ⟩
+      pos 2 ℤ* (upRight c ℤ+ pos 2) ∎
+
+  III : c ℤ+ pos 2 ≤ pos 2 ℤ* (upRight c ℤ+ pos 2)
+  III = transport (c ℤ+ pos 2 ≤_) V IV
+ 
+  I : quotient (c ℤ+ pos 2 , n) ≤ quotient (pos 2 ℤ* (upRight c ℤ+ pos 2) , n)
+  I = normalise-≤2 (c ℤ+ pos 2) (pos 2 ℤ* (upRight c ℤ+ pos 2)) n III
+
 upRight-covers : (ci : 𝕀s) → swi (upRight* ci) covers swi ci
-upRight-covers (c , i) = {!!} , {!!}
+upRight-covers (c , i) = leftproof c i , rightproof c i
 
 upRight-preserves-covering : (ci kj : 𝕀s) → swi ci covers swi kj → swi (upRight* ci) covers swi (upRight* kj)
 upRight-preserves-covering (c , i) (k , j) (v₁ , v₂) = {!!} , {!!}
