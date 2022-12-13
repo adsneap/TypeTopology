@@ -8,6 +8,7 @@ import Todd.BelowAndAbove
 import Todd.BelowLemmas
 import Todd.DyadicReals
 import Todd.RationalsDyadic
+import Todd.Prelude
 import Todd.TBRDyadicReals
 import Todd.TBRFunctions
 import Todd.TBRMultiplication
