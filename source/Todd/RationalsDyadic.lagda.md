@@ -481,6 +481,7 @@ record OrderProperties : 𝓤₁ ̇ where
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
   ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)
   normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
+  normalise-pred' : (z n : ℤ) → normalise (z , predℤ n) ＝ normalise (pos 2 * z , n)
   ℤ[1/2]<-positive-mult : (a b : ℤ[1/2]) → is-positive a → is-positive b → is-positive (a ℤ[1/2]* b)
   ℤ[1/2]-find-lower : ∀ ε → is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
   normalise-negation : ∀ a b c → normalise (a , c) ℤ[1/2]- normalise (b , c) ＝ normalise (a - b , c)
