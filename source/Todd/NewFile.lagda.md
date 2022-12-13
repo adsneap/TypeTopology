@@ -352,7 +352,19 @@ upRight-covers : (ci : 𝕀s) → swi (upRight* ci) covers swi ci
 upRight-covers (c , i) = leftproof c i , rightproof c i
 
 upRight-preserves-covering : (ci kj : 𝕀s) → swi ci covers swi kj → swi (upRight* ci) covers swi (upRight* kj)
-upRight-preserves-covering (c , i) (k , j) (v₁ , v₂) = {!!} , {!!}
+upRight-preserves-covering (c , i) (k , j) (v₁ , v₂) = to1 , to2
+ where
+  from1 : quotient (c , i) ≤ quotient (k , j)
+  from1 = v₁
+
+  from2 : quotient (k ℤ+ pos 2 , j) ≤ quotient (c ℤ+ pos 2 , i)
+  from2 = v₂
+  
+  to1 : quotient (upRight c , predℤ i) ≤ quotient (upRight k , predℤ j)
+  to1 = {!!}
+
+  to2 : quotient ({!!} , predℤ j) ≤ quotient ((upRight c +pos 2) , predℤ i)
+  to2 = {!!}
 
 upRight-covers-lemma : ((c , i) (k , j) : 𝕀s) → i < j → swi (c , i) covers swi (k , j) → swi (c , i) covers swi (upRight* (k , j))
 upRight-covers-lemma (c , i) (k , j) i<j v = {!!} , {!!}
