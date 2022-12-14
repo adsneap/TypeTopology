@@ -14,6 +14,7 @@ open import MLTT.Spartan renaming (_+_ to _∔_)
 
 open import Notation.CanonicalMap
 open import Notation.Order
+open import Todd.Prelude
 open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Powerset
@@ -23,10 +24,11 @@ module Todd.DyadicReals
   (pe : PropExt)
   (pt : propositional-truncations-exist)
   (fe : FunExt)
+  (dy : Dyadics)
  where
 
  open PropositionalTruncation pt
- open import Todd.Prelude
+ open Dyadics dy
 
 ```
 
@@ -150,5 +152,19 @@ rationals.
  instance
   canonical-map-ℤ[1/2]-to-ℝ-d : Canonical-Map ℤ[1/2] ℝ-d
   ι {{canonical-map-ℤ[1/2]-to-ℝ-d}} = embedding-ℤ[1/2]-to-ℝ-d
+ 
+ ℝd- : ℝ-d → ℝ-d
+ ℝd- x = (L , R) , {!!}
+  where
+   L R : 𝓟 ℤ[1/2]
+   L p = x < (ℤ[1/2]- p) , ∈-is-prop (upper-cut-of x) (ℤ[1/2]- p) 
+   R q = (ℤ[1/2]- q) < x , ∈-is-prop (lower-cut-of x) (ℤ[1/2]- q) 
+
+ _ℝd+_ : ℝ-d → ℝ-d → ℝ-d
+ x ℝd+ y = (L , R) , {!!}
+  where
+   L R : 𝓟 ℤ[1/2]
+   L p = (∃ (r , s) ꞉ ℤ[1/2] × ℤ[1/2] , r ∈ lower-cut-of x × s ∈ lower-cut-of y × (p ＝ r ℤ[1/2]+ s)) , ∃-is-prop
+   R q = (∃ (r , s) ꞉ ℤ[1/2] × ℤ[1/2] , r ∈ upper-cut-of x × s ∈ upper-cut-of y × (q ＝ r ℤ[1/2]+ s)) , ∃-is-prop
 
 ```

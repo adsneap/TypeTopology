@@ -30,7 +30,7 @@ module Todd.TBRFunctions
  where
 
 open import Todd.BelowAndAbove using (below-implies-below' ; _below'_ ; below'-implies-below)
-open import Todd.DyadicReals pe pt fe
+open import Todd.DyadicReals pe pt fe dy
 open import Todd.TernaryBoehmRealsPrelude
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 

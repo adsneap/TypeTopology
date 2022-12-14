@@ -28,11 +28,10 @@ module Todd.NewFile
   (dy : Dyadics)
  where
 
-open import Todd.DyadicReals pe pt fe renaming (located to located')
+open import Todd.DyadicReals pe pt fe dy renaming (located to located')
 open import Todd.TBRFunctions pt fe pe sq dy
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 open import Todd.TernaryBoehmRealsPrelude using (2^)
-open import Todd.TBRDyadicReals pt fe pe sq dy
 open import Todd.upValue
 open import Todd.BelowAndAbove using (downLeft-upRight ; downRight-upRight)
 
