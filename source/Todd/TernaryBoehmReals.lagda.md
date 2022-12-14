@@ -21,7 +21,7 @@ module Todd.TernaryBoehmReals
   (sq : set-quotients-exist)
   where
 
-open import Todd.TernaryBoehmRealsPrelude fe
+open import Todd.TernaryBoehmRealsPrelude
 
 _≤_≤_ : ℤ → ℤ → ℤ → 𝓤₀ ̇ 
 a ≤ b ≤ c = (a ≤ b) × (b ≤ c)
@@ -112,7 +112,7 @@ tedious. It, along with other proofs about `below` and `above` and their
 relationship to each other, are outsourced to the following file.
 
 ```
-open import Todd.BelowAndAbove fe
+open import Todd.BelowAndAbove
   hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_)
 ```
 

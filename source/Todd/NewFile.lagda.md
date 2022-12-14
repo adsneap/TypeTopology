@@ -18,24 +18,26 @@ open import UF.Subsingletons
 open import UF.Quotient
 open import UF.Powerset hiding (𝕋)
 
+open import Todd.Prelude renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
+
 module Todd.NewFile
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
   (sq : set-quotients-exist)
+  (dy : Dyadics)
  where
 
-open import Todd.RationalsDyadic fe renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
 open import Todd.DyadicReals pe pt fe renaming (located to located')
-open import Todd.TBRFunctions pt fe pe sq
+open import Todd.TBRFunctions pt fe pe sq dy
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
-open import Todd.TBRDyadicReals pt fe pe sq
+open import Todd.TernaryBoehmRealsPrelude using (2^)
+open import Todd.TBRDyadicReals pt fe pe sq dy
 open import Todd.upValue
-open import Todd.BelowAndAbove fe using (downLeft-upRight ; downRight-upRight)
-open PropositionalTruncation pt
+open import Todd.BelowAndAbove using (downLeft-upRight ; downRight-upRight)
 
-open OrderProperties DyOrPr
-open DyadicProperties Dp
+open PropositionalTruncation pt
+open Dyadics dy
   renaming (_ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_ ; _ℤ[1/2]*_ to _*_)
                                     
 open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans ; ≤-split)
@@ -488,7 +490,7 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 -- Approximators and continuity oracles
 
 map₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
-      → Vec (X → Y) n → Vec X n → Vec Y n
+     → Vec (X → Y) n → Vec X n → Vec Y n
 map₂ [] [] = []
 map₂ (x ∷ χs) (k ∷ ks) = x k ∷ map₂ χs ks
 

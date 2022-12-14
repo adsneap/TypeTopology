@@ -26,7 +26,7 @@ module Todd.DyadicReals
  where
 
  open PropositionalTruncation pt
- open import Todd.RationalsDyadic fe
+ open import Todd.Prelude
 
 ```
 
@@ -132,8 +132,6 @@ rationals.
        II : k ∈ lower-cut-of y ∔ q ∈ upper-cut-of y → q ∈ upper-cut-of y
        II (inl k<y) = 𝟘-elim {!ℤ[1/2]<-not-itself!}
        II (inr y<q) = {!!}
-
-
 
  ℝ-d-equality-from-left-cut : {x y : ℝ-d}
                             → lower-cut-of x ⊆ lower-cut-of y

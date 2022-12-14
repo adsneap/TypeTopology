@@ -19,23 +19,24 @@ open import UF.PropTrunc
 open import UF.Subsingletons
 open import UF.Quotient
 open import Naturals.Order renaming (max to maxℕ)
+open import Todd.Prelude
 
 module Todd.TBRFunctions
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
   (sq : set-quotients-exist)
+  (dy : Dyadics)
  where
 
-open import Todd.TBRDyadicReals pt fe pe sq
-open import Todd.BelowAndAbove fe using (below-implies-below' ; _below'_ ; below'-implies-below)
+open import Todd.BelowAndAbove using (below-implies-below' ; _below'_ ; below'-implies-below)
 open import Todd.DyadicReals pe pt fe
-open import Todd.RationalsDyadic fe
-open import Todd.TernaryBoehmRealsPrelude fe
+open import Todd.TernaryBoehmRealsPrelude
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
-open OrderProperties DyOrPr
-open DyadicProperties Dp
+
 open PropositionalTruncation pt
+open Dyadics dy
+
 ```
 
 ```agda
@@ -107,6 +108,7 @@ _Vecℤ[1/2]<_ _Vecℤ[1/2]≤_ : {n : ℕ} → Vec ℤ[1/2] n → Vec ℤ[1/2] 
 _Vecℤ[1/2]<_ = pairwise-P' _<ℤ[1/2]_ 
 _Vecℤ[1/2]≤_ = pairwise-P' _≤ℤ[1/2]_
 
+
 Vecℤ[1/2]<-to-Vecℤ[1/2]≤ : {n : ℕ} → (a b : Vec ℤ[1/2] n) → a Vecℤ[1/2]< b → a Vecℤ[1/2]≤ b
 Vecℤ[1/2]<-to-Vecℤ[1/2]≤ {0} [] []    _ = ⋆
 Vecℤ[1/2]<-to-Vecℤ[1/2]≤ {succ n} (a ∷ as) (b ∷ bs) (a<b , as<bs) = (<-is-≤ℤ[1/2] a b a<b) , (Vecℤ[1/2]<-to-Vecℤ[1/2]≤ as bs as<bs)
@@ -155,6 +157,7 @@ generate-asbs {succ n} (v ∷ vs) = do (asbs , as<xs<bs) ← generate-asbs vs
 ```
 
 ```agda
+
 _near_ : ℤ → ℤ → 𝓤₀ ̇
 x near y = dist x y ≤ℕ 2
 
@@ -204,8 +207,8 @@ psc'-¬-conv x y n f = ap (psc'' x y n)
 psc'-eic : (x : 𝕋) → (n : ℤ) → psc' x x n ＝ ₁
 psc'-eic x n = psc'-conv x x n (near-ref (pr₁ x n))
 
-psc'-ice : (x y : 𝕋) → (n : ℤ) → psc' x y n ＝ ₁ → ⟦ x ⟧ ＝ ⟦ y ⟧
-psc'-ice x y n p = {!!} -- should be
+-- psc'-ice : (x y : 𝕋) → (n : ℤ) → psc' x y n ＝ ₁ → ⟦ x ⟧ ＝ ⟦ y ⟧
+-- psc'-ice x y n p = {!!} -- should be
 
 psc'-sym : (x y : 𝕋) → (n : ℤ) → psc' x y n ＝ psc' y x n
 psc'-sym x y n = Cases (near-decidable (pr₁ x n) (pr₁ y n))
@@ -241,9 +244,11 @@ continuous-psc' {n} f = (xs ys : Vec 𝕋 n)
                       → Σ δs ꞉ Vec ℤ n
                       , (pairwise-P (λ x y δ → psc' x y δ ＝ ₁) xs ys δs
                       → psc' (f xs) (f ys) ε ＝ ₁)
+                     
 ```
 
 ```agda
+{-
 record FunctionCollection (n : ℕ) : 𝓤₁ ̇  where
  field
   F  : Vec ℝ-d n → ℝ-d
@@ -329,7 +334,7 @@ vec-map-＝2 : {n : ℕ} → {X : 𝓤 ̇ } {Y : 𝓥 ̇ }
 vec-map-＝2 f g i [] = refl
 vec-map-＝2 f g i (x ∷ v) = ap (_∷ vec-map f v) (i x)
                          ∙ ap (g x ∷_) (vec-map-＝2 f g i v)
-
+-}
 -- continuous (f : (ℕ → X) → (ℕ → Y)) ≔ (α β : ℕ → X) → (ε : ℤ)
 --                              → Σ δ ꞉ ℤ , ((α ≈ β) δ → (f α) ≈ (f β) ε)
 
@@ -341,6 +346,7 @@ vec-map-＝2 f g i (x ∷ v) = ap (_∷ vec-map f v) (i x)
 
 --                λ x₀..xₙ → f(x₀ ... xₙ)         → [λ y₀..yₘ → g₀(y₀...yₘ) ... λ y₀..yₘ → gₙ(y₀...yₘ)]
 --                                     → λ y₀..yₘ → f(g₀(y₀...yₘ).....gₙ(y₀..yₘ))
+{-
 Map : {n m : ℕ} → FunctionCollection n → Vec (FunctionCollection m) n → FunctionCollection m
 F  (Map f v) as = F  f (vec-map (λ g → F  g as) v)
 F* (Map f v) as = F* f (vec-map (λ g → F* g as) v)
@@ -356,7 +362,7 @@ I  (Map f v) as = I  f (vec-map (λ g → I  g as) v)
 ζ (Map {n} {m} f v) as bs ε = {!!} , (λ p → pr₂ IH {!!})
   where
     IH = ζ f (vec-map (λ g → F* g as) v) (vec-map (λ g → F* g bs) v) ε
-
+-}
 -- if x δ = y δ then f x ε = f y ε
 
 -- if g1(x) δ1 = g1(y) δ1 and g2(x) δ2 = g2(y) δ2 then f (g1(x) , g2(x)) ε = f (g1(y) , g2(y)) ε
@@ -376,7 +382,8 @@ I  (Map f v) as = I  f (vec-map (λ g → I  g as) v)
    fst = ζ g (a ∷ as) (b ∷ bs) ε
    rst = {!!}
 -}
+{-
 AddFuns : {n : ℕ} → FunctionCollection n → FunctionCollection n → FunctionCollection n
 AddFuns f g = Map Add (f ∷ (g ∷ []))
-
+-}
 ```

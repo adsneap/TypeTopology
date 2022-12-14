@@ -30,7 +30,7 @@ module Todd.RationalsDyadic
   (fe : FunExt)
  where
  
-open import Todd.TernaryBoehmRealsPrelude fe
+open import Todd.TernaryBoehmRealsPrelude
 
 ```
 
@@ -40,34 +40,8 @@ proved.
 
 ```agda
 
-_ℕ^_ : ℕ → ℕ → ℕ
-a ℕ^ b = ((a ℕ*_) ^ b) 1
-
-infixl 33 _ℕ^_ 
-
-_/2' : ℤ → ℤ
-pos x     /2' = pos (x /2)
-negsucc x /2' = - (pos (succ x /2))
-
-2^ : ℕ → ℕ
-2^ = 2 ℕ^_
-
 zero-base : (a : ℕ) → a ℕ^ 0 ＝ 1
 zero-base a = refl
-
-prod-of-powers : (n a b : ℕ) → n ℕ^ a ℕ* n ℕ^ b ＝ n ℕ^ (a + b)
-prod-of-powers n a zero     = refl
-prod-of-powers n a (succ b) = I
- where
-  I : n ℕ^ a ℕ* n ℕ^ succ b ＝ n ℕ^ (a + succ b)
-  I = n ℕ^ a ℕ* n ℕ^ succ b   ＝⟨ refl ⟩
-      n ℕ^ a ℕ* (n ℕ* n ℕ^ b) ＝⟨ mult-associativity (n ℕ^ a) n (n ℕ^ b) ⁻¹ ⟩
-      n ℕ^ a ℕ* n ℕ* n ℕ^ b   ＝⟨ ap (_ℕ* n ℕ^ b) (mult-commutativity (n ℕ^ a) n) ⟩
-      n ℕ* n ℕ^ a ℕ* n ℕ^ b   ＝⟨ mult-associativity n (n ℕ^ a) (n ℕ^ b) ⟩
-      n ℕ* (n ℕ^ a ℕ* n ℕ^ b) ＝⟨ ap (n ℕ*_) (prod-of-powers n a b) ⟩
-      n ℕ* n ℕ^ (a + b)       ＝⟨ refl ⟩
-      n ℕ^ succ (a + b)       ＝⟨ refl ⟩
-      n ℕ^ (a + succ b)       ∎
 
 raise-again : (n a b : ℕ) → (n ℕ^ a) ℕ^ b ＝ n ℕ^ (a ℕ* b)
 raise-again n a zero     = refl
@@ -83,13 +57,6 @@ raise-again n a (succ b) = I
       n ℕ^ (a + a ℕ* b)       ＝⟨ refl ⟩
       n ℕ^ (a ℕ* succ b)      ∎
 
-power-of-pos-positive : ∀ n → is-pos-succ (pos (2^ n))
-power-of-pos-positive 0 = ⋆
-power-of-pos-positive (succ n) = transport is-pos-succ (pos-multiplication-equiv-to-ℕ 2 (2^ n)) I
- where
-  I : is-pos-succ (pos 2 * pos (2^ n))
-  I = is-pos-succ-mult (pos 2) (pos (2^ n)) ⋆ (power-of-pos-positive n) 
-
 -- TODO : Move following proofs into relevant files/places.
 
 lim₁ : (x : ℤ) → (n : ℕ) → x * pos (2^ (succ n)) ≤ (x * pos 2) * pos (2^ n) 
@@ -102,85 +69,6 @@ lim₂ x n = ℤ≤-trans _ _ _ (lim₁ x n) (positive-multiplication-preserves-
 
 lim₃ : (x : ℤ) → (n : ℕ) → x * pos (2^ (succ n)) ≤ (x * pos 2 +ℤ pos 2) * pos (2^ n) 
 lim₃ x n = ℤ≤-trans _ _ _ (lim₂ x n) (positive-multiplication-preserves-order' _ _ (pos (2^ n)) (power-of-pos-positive n) (≤-incrℤ (succℤ (x * pos 2))))
-
-negsucc-lemma : (x : ℕ) → negsucc x +ℤ negsucc x ＝ negsucc (x + succ x)
-negsucc-lemma x = negsucc x +ℤ negsucc x           ＝⟨ refl ⟩
-                  (- pos (succ x)) - pos (succ x)  ＝⟨ negation-dist (pos (succ x)) (pos (succ x)) ⟩
-                  - (pos (succ x) +ℤ pos (succ x)) ＝⟨ refl ⟩
-                  - succℤ (pos (succ x) +ℤ pos x)  ＝⟨ ap (λ z → - succℤ z) (distributivity-pos-addition (succ x) x) ⟩
-                  - succℤ (pos (succ x + x))       ＝⟨ refl ⟩
-                  negsucc (succ x + x)             ＝⟨ ap negsucc (addition-commutativity (succ x) x) ⟩
-                  negsucc (x + succ x)             ∎
-
-div-by-two' : (k : ℕ) → k + k /2 ＝ k
-div-by-two' 0 = refl
-div-by-two' (succ k) = (succ k + succ k) /2     ＝⟨ ap _/2 (succ-left k (succ k)) ⟩
-                       succ (succ (k + k)) /2  ＝⟨ refl ⟩
-                       succ ((k + k) /2)        ＝⟨ ap succ (div-by-two' k) ⟩
-                       succ k                    ∎
-
-div-by-two : (k : ℤ) → (k +ℤ k) /2' ＝ k
-div-by-two (pos k) = (pos k +ℤ pos k) /2' ＝⟨ ap _/2' (distributivity-pos-addition k k) ⟩     
-                     pos (k + k) /2'      ＝⟨ ap pos (div-by-two' k) ⟩
-                     pos k ∎
-div-by-two (negsucc x) = (negsucc x +ℤ negsucc x) /2'   ＝⟨ ap _/2' (negsucc-lemma x) ⟩
-                         negsucc (x + succ x) /2'     ＝⟨ refl ⟩
-                         - pos (succ (x + succ x) /2) ＝⟨ ap (λ z → - pos (z /2)) (succ-left x (succ x) ⁻¹) ⟩
-                         - pos ((succ x + succ x) /2) ＝⟨ ap (λ z → - pos z) (div-by-two' (succ x)) ⟩
-                         negsucc x ∎
-
-odd-succ-succ' : (k : ℤ) → odd (succℤ (succℤ k)) → odd k
-odd-succ-succ' (pos x) = id
-odd-succ-succ' (negsucc zero) = id
-odd-succ-succ' (negsucc (succ (succ x))) = id
-
-even-succ-succ' : (k : ℤ) → even (succℤ (succℤ k)) → even k
-even-succ-succ' (pos 0) e = id
-even-succ-succ' (pos (succ 0)) e = 𝟘-elim (e ⋆)
-even-succ-succ' (pos (succ (succ x))) e = e
-even-succ-succ' (negsucc 0) e = 𝟘-elim (e ⋆)
-even-succ-succ' (negsucc (succ 0)) e = id
-even-succ-succ' (negsucc (succ (succ x))) e = e
-
-times-two-even' : (k : ℤ) → even (k +ℤ k)
-times-two-even' (pos (succ k)) odd2k = times-two-even' (pos k) (odd-succ-succ' (pos k +ℤ pos k) (transport odd I odd2k))
- where
-  I : pos (succ k) +ℤ pos (succ k) ＝ pos k +ℤ pos (succ (succ k))
-  I = ℤ-left-succ (pos k) (pos (succ k))
-times-two-even' (negsucc (succ k)) odd2k = times-two-even' (negsucc k) (transport odd I (odd-succ-succ (negsucc (succ k) +ℤ negsucc (succ k)) odd2k))
- where
-  I : succℤ (succℤ (negsucc (succ k) +ℤ negsucc (succ k))) ＝ negsucc k +ℤ negsucc k
-  I = succℤ (succℤ (negsucc (succ k) +ℤ negsucc (succ k)))   ＝⟨ refl ⟩
-      succℤ (succℤ (predℤ (negsucc k) +ℤ predℤ (negsucc k))) ＝⟨ refl ⟩
-      succℤ (succℤ (predℤ (predℤ (negsucc k) +ℤ negsucc k))) ＝⟨ ap (λ a → succℤ a) (succpredℤ (predℤ (negsucc k) +ℤ negsucc k)) ⟩
-      succℤ (predℤ (negsucc k) +ℤ negsucc k)                 ＝⟨ ap succℤ (ℤ-left-pred (negsucc k) (negsucc k)) ⟩
-      succℤ (predℤ (negsucc k +ℤ negsucc k))                 ＝⟨ succpredℤ (negsucc k +ℤ negsucc k) ⟩
-      negsucc k +ℤ negsucc k ∎
-
-negation-preserves-parity : (x : ℤ) → even x → even (- x)
-negation-preserves-parity (pos 0) = id
-negation-preserves-parity (pos (succ 0)) e = 𝟘-elim (e ⋆)
-negation-preserves-parity (pos (succ (succ 0))) e = id
-negation-preserves-parity (pos (succ (succ (succ x)))) e = negation-preserves-parity (pos (succ x)) e
-negation-preserves-parity (negsucc 0) e = 𝟘-elim (e ⋆)
-negation-preserves-parity (negsucc (succ 0)) e = id
-negation-preserves-parity (negsucc (succ (succ x))) e = negation-preserves-parity (negsucc x) (even-succ-succ (negsucc (succ (succ x))) e)
-
-even-lemma-pos : (x : ℕ) → even (pos x) → (pos x /2') * pos 2 ＝ pos x
-even-lemma-pos 0 even-x = refl
-even-lemma-pos (succ 0) even-x = 𝟘-elim (even-x ⋆)
-even-lemma-pos (succ (succ x)) even-x = succℤ (pos x /2') +ℤ succℤ (pos x /2')    ＝⟨ ℤ-left-succ (pos x /2') (succℤ (pos x /2')) ⟩
-                                          succℤ (succℤ ((pos x /2') * pos 2))       ＝⟨ ap (λ z → succℤ (succℤ z)) (even-lemma-pos x even-x) ⟩
-                                          pos (succ (succ x)) ∎
-
-even-lemma-neg : (x : ℕ) → even (negsucc x) → (negsucc x /2') * pos 2 ＝ negsucc x
-even-lemma-neg x even-x = (- pos (succ x /2)) - pos (succ x /2)  ＝⟨ negation-dist (pos (succ x /2)) (pos (succ x /2)) ⟩
-                          - (pos (succ x /2) +ℤ pos (succ x /2)) ＝⟨ ap -_ (even-lemma-pos (succ x) (negation-preserves-parity (negsucc x) even-x)) ⟩
-                          negsucc x ∎
-
-even-lemma : (x : ℤ) → even x → (x /2') * pos 2 ＝ x
-even-lemma (pos x) = even-lemma-pos x
-even-lemma (negsucc x) = even-lemma-neg x
 
 ```
 
@@ -253,37 +141,7 @@ normalise : ℤ × ℤ → ℤ[1/2]
 normalise (k , pos     n) = normalise-pos k n
 normalise (k , negsucc n) = normalise-neg k n
 
-open import Todd.BelowAndAbove fe
-
-normalise-pos-lemma₁ : (k : ℤ) (δ : ℕ) (p : (δ ＝ 0) ∔ ((δ ≠ 0) × odd k))
-             → normalise-pos ((k +ℤ k) /2') δ ＝ (k , δ) , p
-normalise-pos-lemma₁ k 0 (inl refl) = to-subtype-＝ (λ (z , n) → ℤ[1/2]-cond-is-prop z n) (to-×-＝ (div-by-two k) refl)
-normalise-pos-lemma₁ k 0 (inr (δnz , k-odd)) = 𝟘-elim (δnz refl)
-normalise-pos-lemma₁ k (succ δ) (inr p) with even-or-odd? ((k +ℤ k) /2')
-normalise-pos-lemma₁ k (succ δ) (inr (δnz , k-odd)) | inl k-even = 𝟘-elim (k-even (transport odd (div-by-two k ⁻¹) k-odd))
-... | inr _ = to-subtype-＝ (λ (z , n) → ℤ[1/2]-cond-is-prop z n) (to-×-＝ (div-by-two k) refl)
-
-normalise-pos-lemma₂ : (k : ℤ) (δ : ℕ) → normalise-pos k δ ＝ normalise-pos (k +ℤ k) (succ δ)
-normalise-pos-lemma₂ k δ with even-or-odd? (k +ℤ k)
-... | inl _ = ap (λ s → normalise-pos s δ) (div-by-two k ⁻¹)
-... | inr o = 𝟘-elim (times-two-even' k o)
-
-normalise-lemma : (k : ℤ) (δ : ℕ) (n : ℕ) (p : (δ ＝ 0) ∔ ((δ ≠ 0) × odd k))
-                → normalise (rec k downLeft n +ℤ rec k downLeft n , (pos (succ δ) +ℤ pos n)) ＝ (k , δ) , p
-normalise-lemma k δ 0 p with even-or-odd? (k +ℤ k)
-... | inl even = normalise-pos-lemma₁ k δ p
-... | inr odd = 𝟘-elim (times-two-even' k odd)
-normalise-lemma k δ (succ n) p with even-or-odd? (k +ℤ k)
-... | inl even = let y = rec k downLeft n 
-                     z = (y +ℤ y) in 
-                 normalise (z +ℤ z , (succℤ (pos (succ δ) +ℤ pos n))) ＝⟨ ap (λ - → normalise (z +ℤ z , succℤ -)) (distributivity-pos-addition (succ δ) n) ⟩
-                 normalise (z +ℤ z , succℤ (pos (succ δ + n)))      ＝⟨ refl ⟩
-                 normalise-pos (z +ℤ z) (succ (succ δ + n))         ＝⟨ normalise-pos-lemma₂ z (succ δ + n) ⁻¹ ⟩
-                 normalise-pos z (succ δ + n)                      ＝⟨ refl ⟩
-                 normalise (z , pos (succ δ + n))                  ＝⟨ ap (λ - → normalise (z , -)) (distributivity-pos-addition (succ δ) n ⁻¹) ⟩
-                 normalise (z , pos (succ δ) +ℤ pos n)               ＝⟨ normalise-lemma k δ n p ⟩
-                 (k , δ) , p ∎ 
-... | inr odd = 𝟘-elim (times-two-even' k odd)
+open import Todd.BelowAndAbove
 
 lowest-terms-normalised : (((k , δ) , p) : ℤ[1/2]) → normalise-pos k δ ＝ ((k , δ) , p)
 lowest-terms-normalised ((k , .0) , inl refl) = refl
@@ -475,8 +333,8 @@ record OrderProperties : 𝓤₁ ̇ where
   ℤ[1/2]<-to-abs : (x y : ℤ[1/2]) → ((ℤ[1/2]- y) < x) × (x < y) → ℤ[1/2]-abs x < y
   ℤ[1/2]-abs-lemma : (x y : ℤ[1/2]) → ℤ[1/2]-abs (x ℤ[1/2]- y) ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
   ℤ[1/2]-1/2-< : (x : ℤ[1/2]) → 0ℤ[1/2] < x → (1/2ℤ[1/2] ℤ[1/2]* x) < x
---   normalise-< : ((k , p) : ℤ × ℤ) → normalise (k , p) < normalise ((k +pos 2) , p)
-  -- normalise-≤2 : ∀ n → ((k , p) : ℤ × ℤ) → normalise (k , p) ≤ normalise ((k +pos n) , p)
+  normalise-< : ((k , p) : ℤ × ℤ) → normalise (k , p) < normalise ((k +pos 2) , p)
+  normalise-≤ : ∀ n → ((k , p) : ℤ × ℤ) → normalise (k , p) ≤ normalise ((k +pos n) , p)
   normalise-≤2 : ∀ l r p → l ≤ r → normalise (l , p) ≤ normalise (r , p) 
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
   ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)

@@ -16,14 +16,10 @@ open import UF.Subsingletons
 open import Naturals.Order
 open import NotionsOfDecidability.DecidableAndDetachable
 
-module Todd.BelowAndAbove (fe : FunExt)where
+module Todd.BelowAndAbove where
 
-open import Todd.TernaryBoehmRealsPrelude fe
+open import Todd.TernaryBoehmRealsPrelude
 
-
-```
-
-```
 b<a→a≠b : ∀ a b → (b <ℤ a) → a ≠ b
 b<a→a≠b a a (n , a<a) refl = γ γ'
  where
@@ -853,4 +849,6 @@ apparently : (k₁ k₂ c : ℤ)
            → k₁ ≤ℤ c ≤ℤ k₂
 apparently k₁ k₂ c (l≤c , c≤u)
  = ℤ≤-trans _ _ _ (downRight-upLeft k₁) l≤c
- , ℤ≤-trans _ _ _ c≤u (downLeft-upRight k₂) 
+ , ℤ≤-trans _ _ _ c≤u (downLeft-upRight k₂)
+
+```

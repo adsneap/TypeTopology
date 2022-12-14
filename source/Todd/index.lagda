@@ -7,11 +7,12 @@ module Todd.index where
 import Todd.BelowAndAbove
 import Todd.BelowLemmas
 import Todd.DyadicReals
-import Todd.RationalsDyadic
+-- import Todd.RationalsDyadic
+import Todd.NewFile
 import Todd.Prelude
-import Todd.TBRDyadicReals
+-- import Todd.TBRDyadicReals
 import Todd.TBRFunctions
-import Todd.TBRMultiplication
+-- import Todd.TBRMultiplication
 import Todd.TernaryBoehmReals
 import Todd.TernaryBoehmRealsPrelude
 

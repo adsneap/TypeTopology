@@ -22,25 +22,24 @@ open import UF.PropTrunc
 open import UF.Subsingletons
 open import UF.Quotient
 
+open import Todd.Prelude
+
 module Todd.TBRDyadicReals
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
   (sq : set-quotients-exist)
+  (dy : Dyadics)
  where
 
-open import Todd.BelowAndAbove fe using (below-implies-below' ; _below'_ ; below'-implies-below)
+open import Todd.BelowAndAbove using (below-implies-below' ; _below'_ ; below'-implies-below)
 open import Todd.DyadicReals pe pt fe
-open import Todd.RationalsDyadic fe
-open import Todd.TernaryBoehmRealsPrelude fe
+
+open import Todd.TernaryBoehmRealsPrelude
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 
-DyOrPr : OrderProperties
-DyOrPr = {!!}
-
-open OrderProperties DyOrPr
-open DyadicProperties Dp
 open PropositionalTruncation pt
+open Dyadics dy
 
 
 ```
@@ -260,7 +259,7 @@ requires numerous lemmas regarding normalise, the map, and the bounds
 on each level of a TBR.
 
 ```agda
-
+{-
 layer : ℤ[1/2] → ℕ
 layer ((_ , n) , _) = n
 
@@ -287,7 +286,7 @@ lim₄ : (x' x : ℤ) (n : ℕ) → x' below' x → x * pos (2^ (succ n)) ≤ x'
 lim₄ x' x n (inl x'＝2x)         = transport (λ z → x * pos (2^ (succ n)) ≤ z * pos (2^ n)) (x'＝2x ⁻¹) (lim₁ x n) 
 lim₄ x' x n (inr (inl x'＝2x+1)) = transport (λ z → x * pos (2^ (succ n)) ≤ z * pos (2^ n)) (x'＝2x+1 ⁻¹) (lim₂ x n)
 lim₄ x' x n (inr (inr x'＝2x+2)) = transport (λ z → x * pos (2^ (succ n)) ≤ z * pos (2^ n)) (x'＝2x+2 ⁻¹) (lim₃ x n)
-
+-}
 {-
 left-interval-monotonic' : (t : 𝕋) → (n : ℤ) → lb t n ≤ lb t (succℤ n)
 left-interval-monotonic' (x , b) (pos n) = normalise-≤ ((x (pos n)) , n) (x (pos (succ n)) , succ n)
@@ -830,7 +829,7 @@ interval-addition-preserves-bounds x y = find-next-2-exponent (difference _+_ x 
 
 _𝕋+'_ : 𝕋 → 𝕋 → 𝕋
 _𝕋+'_ = operation-builder _+_ addition-interval-monotonic interval-addition-preserves-bounds
-
+{-
 0𝕋' : 𝕋
 0𝕋' = map (((pos 0) , 0) , {!!})
 
@@ -917,7 +916,7 @@ _𝕋*_ = operation-builder _*_ multiplication-interval-monotonic interval-multi
   x (pos (succ n)) = downLeft (x (pos n))
   x (negsucc 0) = upRight (negsucc 4)
   x (negsucc (succ n)) = upRight (x (negsucc n))
-
+-}
 ```
 
 We can define order of TBR's. We could define it similarly to order of

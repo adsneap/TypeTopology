@@ -26,10 +26,9 @@ module Todd.BelowLemmas
   (sq : set-quotients-exist)
  where
 
-open import Todd.BelowAndAbove fe using (below-implies-below' ; _below'_ ; below'-implies-below)
+open import Todd.BelowAndAbove using (below-implies-below' ; _below'_ ; below'-implies-below)
 open import Todd.DyadicReals pe pt fe
-open import Todd.RationalsDyadic fe
-open import Todd.TernaryBoehmRealsPrelude fe
+open import Todd.TernaryBoehmRealsPrelude
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
 
 UU : ℤ → ℤ
