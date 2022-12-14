@@ -5,7 +5,7 @@ are denoted ℤ[1/2].
 
 ```agda
 
-{-# OPTIONS --without-K --exact-split --allow-unsolved-metas #-}
+{-# OPTIONS --without-K --exact-split #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 

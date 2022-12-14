@@ -119,6 +119,7 @@ rationals.
 
 ```agda
 
+
  ℝ-d-left-cut-equal-gives-right-cut-equal : (x y : ℝ-d)
                                           → lower-cut-of x ＝ lower-cut-of y
                                           → upper-cut-of x ＝ upper-cut-of y
@@ -134,13 +135,14 @@ rationals.
        II : k ∈ lower-cut-of y ∔ q ∈ upper-cut-of y → q ∈ upper-cut-of y
        II (inl k<y) = 𝟘-elim {!ℤ[1/2]<-not-itself!}
        II (inr y<q) = {!!}
-
+ 
+ 
  ℝ-d-equality-from-left-cut : {x y : ℝ-d}
                             → lower-cut-of x ⊆ lower-cut-of y
                             → lower-cut-of y ⊆ lower-cut-of x
                             → x ＝ y
  ℝ-d-equality-from-left-cut { x } { y } Lx⊆Ly Ly⊆Lx = {!!}
-
+ 
  embedding-ℤ[1/2]-to-ℝ-d : ℤ[1/2] → ℝ-d
  embedding-ℤ[1/2]-to-ℝ-d z = (L , R) , {!!}
   where
@@ -148,7 +150,7 @@ rationals.
    L p = p < z , <ℤ[1/2]-is-prop p z
    R : 𝓟 ℤ[1/2]
    R q = z < q , <ℤ[1/2]-is-prop z q
-
+ 
  instance
   canonical-map-ℤ[1/2]-to-ℝ-d : Canonical-Map ℤ[1/2] ℝ-d
   ι {{canonical-map-ℤ[1/2]-to-ℝ-d}} = embedding-ℤ[1/2]-to-ℝ-d
@@ -166,5 +168,5 @@ rationals.
    L R : 𝓟 ℤ[1/2]
    L p = (∃ (r , s) ꞉ ℤ[1/2] × ℤ[1/2] , r ∈ lower-cut-of x × s ∈ lower-cut-of y × (p ＝ r ℤ[1/2]+ s)) , ∃-is-prop
    R q = (∃ (r , s) ꞉ ℤ[1/2] × ℤ[1/2] , r ∈ upper-cut-of x × s ∈ upper-cut-of y × (q ＝ r ℤ[1/2]+ s)) , ∃-is-prop
-
+ 
 ```
