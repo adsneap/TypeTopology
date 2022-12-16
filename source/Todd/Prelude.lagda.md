@@ -223,10 +223,12 @@ record Dyadics : 𝓤₁ ̇ where
   normalise-equality : ((k , p) : ℤ × ℤ) → normalise (pos 1 , predℤ p) ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
   ℤ[1/2]-ordering-property : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) ∔ (d < b)
   normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
+  normalise-succ' : (z n : ℤ) → normalise (z , n) ＝ normalise (z +ℤ z , succℤ n)
   normalise-pred' : (z n : ℤ) → normalise (z , predℤ n) ＝ normalise (pos 2 * z , n)
   ℤ[1/2]<-positive-mult : (a b : ℤ[1/2]) → is-positive a → is-positive b → is-positive (a ℤ[1/2]* b)
   ℤ[1/2]-find-lower : ∀ ε → is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
   normalise-negation : ∀ a b c → normalise (a , c) ℤ[1/2]- normalise (b , c) ＝ normalise (a ℤ- b , c)
+  from-normalise-≤-same-denom : (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
 
  metric : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
  metric p q = ℤ[1/2]-abs (p ℤ[1/2]- q)
@@ -270,6 +272,17 @@ record Dyadics : 𝓤₁ ̇ where
    I : a * pos (2^ x) ≤ b * pos (2^ x)
    I = positive-multiplication-preserves-order' a b (pos (2^ x)) (power-of-pos-positive x) l
 
+ numerator-≤' : (((a , x) , l₁) ((b , y) , l₂) : ℤ[1/2])
+              → x ＝ y
+              → ((a , x) , l₁) ≤ ((b , y) , l₂)
+              → a ≤ b
+ numerator-≤'((a , x) , l₁) ((b , y) , l₂) e l = γ
+  where
+   I : a * pos (2^ x) ≤ b * pos (2^ x)
+   I = transport (λ z → a * pos (2^ z) ≤ b * pos (2^ x)) (e ⁻¹) l
+   γ : a ≤ b
+   γ = ℤ≤-ordering-right-cancellable a b (pos (2^ x)) (power-of-pos-positive x) I
+ 
  normalise-≤' : ((k , δ) : ℤ × ℕ) → ((m , ε) : ℤ × ℕ)
              → k * pos (2^ ε) ≤ m * pos (2^ δ)
              → normalise (k , pos δ) ≤ normalise (m , pos ε)
