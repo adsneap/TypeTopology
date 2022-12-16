@@ -8,7 +8,7 @@ http://math.andrej.com/wp-content/uploads/2008/08/abstract-cca2008.pdf
 
 ```agda
 
-{-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --without-K --allow-unsolved-metas #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 

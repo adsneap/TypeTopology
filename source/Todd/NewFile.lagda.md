@@ -1,9 +1,9 @@
 
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --experimental-lossy-unification #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
-open import Notation.CanonicalMap
+-- open import Notation.CanonicalMap hiding
 open import Notation.Order
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Order hiding (≤-refl)
@@ -29,6 +29,7 @@ module Todd.NewFile
   (dy : Dyadics)
  where
 
+open import UF.Subsingletons-FunExt
 open import Todd.DyadicReals pe pt fe dy renaming (located to located')
 open import Todd.TBRFunctions pt fe pe sq dy
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
@@ -269,6 +270,12 @@ sw-intervalled sw-nested sw-located : (ℤ → 𝕀s) → 𝓤₀ ̇
 sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
 sw-located ζ = (ϵ : ℤ[1/2]) → is-positive ϵ → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
+
+covers-is-prop : ∀ a b → is-prop (a covers b)
+covers-is-prop a b = ×-is-prop (≤ℤ[1/2]-is-prop (ld a) (ld b)) (≤ℤ[1/2]-is-prop (rd b) (rd a))
+
+sw-nested-is-prop : ∀ ζ → is-prop (sw-nested ζ)
+sw-nested-is-prop ζ = Π-is-prop (fe 𝓤₀ 𝓤₀) λ _ → covers-is-prop _ _
 
 sw-fully-nested : (ℤ → 𝕀s) → 𝓤₀ ̇
 sw-fully-nested = vw-fully-nested ∘ seq-sw-to-vw
@@ -675,6 +682,7 @@ vec-satisfy-preserved-by [] [] p ⋆ = ⋆
 vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
  = px k , vec-satisfy-preserved-by xs ks p pxs
 
+{-
 vec-lift : {X : 𝓤 ̇ } → (p : X → 𝓦 ̇ ) → Π p
          → {n : ℕ} → (xs : Vec X n) → vec-satisfy p xs
 vec-lift p Πp [] = ⋆
@@ -684,6 +692,7 @@ vec-map-lift : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (p : X → 𝓦 ̇ ) (f : Y →
              → {n : ℕ} → (ys : Vec Y n) → vec-satisfy p (vec-map f ys)
 vec-map-lift p f Πpf [] = ⋆
 vec-map-lift p f Πpf (y ∷ ys) = Πpf y , vec-map-lift p f Πpf ys
+-}
 
 vec-map-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
           → {n : ℕ}
@@ -693,9 +702,8 @@ vec-map-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
 vec-map-∼ f g [] = refl
 vec-map-∼ f g (x ∷ xs) = ap (g (f x) ∷_) (vec-map-∼ f g xs)
 
-record FunctionMachine : 𝓤₁  ̇ where
+record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
   field
-    d  : ℕ
     f  : Vec ℝ-d d → ℝ-d
     A  : Vec 𝕀v d → 𝕀v
     κ' : Vec 𝕋 d → ℤ → Vec ℤ d
@@ -717,9 +725,9 @@ record FunctionMachine : 𝓤₁  ̇ where
                  (κ'-is-coracle χs)
                  (join-preserves-nested (f̂' (vec-map (seq-sw-to-vw) (vec-map TBR-to-sw-seq χs)) (κ' χs))
                    {!!})
+ 
 
-Negation : FunctionMachine
-FunctionMachine.d Negation = 1
+Negation : FunctionMachine 1
 FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
                            = ((ℤ- r , ℤ- l) , i)
@@ -732,8 +740,7 @@ x -min y with ℤ-dichotomous x y
 ... | inl x≤y = 0
 ... | inr (n , refl) = n
 
-Addition : FunctionMachine
-FunctionMachine.d Addition = 2
+Addition : FunctionMachine 2
 FunctionMachine.f Addition (x ∷ [ y ]) = x ℝd+ y
 FunctionMachine.A Addition ((((l₁ , r₁) , i₁) , l≤₁r) ∷ [ (((l₂ , r₂) , i₂) , l≤₂r) ])
                            = ((pos (2^ (i₂  -min i₁)) ℤ* l₁ ℤ+ pos (2^ (i₁ -min i₂)) ℤ* l₂

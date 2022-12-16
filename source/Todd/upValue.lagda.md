@@ -1,5 +1,5 @@
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --experimental-lossy-unification #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline --experimental-lossy-unification #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.Order

@@ -1,6 +1,6 @@
 ```agda
 
-{-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --without-K --allow-unsolved-metas #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Notation.CanonicalMap
