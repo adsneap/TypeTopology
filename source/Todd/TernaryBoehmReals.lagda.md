@@ -749,7 +749,7 @@ replace-below (k , i) (c , j) (n , i<j') b with build-via-ci (k , i)
     y z (inl      _ )
      = x z
     y z (inr (inl ((n₁ , ε₁) , n₂ , ε₂)))
-     = ((below-vec c k n b) !! n₂) (ye i z j i≤j (n₁ , ε₁) (n₂ , ε₂))
+     = ((below-vec c k n b) !! n₂) (ℤ≤-progress i z j i≤j (n₁ , ε₁) (n₂ , ε₂))
     y z (inr (inr (n , ε)))
      = rec c downLeft (succ n)
     γ : (z : ℤ) → (η : vert-trich-ij z)

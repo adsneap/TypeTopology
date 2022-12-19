@@ -310,32 +310,20 @@ module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) whe
   open FunctionMachine FM
   open UniformContinuity UC
 
-  get : {X : 𝓤 ̇ } → Vec X 1 → X
-  get [ x ] = x
-
-  map₂-get : {X : 𝓤 ̇ } {Y : 𝓥 ̇ }
-           → (fs : Vec (X → Y) 1) → (xs : Vec X 1)
-           → map₂ fs xs ≡ [ get fs (get xs) ]
-  map₂-get [ f ] [ x ] = refl
-
-  ≥-lemma : (a b c : ℤ) → a ≡ b → (p : a ≥ c) → (q : b ≥ c)
-          → pr₁ p ≡ pr₁ q
-  ≥-lemma a a c refl (n , refl) (m , γ) = pos-lc (ℤ+-lc _ _ _ (γ ⁻¹))
-
-  Lem-628 : (χ γ : 𝕋) (ϵ : ℤ) → let (δχ , δγ) = (get (κ' [ χ ] ϵ) , get (κ' [ γ ] ϵ) ) in 
+  Lem-628 : (χ γ : 𝕋) (ϵ : ℤ) → let (δχ , δγ) = (head (κ' [ χ ] ϵ) , head (κ' [ γ ] ϵ) ) in 
             δχ ≡ δγ
           → ⟨ χ ⟩ δχ ≡ ⟨ γ ⟩ δγ
           → ⟨ f̂ [ χ ] ⟩ ϵ ≡ ⟨ f̂ [ γ ] ⟩ ϵ
   Lem-628 χ γ ϵ δχ≡δγ χδ≡γδ = ap pr₁ seven
    where
-     δχ = get (κ' [ χ ] ϵ)
-     δγ = get (κ' [ γ ] ϵ)
+     δχ = head (κ' [ χ ] ϵ)
+     δγ = head (κ' [ γ ] ϵ)
      one : A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ] ≡ A [ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]
      one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ δχ≡δγ)
      two : join' (A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ]) ≡ join' (A ([ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]))
      two = ap join' one
-     two' : join' (A (map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) χ) ] (κ' [ χ ] ϵ)))
-          ≡ join' (A (map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) γ) ] (κ' [ γ ] ϵ)))
+     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) χ) ] (κ' [ χ ] ϵ)))
+          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) γ) ] (κ' [ γ ] ϵ)))
      two' = ap (join' ∘ A) (map₂-get _ _) ∙ two ∙ ap (join' ∘ A) (map₂-get _ _ ⁻¹) 
      three : f̂'' [ TBR-to-sw-seq χ ] (κ' [ χ ]) ϵ ≡  f̂'' [ TBR-to-sw-seq γ ] (κ' [ γ ]) ϵ
      three = two'
@@ -354,8 +342,8 @@ module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) whe
      one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ refl)
      two : join' (A [ sw-to-vw (⟨ ι χ ⟩ δ , δ) ]) ≡ join' (A ([ sw-to-vw (⟨ ι γ ⟩ δ , δ) ]))
      two = ap join' one
-     two' : join' (A (map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ)) ] [ δ ]))
-          ≡ join' (A (map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ)) ] [ δ ]))
+     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ)) ] [ δ ]))
+          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ)) ] [ δ ]))
      two' = ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) ] [ δ ])
           ∙ two
           ∙ ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ) ] [ δ ] ⁻¹) 

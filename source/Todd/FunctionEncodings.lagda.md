@@ -552,14 +552,6 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 
 -- Approximators and continuity oracles
 
-map₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
-     → Vec (X → Y) n → Vec X n → Vec Y n
-map₂ [] [] = []
-map₂ (x ∷ χs) (k ∷ ks) = x k ∷ map₂ χs ks
-
-vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦 ̇ 
-vec-satisfy p [] = 𝟙
-vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
 join' : 𝕀v → 𝕀s
 join' z = upRight-𝕀s (upValue (v-left z) (v-right z) (v-l≤r z)) (v-left z , v-prec z)
@@ -671,14 +663,7 @@ join-preserves-nested ζ v
        (nested-implies-fully-nested
          (seq-of-vw-intervals ζ) v))
 
-vec-satisfy-preserved-by : {X : 𝓤 ̇ }
-                         → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
-                         → (p : X → 𝓦 ̇ )
-                         → vec-satisfy (λ x → ∀ (n : ℤ) → p (x n)) xs
-                         → vec-satisfy p (map₂ xs ks)
-vec-satisfy-preserved-by [] [] p ⋆ = ⋆
-vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
- = px k , vec-satisfy-preserved-by xs ks p pxs
+
 
 {-
 vec-lift : {X : 𝓤 ̇ } → (p : X → 𝓦 ̇ ) → Π p
@@ -692,13 +677,7 @@ vec-map-lift p f Πpf [] = ⋆
 vec-map-lift p f Πpf (y ∷ ys) = Πpf y , vec-map-lift p f Πpf ys
 -}
 
-vec-map-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
-          → {n : ℕ}
-          → (f : X → Y) → (g : Y → Z)
-          → (xs : Vec X n)
-          → vec-map (g ∘ f) xs ≡ vec-map g (vec-map f xs)
-vec-map-∼ f g [] = refl
-vec-map-∼ f g (x ∷ xs) = ap (g (f x) ∷_) (vec-map-∼ f g xs)
+
 
 record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
   field
@@ -707,15 +686,15 @@ record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
     κ' : Vec 𝕋 d → ℤ → Vec ℤ d
     κ-is-coracle
       : (χs : Vec 𝕋 d) → (ϵ : ℤ)
-      → pr₂ (join' (A (map₂ (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ' χs ϵ)))) ≥ ϵ
+      → pr₂ (join' (A (vec-map₂ (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ' χs ϵ)))) ≥ ϵ
   f̂'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
-  f̂'  χs k n = A (map₂ χs (k n))
+  f̂'  χs k n = A (vec-map₂ χs (k n))
   g'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
-  g'  χs k n = A (map₂ χs (k n))
+  g'  χs k n = A (vec-map₂ χs (k n))
   f̂'' : Vec (ℤ → 𝕀s) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀s)
   f̂'' χs k = join (f̂' (vec-map seq-sw-to-vw χs) k)
   κ'-is-coracle : (χs : Vec 𝕋 d) → is-prenormalised (f̂'' (vec-map TBR-to-sw-seq χs) (κ' χs))
-  κ'-is-coracle χs ϵ = transport (λ ■ → ϵ ≤ pr₂ (join' (A (map₂ ■ (κ' χs ϵ)))))
+  κ'-is-coracle χs ϵ = transport (λ ■ → ϵ ≤ pr₂ (join' (A (vec-map₂ ■ (κ' χs ϵ)))))
                          (vec-map-∼ TBR-to-sw-seq seq-sw-to-vw χs)
                          (κ-is-coracle χs ϵ)
   f̂   : Vec 𝕋 d → 𝕋

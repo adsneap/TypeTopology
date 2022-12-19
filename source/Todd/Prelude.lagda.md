@@ -23,17 +23,9 @@ open import UF.FunExt
 open import UF.Miscelanea
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
+open import TypeTopology.DiscreteAndSeparated using (ℕ-is-discrete)
 
 module Todd.Prelude where
-
-ℕ-is-discrete : (x y : ℕ) → decidable (x ＝ y)
-ℕ-is-discrete zero zero = inl refl
-ℕ-is-discrete zero (succ y) = inr (λ ())
-ℕ-is-discrete (succ x) zero = inr (λ ())
-ℕ-is-discrete (succ x) (succ y)
- = Cases (ℕ-is-discrete x y)
-     (inl ∘ ap succ)
-     (inr ∘ λ f g → f (succ-lc g))
 
 _≤ℤ_≤ℤ_ : ℤ → ℤ → ℤ → 𝓤₀ ̇ 
 x ≤ℤ y ≤ℤ z = (x ≤ℤ y) × (y ≤ℤ z)
@@ -111,15 +103,6 @@ even-succ-succ (pos x) = id
 even-succ-succ (negsucc zero) = id
 even-succ-succ (negsucc (succ (succ x))) = id
 
--- even-is-prop : (x : ℤ) → is-prop (even x)
--- even-is-prop x p q = dfunext (fe _ _) (λ i → 𝟘-elim (p i))
-
--- even-or-odd-is-prop : (x : ℤ) → is-prop (even x + odd x)
--- even-or-odd-is-prop x = +-is-prop (even-is-prop x) (odd-is-prop x) id
-
-_−ℤ_ : ℤ → ℤ → ℤ
-x −ℤ y = x +ℤ (ℤ- y)
-
 ℤ[_,_] : ℤ → ℤ → 𝓤₀ ̇
 ℤ[ l , u ] = Σ z ꞉ ℤ , (l ≤ℤ z ≤ℤ u)
 
@@ -191,14 +174,14 @@ x −ℤ y = x +ℤ (ℤ- y)
      (λ (a≤z , _) → ℤ-less-not-bigger-or-equal z a z<a a≤z)
      (ℤ-bigger-or-equal-not-less z b (<-is-≤ z b (ℤ<-trans z a b z<a a<b))))
 
-ne : (a b c : ℤ)
-   → ((n , _) : a ≤ c) → ((n₁ , _) : a ≤ b) → ((n₂ , _) : b ≤ c)
-   → n₁ +ℕ n₂ ＝ n
-ne a b c a≤c a≤b b≤c = ℤ≤-same-witness a c (ℤ≤-trans a b c a≤b b≤c) a≤c
-
-ye : (a b c : ℤ) → ((n , _) : a ≤ c) → a ≤ b → ((n₂ , _) : b ≤ c) → n₂ < succ n
-ye a b c (n , q) (n₁ , r) (n₂ , s)
- = transport (n₂ ≤_) (ne a b c (n , q) (n₁ , r) (n₂ , s)) (≤-+' n₁ n₂) 
+ℤ≤-progress : (a b c : ℤ)
+            → ((n , _) : a ≤ c) → a ≤ b → ((n₂ , _) : b ≤ c)
+            → n₂ < succ n
+ℤ≤-progress a b c a≤c (n₁ , refl) (n₂ , refl)
+ = transport (n₂ ≤_)
+     (ℤ≤-same-witness a c
+       (ℤ≤-trans a b c (n₁ , refl) (n₂ , refl)) a≤c)
+     (≤-+' n₁ n₂)
 
 rec-f-＝ : {X : 𝓤 ̇ } → (f : X → X) (x : X) (n : ℕ)
         → rec (f x) f n ＝ rec x f (succ n) 
@@ -316,6 +299,54 @@ div-by-two (negsucc x) = (negsucc x +ℤ negsucc x) /2'   ＝⟨ ap _/2' (negsuc
                          ℤ- pos ((succ x +ℕ succ x) /2) ＝⟨ ap (λ z → ℤ- pos z) (div-by-two' (succ x)) ⟩
                          negsucc x ∎
 
+data Vec (A : 𝓤 ̇ ) : ℕ → 𝓤 ̇  where
+  []  : Vec A 0
+  _∷_ : {n : ℕ} → A → Vec A n → Vec A (succ n)
+
+pattern [_] x = x ∷ []
+
+head : {A : 𝓤 ̇ } {n : ℕ} → Vec A (succ n) → A
+head (x ∷ _) = x
+
+vec-map : {A : 𝓤 ̇ } {B : 𝓥 ̇ } {n : ℕ}
+        → (A → B) → Vec A n → Vec B n
+vec-map f [] = []
+vec-map f (x ∷ v) = f x ∷ vec-map f v
+
+vec-map-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ }
+          → {n : ℕ}
+          → (f : X → Y) → (g : Y → Z)
+          → (xs : Vec X n)
+          → vec-map (g ∘ f) xs ＝ vec-map g (vec-map f xs)
+vec-map-∼ f g [] = refl
+vec-map-∼ f g (x ∷ xs) = ap (g (f x) ∷_) (vec-map-∼ f g xs)
+
+vec-map₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
+         → Vec (X → Y) n → Vec X n → Vec Y n
+vec-map₂ [] [] = []
+vec-map₂ (x ∷ χs) (k ∷ ks) = x k ∷ vec-map₂ χs ks
+
+vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦 ̇ 
+vec-satisfy p [] = 𝟙
+vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
+
+vec-satisfy-preserved-by : {X : 𝓤 ̇ }
+                         → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
+                         → (p : X → 𝓦 ̇ )
+                         → vec-satisfy (λ x → ∀ (n : ℤ) → p (x n)) xs
+                         → vec-satisfy p (vec-map₂ xs ks)
+vec-satisfy-preserved-by [] [] p ⋆ = ⋆
+vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
+ = px k , vec-satisfy-preserved-by xs ks p pxs
+
+map₂-get : {X : 𝓤 ̇ } {Y : 𝓥 ̇ }
+         → (fs : Vec (X → Y) 1) → (xs : Vec X 1)
+         → vec-map₂ fs xs ＝ [ head fs (head xs) ]
+map₂-get [ f ] [ x ] = refl
+
+≥-lemma : (a b c : ℤ) → a ＝ b → (p : a ≥ c) → (q : b ≥ c)
+        → pr₁ p ＝ pr₁ q
+≥-lemma a a c refl (n , refl) (m , γ) = pos-lc (ℤ+-lc _ _ _ (γ ⁻¹))
 ```
 
 ```
@@ -619,17 +650,5 @@ record Dyadics : 𝓤₁ ̇ where
                                  (ℤ*-comm m (pos (2^ (succ ε))) ∙ ap₂ (λ z z' → z ℤ* pos (2^ z')) (e₃ ⁻¹) (e₂ ⁻¹))
 
 
-```
-
-```
-data Vec (A : 𝓤 ̇ ) : ℕ → 𝓤 ̇  where
-  []  : Vec A 0
-  _∷_ : {n : ℕ} → A → Vec A n → Vec A (succ n)
-
-pattern [_] x = x ∷ []
-
-vec-map : {A : 𝓤 ̇ } {B : 𝓥 ̇ } {n : ℕ} → (A → B) → Vec A n → Vec B n
-vec-map f [] = []
-vec-map f (x ∷ v) = f x ∷ vec-map f v
 ```
 
