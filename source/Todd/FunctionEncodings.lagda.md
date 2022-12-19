@@ -2,25 +2,29 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
-open import MLTT.Spartan renaming (_+_ to _∔_)
-open import Notation.Order
-open import Naturals.Addition renaming (_+_ to _ℕ+_)
-open import Naturals.Order hiding (≤-refl)
-open import Integers.Type
 open import Integers.Addition renaming (_+_ to _ℤ+_;  _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Negation renaming (-_ to ℤ-_ )
 open import Integers.Order
+open import Integers.Type
+open import MLTT.Spartan renaming (_+_ to _∔_)
+open import Notation.Order
+open import Naturals.Addition renaming (_+_ to _ℕ+_)
+open import Naturals.Order hiding (≤-refl)
 open import UF.Base
 open import UF.FunExt
-open import UF.PropTrunc
-open import UF.Subsingletons
-open import UF.Quotient
 open import UF.Powerset hiding (𝕋)
+open import UF.PropTrunc
+open import UF.Quotient
+open import UF.Subsingletons
+open import UF.Subsingletons-FunExt
 
+open import Todd.BelowAndAbove
+  using (downLeft-upRight ; downRight-upRight ; dL-transform)
 open import Todd.Prelude renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
+open import Todd.upValue
 
-module Todd.NewFile
+module Todd.FunctionEncodings
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -28,11 +32,8 @@ module Todd.NewFile
   (dy : Dyadics)
  where
 
-open import UF.Subsingletons-FunExt
 open import Todd.DyadicReals pe pt fe dy renaming (located to located')
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
-open import Todd.upValue
-open import Todd.BelowAndAbove using (downLeft-upRight ; downRight-upRight ; dL-transform)
 
 open PropositionalTruncation pt
 open Dyadics dy

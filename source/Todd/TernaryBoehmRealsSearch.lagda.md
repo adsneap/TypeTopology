@@ -1,19 +1,20 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
-open import MLTT.Spartan
-open import Notation.Order
-open import Integers.Type
 open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Integers.Order
+open import Integers.Type
+open import MLTT.Spartan
+open import Naturals.Order
+open import Notation.Order
 open import UF.Base
-open import UF.PropTrunc
-open import UF.Subsingletons
-open import UF.Quotient
 open import UF.Equiv
 open import UF.FunExt
+open import UF.PropTrunc
+open import UF.Quotient
+open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
-open import Naturals.Order
+
 open import Todd.Prelude
 
 module Todd.TernaryBoehmRealsSearch
@@ -25,11 +26,10 @@ module Todd.TernaryBoehmRealsSearch
   where
 
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (_≤_≤_)
-open import Todd.NewFile pt fe pe sq dy hiding (r)
+open import Todd.FunctionEncodings pt fe pe sq dy hiding (r)
 
 open set-quotients-exist sq
 open Dyadics dy                                   
-
 ```
 
 ## Searchable types

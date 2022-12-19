@@ -1,14 +1,13 @@
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline --experimental-lossy-unification #-}
+{-# OPTIONS --exact-split --without-K --auto-inline --experimental-lossy-unification #-}
 
-open import MLTT.Spartan renaming (_+_ to _∔_)
-open import Notation.Order
-open import Naturals.Division
+open import Integers.Order
+open import Integers.Type
+open import MLTT.Spartan
 open import Naturals.Exponents
-open import Naturals.Multiplication
 open import Naturals.Order
 open import Naturals.Properties
-open import UF.Base
+open import Notation.Order
 
 module Todd.upValue where
 
@@ -36,10 +35,6 @@ ceilog2 (succ n) with ceilog2 n
 clog2 : ℕ → ℕ
 clog2 0 = 0
 clog2 (succ n) = succ (pr₁ (ceilog2 n))
-
-open import Integers.Type
-open import Integers.Order
-open import Integers.Addition
 
 upValue : (a b : ℤ) → a ≤ b → ℕ
 upValue a b (n , a≤b) = clog2 (pred (pred n))

@@ -8,10 +8,9 @@ http://math.andrej.com/wp-content/uploads/2008/08/abstract-cca2008.pdf
 
 ```agda
 
-{-# OPTIONS --without-K --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline --experimental-lossy-unification #-}
 
-open import MLTT.Spartan renaming (_+_ to _∔_)
-
+open import MLTT.Spartan
 open import Notation.CanonicalMap
 open import Notation.Order
 open import Todd.Prelude
@@ -132,7 +131,7 @@ rationals.
      I : Σ k ꞉ ℤ[1/2] , k < q × k ∈ upper-cut-of x → q ∈ upper-cut-of y
      I (k , (k<q , x<k)) = ∥∥-rec (∈-is-prop (upper-cut-of y) q) II (located-from-real y k q k<q)
       where
-       II : k ∈ lower-cut-of y ∔ q ∈ upper-cut-of y → q ∈ upper-cut-of y
+       II : k ∈ lower-cut-of y + q ∈ upper-cut-of y → q ∈ upper-cut-of y
        II (inl k<y) = 𝟘-elim {!ℤ[1/2]<-not-itself!}
        II (inr y<q) = {!!}
  

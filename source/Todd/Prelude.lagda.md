@@ -5,22 +5,22 @@ are denoted ℤ[1/2].
 
 ```agda
 
-{-# OPTIONS --without-K --exact-split #-}
+{-# OPTIONS --exact-split --without-K --auto-inline --experimental-lossy-unification #-}
 
-open import MLTT.Spartan
-open import Notation.Order 
 open import Integers.Addition renaming (_+_ to _+ℤ_ ; _-_ to _ℤ-_)
-open import Integers.Negation renaming (-_ to ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
+open import Integers.Negation renaming (-_ to ℤ-_)
 open import Integers.Order
 open import Integers.Type
+open import MLTT.Spartan
 open import Naturals.Addition renaming (_+_ to _+ℕ_)
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Naturals.Properties
 open import Naturals.Order hiding (max; ≤-refl; ≤-split)
+open import Notation.Order 
 open import UF.Base
-open import UF.Miscelanea
 open import UF.FunExt
+open import UF.Miscelanea
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 

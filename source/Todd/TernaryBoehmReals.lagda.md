@@ -1,18 +1,17 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
-open import UF.Equiv
-open import UF.FunExt
-open import UF.Subsingletons
-open import MLTT.Spartan
-open import Naturals.Order
+open import Integers.Addition renaming (_+_ to _ℤ+_)
 open import Integers.Order
 open import Integers.Type
-open import Naturals.Addition renaming (_+_ to _+ℕ_)
-open import Integers.Addition renaming (_+_ to _+ℤ_)
+open import MLTT.Spartan
+open import Naturals.Order
 open import Notation.Order
+open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Quotient
+open import UF.Subsingletons
+
 open import Todd.Prelude
 
 module Todd.TernaryBoehmReals
@@ -78,9 +77,9 @@ brick `δ` has bricks `2δ`, `2δ+1` and `2δ+2` below it.
 
 ```
 downLeft downMid downRight : ℤ → ℤ
-downLeft  k = (k +ℤ k)
-downMid   k = (k +ℤ k) +pos 1
-downRight k = (k +ℤ k) +pos 2
+downLeft  k = (k ℤ+ k)
+downMid   k = (k ℤ+ k) +pos 1
+downRight k = (k ℤ+ k) +pos 2
 ```
 
 Furthermore, Each brick on level `n` also has either one or two bricks "above" it
@@ -404,12 +403,12 @@ ci-lower-upper-<' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ 0        refl
  = γx i
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ (succ n) refl
- = ℤ≤-trans _ _ _ (downLeft-monotone _ _ IHl) (pr₁ (γx (succℤ i +ℤ pos n)))
+ = ℤ≤-trans _ _ _ (downLeft-monotone _ _ IHl) (pr₁ (γx (succℤ i ℤ+ pos n)))
  , ℤ≤-trans _ _ _ (pr₂ (γx (succℤ i +pos n))) (downRight-monotone _ _ IHr)
  where
    IH = ci-lower-upper-<' (x i , i) ((x , γx) , refl)
           (predℤ δ) n (predsuccℤ _ ⁻¹)
-   IHl : rec (x i) downLeft (succ n) ≤ x (succℤ i +ℤ pos n)
+   IHl : rec (x i) downLeft (succ n) ≤ x (succℤ i ℤ+ pos n)
    IHl = transport (λ - → rec (x i) downLeft (succ n) ≤ x -)
           (predsuccℤ _)
           (pr₁ IH)

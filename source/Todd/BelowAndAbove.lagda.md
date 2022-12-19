@@ -1,20 +1,14 @@
 ```agda
+
 {-# OPTIONS --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
-open import UF.Equiv
-open import UF.FunExt
-open import UF.Subsingletons
-open import MLTT.Spartan
-open import MLTT.Two-Properties hiding (zero-is-not-one)
-open import Naturals.Order
+open import Integers.Addition renaming (_+_ to _ℤ+_)
 open import Integers.Order
 open import Integers.Type
-open import Naturals.Addition renaming (_+_ to _+ℕ_)
-open import Integers.Addition renaming (_+_ to _+ℤ_)
-open import Integers.Negation renaming (-_  to  −ℤ_)
-open import UF.Subsingletons
+open import MLTT.Spartan
+open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Order
-open import NotionsOfDecidability.DecidableAndDetachable
+
 open import Todd.Prelude
 
 module Todd.BelowAndAbove where
@@ -68,7 +62,7 @@ downLeft, downMid and downRight
 
 ```
 downLeft downMid downRight : ℤ → ℤ
-downLeft  a = a +ℤ a
+downLeft  a = a ℤ+ a
 downMid   a = succℤ (downLeft a)
 downRight a = succℤ (downMid  a)
 ```
@@ -89,41 +83,41 @@ downLeft≠downRight : (a b : ℤ) → a ＝ b → downLeft a ≠ downRight a
 downLeft≠downRight a a refl dL＝dR = b<a→a≠b _ _ (1 , refl) (dL＝dR ⁻¹)
 
 downLeft-monotone' : (a b : ℤ) → ((n , _) : a ≤ℤ b)
-                   → downLeft a +pos (n +ℕ n) ＝ downLeft b
+                   → downLeft a +pos (n ℕ+ n) ＝ downLeft b
 downLeft-monotone' a b (n , refl)
- = ap ((a +ℤ a) +ℤ_) (distributivity-pos-addition n n ⁻¹)
- ∙ ℤ+-rearrangement (a +ℤ a) (pos n) (pos n) ⁻¹
+ = ap ((a ℤ+ a) ℤ+_) (distributivity-pos-addition n n ⁻¹)
+ ∙ ℤ+-rearrangement (a ℤ+ a) (pos n) (pos n) ⁻¹
  ∙ ap (λ - → (- +pos n) +pos n) (ℤ+-comm a a)
  ∙ ap (_+pos n)
      (ℤ+-assoc a a (pos n)
-     ∙ ap (a +ℤ_) (ℤ+-comm a (pos n))
+     ∙ ap (a ℤ+_) (ℤ+-comm a (pos n))
      ∙ ℤ+-assoc a (pos n) a ⁻¹)
  ∙ ℤ+-assoc (a +pos n) a (pos n)
 
 ℤ≤<-trans : (a b c : ℤ) → a ≤ℤ b → b <ℤ c → a <ℤ c
 ℤ≤<-trans a b c (m , refl) (n , refl)
- = m +ℕ n
- , (ap (succℤ a +ℤ_) (distributivity-pos-addition m n ⁻¹)
+ = m ℕ+ n
+ , (ap (succℤ a ℤ+_) (distributivity-pos-addition m n ⁻¹)
  ∙ ℤ+-assoc (succℤ a) (pos m) (pos n) ⁻¹ -- ℤ-left-succ a (pos m +pos n)
  ∙ ap (_+pos n) (ℤ-left-succ-pos a m))
 
 
 downLeft<<downRight : (a b : ℤ) → a <ℤ b → downLeft a <ℤ downRight b
 downLeft<<downRight a b (n , refl)
- = (succ (succ (succ (n +ℕ n))))
+ = (succ (succ (succ (n ℕ+ n))))
  , ap (succℤ ∘ succℤ)
      (ap succℤ
-       (ap (_+pos (n +ℕ n)) (ℤ-left-succ a a ⁻¹)
-       ∙ ap ((succℤ a +ℤ a) +ℤ_) (distributivity-pos-addition n n ⁻¹)
-       ∙ ℤ+-rearrangement (succℤ a +ℤ a) (pos n) (pos n) ⁻¹
+       (ap (_+pos (n ℕ+ n)) (ℤ-left-succ a a ⁻¹)
+       ∙ ap ((succℤ a ℤ+ a) ℤ+_) (distributivity-pos-addition n n ⁻¹)
+       ∙ ℤ+-rearrangement (succℤ a ℤ+ a) (pos n) (pos n) ⁻¹
        ∙ ap (λ - → (- +pos n) +pos n) (ℤ+-comm (succℤ a) a)
        ∙ ap (_+pos n)
            (ℤ+-assoc a (succℤ a) (pos n)
-         ∙ ap (a +ℤ_) (ℤ+-comm (succℤ a) (pos n))
+         ∙ ap (a ℤ+_) (ℤ+-comm (succℤ a) (pos n))
          ∙ ℤ+-assoc a (pos n) (succℤ a) ⁻¹)
        ∙ ℤ+-assoc (a +pos n) (succℤ a) (pos n))
    ∙ ℤ-left-succ (a +pos n) (succℤ a +pos n) ⁻¹
-   ∙ ap (_+ℤ (succℤ a +pos n)) (ℤ-left-succ-pos a n ⁻¹))
+   ∙ ap (_ℤ+ (succℤ a +pos n)) (ℤ-left-succ-pos a n ⁻¹))
 
 downLeft<downRight : (a : ℤ) (n : ℕ)
                    → rec a downLeft (succ n) <ℤ rec a downRight (succ n)
@@ -207,9 +201,9 @@ below-implies-below' a b ((succ (succ (succ n)) , e) , (succ (succ (succ m)) , f
  = 𝟘-elim (k≠2 k＝2)
  where
    k : ℕ
-   k = (succ (succ (succ (succ (succ (succ (n +ℕ m)))))))
+   k = (succ (succ (succ (succ (succ (succ (n ℕ+ m)))))))
    η : downLeft b +pos k ＝ downRight b
-   η = (ap ((succℤ ^ 6) ∘ downLeft b +ℤ_) (distributivity-pos-addition n m ⁻¹)
+   η = (ap ((succℤ ^ 6) ∘ downLeft b ℤ+_) (distributivity-pos-addition n m ⁻¹)
      ∙ ap (succℤ ^ 6) (ℤ+-assoc (downLeft b) (pos n) (pos m) ⁻¹)
      ∙ ap (succℤ ^ 5) (ℤ-left-succ-pos (downLeft b +pos n) m ⁻¹)
      ∙ ap (succℤ ^ 4) (ℤ-left-succ-pos (succℤ (downLeft b +pos n)) m ⁻¹)
