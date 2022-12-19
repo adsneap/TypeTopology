@@ -19,6 +19,8 @@ open import UF.PropTrunc
 open import UF.Powerset
 open import UF.Subsingletons
 
+open import Todd.DyadicRationals
+
 module Todd.DyadicReals
   (pe : PropExt)
   (pt : propositional-truncations-exist)

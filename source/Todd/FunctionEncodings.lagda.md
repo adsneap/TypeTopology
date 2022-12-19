@@ -21,7 +21,8 @@ open import UF.Subsingletons-FunExt
 
 open import Todd.BelowAndAbove
   using (downLeft-upRight ; downRight-upRight ; dL-transform)
-open import Todd.Prelude renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
+open import Todd.DyadicRationals renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
+open import Todd.Prelude 
 open import Todd.upValue
 
 module Todd.FunctionEncodings
