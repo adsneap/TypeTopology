@@ -1,5 +1,5 @@
 ```agda
-{-# OPTIONS --without-K --exact-split --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
 open import UF.Equiv
 open import UF.FunExt
@@ -13,6 +13,7 @@ open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Notation.Order
 open import UF.PropTrunc
 open import UF.Quotient
+open import Todd.Prelude
 
 module Todd.TernaryBoehmReals
   (pt : propositional-truncations-exist)
@@ -21,7 +22,6 @@ module Todd.TernaryBoehmReals
   (sq : set-quotients-exist)
   where
 
-open import Todd.TernaryBoehmRealsPrelude
 
 _≤_≤_ : ℤ → ℤ → ℤ → 𝓤₀ ̇ 
 a ≤ b ≤ c = (a ≤ b) × (b ≤ c)

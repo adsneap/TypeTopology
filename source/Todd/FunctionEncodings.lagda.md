@@ -3,7 +3,6 @@
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
--- open import Notation.CanonicalMap hiding
 open import Notation.Order
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Order hiding (≤-refl)
@@ -31,9 +30,7 @@ module Todd.NewFile
 
 open import UF.Subsingletons-FunExt
 open import Todd.DyadicReals pe pt fe dy renaming (located to located')
-open import Todd.TBRFunctions pt fe pe sq dy
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι ; _≤_≤_)
-open import Todd.TernaryBoehmRealsPrelude using (2^ ; power-of-pos-positive)
 open import Todd.upValue
 open import Todd.BelowAndAbove using (downLeft-upRight ; downRight-upRight ; dL-transform)
 

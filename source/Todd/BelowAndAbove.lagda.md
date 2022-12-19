@@ -1,5 +1,5 @@
 ```agda
-{-# OPTIONS --without-K --exact-split --allow-unsolved-metas #-}
+{-# OPTIONS --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
 open import UF.Equiv
 open import UF.FunExt
@@ -15,10 +15,9 @@ open import Integers.Negation renaming (-_  to  −ℤ_)
 open import UF.Subsingletons
 open import Naturals.Order
 open import NotionsOfDecidability.DecidableAndDetachable
+open import Todd.Prelude
 
 module Todd.BelowAndAbove where
-
-open import Todd.TernaryBoehmRealsPrelude
 
 b<a→a≠b : ∀ a b → (b <ℤ a) → a ≠ b
 b<a→a≠b a a (n , a<a) refl = γ γ'
@@ -570,21 +569,13 @@ above-downRight a = below-implies-above (downRight a) a (downRight-below a)
 Recursive above
 
 ```
-
-data Vec (X : 𝓤 ̇ ) : ℕ → 𝓤 ̇ where
-  [] : Vec X 0
-  _++_ : ∀ {n} → X → Vec X n → Vec X (succ n)
-
-[_] : {X : 𝓤 ̇ } → X → Vec X 1
-[ x ] = x ++ []
-
 _+++_ : {X : 𝓤 ̇ } {n : ℕ} → Vec X n → X → Vec X (succ n)
 [] +++ x = [ x ]
-(h ++ v) +++ x = h ++ (v +++ x)
+(h ∷ v) +++ x = h ∷ (v +++ x)
 
 _!!_ : {X : 𝓤 ̇ } {n : ℕ} → Vec X n → (k : ℕ) → k <ℕ n → X
-((x ++ v) !! zero) k<n = x
-((x ++ v) !! succ k) k<n = (v !! k) k<n
+((x ∷ v) !! zero) k<n = x
+((x ∷ v) !! succ k) k<n = (v !! k) k<n
 
 !!-prop : {X : 𝓤 ̇ } (n : ℕ) → (xs : Vec X n)
         → (k₁ k₂ : ℕ) → k₁ ＝ k₂
@@ -597,9 +588,9 @@ fst xs = (xs !! 0) ⋆
 lst {n = n} xs = (xs !! n) (<-succ n)
 
 drop-fst drop-lst : {X : 𝓤 ̇ } {n : ℕ} → Vec X (succ n) → Vec X n
-drop-fst (x ++ xs) = xs
-drop-lst (x ++ []) = []
-drop-lst (x ++ (y ++ xs)) = x ++ drop-lst (y ++ xs)
+drop-fst (x ∷ xs) = xs
+drop-lst (x ∷ []) = []
+drop-lst (x ∷ (y ∷ xs)) = x ∷ drop-lst (y ∷ xs)
 
 inner : {X : 𝓤 ̇ } {n : ℕ} → Vec X (succ (succ n)) → Vec X n
 inner = drop-fst ∘ drop-lst
@@ -636,50 +627,50 @@ sigma→vector-witness : {X : 𝓤 ̇ } → (p : X → X → 𝓤 ̇ ) → (x y 
                      → sigma-witness p x y n → vector-witness p x y n
 sigma→vector-witness p x y zero η = xs , refl , refl , γ
  where
-  xs = x ++ [ y ]
+  xs = x ∷ [ y ]
   γ : pairwise xs p
   γ zero ⋆ ⋆ = η
 sigma→vector-witness p x y (succ n) (z , η , θ) = xs , refl , pr₁ (pr₂ (pr₂ IH)) , γ
  where
   IH = sigma→vector-witness p z y n θ
-  xs = x ++ pr₁ IH
+  xs = x ∷ pr₁ IH
   γ : pairwise xs p
   γ zero k<n k<sn = transport (p x) (pr₁ (pr₂ IH) ⁻¹) η
   γ (succ k) k<n k<sn = pr₂ (pr₂ (pr₂ IH)) k k<n k<sn
 
 vector→sigma-witness : {X : 𝓤 ̇ } → (p : X → X → 𝓤 ̇ ) → (x y : X) (n : ℕ)
                      → vector-witness p x y n → sigma-witness p x y n
-vector→sigma-witness p x y zero ((x ++ (y ++ [])) , refl , refl , w) = w 0 ⋆ ⋆
-vector→sigma-witness p x y (succ n) ((x ++ (z ++ xs)) , refl , t , w)
- = z , w 0 ⋆ ⋆ , vector→sigma-witness p z y n ((z ++ xs) , refl , t , w ∘ succ)
+vector→sigma-witness p x y zero ((x ∷ (y ∷ [])) , refl , refl , w) = w 0 ⋆ ⋆
+vector→sigma-witness p x y (succ n) ((x ∷ (z ∷ xs)) , refl , t , w)
+ = z , w 0 ⋆ ⋆ , vector→sigma-witness p z y n ((z ∷ xs) , refl , t , w ∘ succ)
 
 reverse : {X : 𝓤 ̇ } {n : ℕ} → Vec X n → Vec X n
 reverse [] = []
-reverse (x ++ xs) = reverse xs +++ x
+reverse (x ∷ xs) = reverse xs +++ x
 
 reverse' : {X : 𝓤 ̇ } {n : ℕ} → Vec X n → Vec X n
 reverse' [] = []
-reverse' (x ++ []) = [ x ]
-reverse' (x ++ (y ++ xs)) = lst (x ++ (y ++ xs)) ++ reverse (drop-lst (x ++ (y ++ xs)))
+reverse' (x ∷ []) = [ x ]
+reverse' (x ∷ (y ∷ xs)) = lst (x ∷ (y ∷ xs)) ∷ reverse (drop-lst (x ∷ (y ∷ xs)))
 
 fst-++ : {X : 𝓤 ̇ } {n : ℕ} → (x : X) (xs : Vec X (succ n))
        → fst (xs +++ x) ＝ fst xs
-fst-++ {𝓤} {X} {n} x (y ++ xs) = refl
+fst-++ {𝓤} {X} {n} x (y ∷ xs) = refl
 
 lst-++ : {X : 𝓤 ̇ } {n : ℕ} → (x : X) (xs : Vec X n)
        → lst (xs +++ x) ＝ x
 lst-++ {𝓤} {X} {0}      x []        = refl
-lst-++ {𝓤} {X} {succ n} x (y ++ xs) = lst-++ x xs
+lst-++ {𝓤} {X} {succ n} x (y ∷ xs) = lst-++ x xs
 
 reverse-fst-becomes-lst : {X : 𝓤 ̇ } {n : ℕ} → (xs : Vec X (succ n))
                         → lst (reverse xs) ＝ fst xs
-reverse-fst-becomes-lst (x ++ xs) = lst-++ x (reverse xs)
+reverse-fst-becomes-lst (x ∷ xs) = lst-++ x (reverse xs)
 
 reverse-lst-becomes-fst : {X : 𝓤 ̇ } {n : ℕ} → (xs : Vec X (succ n))
                         → fst (reverse xs) ＝ lst xs
-reverse-lst-becomes-fst (x ++ []) = refl
-reverse-lst-becomes-fst (x ++ (y ++ xs)) = fst-++ x (reverse (y ++ xs))
-                                         ∙ reverse-lst-becomes-fst (y ++ xs)
+reverse-lst-becomes-fst (x ∷ []) = refl
+reverse-lst-becomes-fst (x ∷ (y ∷ xs)) = fst-++ x (reverse (y ∷ xs))
+                                         ∙ reverse-lst-becomes-fst (y ∷ xs)
 
 _−_ : (n k : ℕ) → k ≤ℕ n → ℕ
 (n − zero) _ = n
@@ -694,27 +685,27 @@ drop-lst-< : {X : 𝓤 ̇ } (n k : ℕ) → (k<n : k <ℕ n) (k<sn : k <ℕ (suc
            → (xs : Vec X  (succ n))
            → (drop-lst xs !! k) k<n
            ＝ (         xs !! k) k<sn
-drop-lst-< n zero k<n k<sn (x ++ (y ++ xs)) = refl
-drop-lst-< (succ n) (succ k) k<n k<sn (x ++ (y ++ xs)) = drop-lst-< n k k<n k<sn (y ++ xs)
+drop-lst-< n zero k<n k<sn (x ∷ (y ∷ xs)) = refl
+drop-lst-< (succ n) (succ k) k<n k<sn (x ∷ (y ∷ xs)) = drop-lst-< n k k<n k<sn (y ∷ xs)
 
 drop-fst-< : {X : 𝓤 ̇ } → (n k : ℕ) → (k<n : k <ℕ n)
            → (xs : Vec X (succ n))
            → (         xs !! succ k) k<n
            ＝ (drop-fst xs !!      k) k<n
-drop-fst-< n k k<n (x ++ xs) = refl
+drop-fst-< n k k<n (x ∷ xs) = refl
 
 drop-fst-++ : {X : 𝓤 ̇ } (n : ℕ) → (xs : Vec X (succ n)) (x : X)
             → drop-fst (xs +++ x) ＝ drop-fst xs +++ x
-drop-fst-++ n (y ++ xs) x = refl
+drop-fst-++ n (y ∷ xs) x = refl
 
 drop-lst-++ : {X : 𝓤 ̇ } (n : ℕ) → (xs : Vec X (succ n)) (x : X)
-            → drop-lst (x ++ xs) ＝ (x ++ drop-lst xs)
-drop-lst-++ n (y ++ xs) x = refl
+            → drop-lst (x ∷ xs) ＝ (x ∷ drop-lst xs)
+drop-lst-++ n (y ∷ xs) x = refl
 
 reverse-drop : {X : 𝓤 ̇ } (n : ℕ) → (xs : Vec X (succ n))
              → reverse (drop-lst xs) ＝ drop-fst (reverse xs)
-reverse-drop zero (x ++ []) = refl
-reverse-drop (succ n) (x ++ xs)
+reverse-drop zero (x ∷ []) = refl
+reverse-drop (succ n) (x ∷ xs)
  = ap reverse (drop-lst-++ n xs x)
  ∙ ap (_+++ x) (reverse-drop n xs)
  ∙ drop-fst-++ n (reverse xs) x ⁻¹
@@ -722,13 +713,13 @@ reverse-drop (succ n) (x ++ xs)
 reverse-minus-becomes-k : {X : 𝓤 ̇ } {n : ℕ} → (xs : Vec X n)
                          → (k : ℕ) → (k<n : k <ℕ n)
                          → (reverse xs !! k) k<n ＝ (xs !! (n − succ k) k<n) (−-< n k k<n)
-reverse-minus-becomes-k (x ++ xs) 0 k<n = reverse-lst-becomes-fst (x ++ xs)
-reverse-minus-becomes-k {𝓤} {X} {succ (succ n)} (x ++ xs) (succ k) k<n
+reverse-minus-becomes-k (x ∷ xs) 0 k<n = reverse-lst-becomes-fst (x ∷ xs)
+reverse-minus-becomes-k {𝓤} {X} {succ (succ n)} (x ∷ xs) (succ k) k<n
  = drop-fst-< (succ n) k k<n (reverse xs +++ x)
- ∙ ap (λ - → (- !! k) k<n) (reverse-drop (succ n) (x ++ xs) ⁻¹)
- ∙ reverse-minus-becomes-k {𝓤} {X} {succ n} (drop-lst (x ++ xs)) k k<n
+ ∙ ap (λ - → (- !! k) k<n) (reverse-drop (succ n) (x ∷ xs) ⁻¹)
+ ∙ reverse-minus-becomes-k {𝓤} {X} {succ n} (drop-lst (x ∷ xs)) k k<n
  ∙ drop-lst-< (succ n) ((n − k) k<n) (−-< (succ n) k k<n)
-     (−-< (succ (succ n)) (succ k) k<n) (x ++ xs) 
+     (−-< (succ (succ n)) (succ k) k<n) (x ∷ xs) 
 
 −-lemma : (n k : ℕ) → (k<sn : k <ℕ succ n) → (k<n : k <ℕ n)
         → (n − k) k<sn ＝ succ ((n − succ k) k<n)
@@ -780,7 +771,7 @@ below-up a c n (b , η , θ)
 
 below-vec' : (a c : ℤ) → (n : ℕ) → (a belowⁿ c) n → Vec ℤ (succ n)
 below-vec' a c zero b = [ a ]
-below-vec' a c (succ n) (a' , _ , f) = a ++ below-vec' a' c n f
+below-vec' a c (succ n) (a' , _ , f) = a ∷ below-vec' a' c n f
 
 below-vec : (a c : ℤ) → (n : ℕ) → (a belowⁿ c) n → Vec ℤ (succ (succ n))
 below-vec a c n b = (below-vec' a c n b) +++ c
@@ -794,8 +785,8 @@ below-vec-!!0 a c (succ n) b = refl
           → (k₁<n : k₁ <ℕ n) (k₂<n : k₂ <ℕ n)
           → k₁ ＝ k₂
           → (v !! k₁) k₁<n ＝ (v !! k₂) k₂<n
-!!-helper (x ++ v) zero .zero k₁<n k₂<n refl = refl
-!!-helper (x ++ v) (succ k) .(succ k) k₁<n k₂<n refl
+!!-helper (x ∷ v) zero .zero k₁<n k₂<n refl = refl
+!!-helper (x ∷ v) (succ k) .(succ k) k₁<n k₂<n refl
  = !!-helper v k k k₁<n k₂<n refl
 
 below-vec-!!sn : (a c : ℤ) (n : ℕ) (b : (a belowⁿ c) n)

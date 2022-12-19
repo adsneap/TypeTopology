@@ -1,25 +1,19 @@
 ```agda
-{-# OPTIONS --without-K --exact-split --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
 
-open import MLTT.Spartan renaming (_+_ to _∔_)
+open import MLTT.Spartan
 open import Notation.Order
-open import Integers.Multiplication renaming (_*_ to _ℤ*_)
+open import Integers.Type
+open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Integers.Order
 open import UF.Base
 open import UF.PropTrunc
 open import UF.Subsingletons
 open import UF.Quotient
-open import UF.Powerset hiding (𝕋)
 open import UF.Equiv
 open import UF.FunExt
-open import UF.Subsingletons
-open import MLTT.Spartan
+open import UF.Subsingletons-FunExt
 open import Naturals.Order
-open import Integers.Order
-open import Integers.Type
-open import Naturals.Addition renaming (_+_ to _+ℕ_)
-open import Integers.Addition renaming (_+_ to _+ℤ_)
-open import Notation.Order
 open import Todd.Prelude
 
 module Todd.TernaryBoehmRealsSearch
@@ -30,8 +24,12 @@ module Todd.TernaryBoehmRealsSearch
   (dy : Dyadics)
   where
 
-open import Todd.TernaryBoehmRealsPrelude
 open import Todd.TernaryBoehmReals pt fe pe sq hiding (_≤_≤_)
+open import Todd.NewFile pt fe pe sq dy hiding (r)
+
+open set-quotients-exist sq
+open Dyadics dy                                   
+
 ```
 
 ## Searchable types
@@ -144,8 +142,6 @@ This equivalence relation simply takes a modulus of continuity `δ : ℤ` and as
 if `⟨ ι x ⟩ δ ＝ ⟨ ι y ⟩ δ` given `x,y : CompactInterval (k , i)`.
 
 ```
-open set-quotients-exist sq
-
 CompEqRel : (δ : ℤ) ((k , i) : ℤ × ℤ) → EqRel {𝓤₀} {𝓤₀} (CompactInterval (k , i))
 CompEqRel δ (k , i) = _≣≣_ , u , r , s , t
  where
@@ -196,7 +192,7 @@ Conv→-identifies-related-points δ (k , i)
 ℤ[_,_]-is-set : (a b : ℤ) → is-set (ℤ[ a , b ])
 ℤ[ a , b ]-is-set = subsets-of-sets-are-sets ℤ (λ z → a ≤ℤ z ≤ℤ b)
                       ℤ-is-set (≤ℤ²-is-prop _)
-
+                      
 med-map/ : {A : 𝓤 ̇ } (δ : ℤ) ((k , i) : ℤ × ℤ)
          → is-set A
          → (f : CompactInterval (k , i) → A)
@@ -222,7 +218,7 @@ med-map δ (k , i) = med-map/ δ (k , i)
 uni-tri : (δ : ℤ) ((k , i) : ℤ × ℤ)
         → (med-map δ (k , i) ∘ η/ (CompEqRel δ (k , i))) ∼ Conv→ δ (k , i)
 uni-tri δ (k , i) = uni-tri/ δ (k , i)
-                      (ℤ[ (lower (k , i) δ) , (upper (k , i) δ) ]-is-set)
+                      ℤ[ (lower (k , i) δ) , (upper (k , i) δ) ]-is-set 
                       (Conv→ δ (k , i))
                       (to-subtype-＝ ≤ℤ²-is-prop)
            
@@ -294,20 +290,6 @@ every element of the `𝕋` sequence.
 Now we bring in our functions!
 
 ```
-open import UF.Subsingletons-FunExt
-open import Todd.DyadicReals pe pt fe dy renaming (located to located')
-open import Todd.TBRFunctions pt fe pe sq dy
-open import Todd.upValue
-open import Todd.BelowAndAbove using (downLeft-upRight ; downRight-upRight)
-
-open PropositionalTruncation pt
-open Dyadics dy
-  renaming (_ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_ ; _ℤ[1/2]*_ to _*_)
-                                    
-open import Naturals.Order renaming (max to ℕmax) hiding (≤-refl ; ≤-trans ; ≤-split)
-
-open import Todd.NewFile pt fe pe sq dy
-
 record UniformContinuity (FM : FunctionMachine 1) : 𝓤₀ ̇  where
   open FunctionMachine FM
   field
@@ -320,9 +302,8 @@ record UniformContinuity (FM : FunctionMachine 1) : 𝓤₀ ̇  where
     κ''-relates-to-κ
       : {(k , i) : 𝕀s}
       → (χ : CompactInterval (k , i)) → (ϵ : ℤ)
-      → upRight-𝕀s (pr₁ (κ''-is-ucoracle χ ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ'' - ]) ϵ)
-      ≡ upRight-𝕀s (pr₁ (κ'-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ' [ ι χ ])  ϵ)
-
+      → upRight-𝕀s (pr₁ (κ''-is-ucoracle χ ϵ))     (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ'' - ]) ϵ)
+      ≡ upRight-𝕀s (pr₁ (κ'-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ' [ ι χ ])      ϵ)
 
 module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) where
 
@@ -421,8 +402,6 @@ module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) whe
            → 𝕋¹-uc-predicate-ki {𝓦} (k , i) (p ∘ f̂ ∘ [_] ∘ ι)
   p∘-is-uc p (δ , ϕ)
     = κ'' δ
-    , λ χ γ χδ≡γδ → ϕ (f̂ [ ι χ ]) (f̂ [ ι γ ])
-        (Lem-629 χ γ δ χδ≡γδ)
-
--- Therefore any 𝕋¹-uc-predicate can be searched
+    , λ χ γ χδ≡γδ → ϕ _ _ (Lem-629 χ γ δ χδ≡γδ)
 ```
+-- Therefore any 𝕋¹-uc-predicate can be searched
