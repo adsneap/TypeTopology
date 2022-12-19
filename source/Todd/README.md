@@ -25,34 +25,34 @@ is compatible with that of the HoTT book.
 
 ### Main files
 
-The file `TernaryBoehmReals` defines the type of ternary Boehm
-reals that the paper/API uses for searching real numbers. The
-type is defined directly, rather than by relationship to
-sequences on variable-width/specific-width ...
+`TernaryBoehmReals` defines the type of ternary Boehm reals that
+the paper/API uses for searching real numbers. The type is
+defined directly, rather than by relationship to sequences on
+variable-width/specific-width ...
 
-The file `FunctionEncodings` defines types for sequences on
+`FunctionEncodings` defines types for sequences on
 variable-width and specific-width interval encodings as in the
 paper's Section ??. ...
 
-The file `TernaryBoehmRealsSearch` combines the two files above
-to formalise how ternary Boehm encodings can be used to search
+`TernaryBoehmRealsSearch` combines the two files above to
+formalise how ternary Boehm encodings can be used to search
 encodings of functions on the mathematical real space. It gives
 the definition of a searchable type and ...
 
-### Supplmentary files
+### Supplementary files
 
-The file 'Prelude' includes a variety of definitions and lemmas
-that are needed for our work but are not in `TypeTopology'. This
+`Prelude` includes a variety of definitions and lemmas that are
+needed for our work but are not in `TypeTopology'. This
 includes ...
 
-The file `DyadicRationals` defines ...
+`DyadicRationals` defines ...
 
-The file `DyadicReals` defines the type of dedekind real numbers
-using dyadic rational numbers. ...
+`DyadicReals` defines the type of dedekind real numbers using
+dyadic rational numbers. ...
 
-The file `BelowAndAbove` include ...
+`BelowAndAbove` include ...
 
-The file `upValue` ...
+`upValue` ...
 
 ## Installation
 
@@ -71,14 +71,14 @@ the library would be an interesting Agda project in and of
 itself, and so it is a long-term goal for our project to
 fully formalise these lemmas.
 
-The file `FunctionMachinery` only gives negation as a completed
+`FunctionMachinery` only gives negation as a completed
 ...
 
-The file `TernaryBoehmRealsSearch` is incomplete. The fact
-that any function on ternary Boehm encodings with a
-continuity oracle yields a uniform continuity oracle that
-can be used to search that function (Lemma ? in the paper)
-has been assumed. This is because we prioritised formalising
-other results over this extensive, but clearly true, lemma.
-The formalistaion of this lemma is a priority for future work,
-though may be very involved and require a lot of work.
+`TernaryBoehmRealsSearch` is incomplete. The fact that any
+function on ternary Boehm encodings with a continuity oracle
+yields a uniform continuity oracle that can be used to search
+that function (Lemma ? in the paper) has been assumed. This
+is because we prioritised formalising other results over this
+extensive, but clearly true, lemma. The formalistaion of this
+lemma is a priority for future work, though may be very
+involved and require a lot of work.
