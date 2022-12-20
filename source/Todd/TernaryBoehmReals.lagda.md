@@ -1,5 +1,6 @@
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline
+            --experimental-lossy-unification #-}
 
 open import Integers.Addition renaming (_+_ to _ℤ+_)
 open import Integers.Order
@@ -20,11 +21,6 @@ module Todd.TernaryBoehmReals
   (pe : PropExt)
   (sq : set-quotients-exist)
   where
-
-
-_≤_≤_ : ℤ → ℤ → ℤ → 𝓤₀ ̇ 
-a ≤ b ≤ c = (a ≤ b) × (b ≤ c)
-
 ```
 
 # Part I - Motivation and Definition
@@ -82,8 +78,8 @@ downMid   k = (k ℤ+ k) +pos 1
 downRight k = (k ℤ+ k) +pos 2
 ```
 
-Furthermore, Each brick on level `n` also has either one or two bricks "above" it
-on level `δ-1` -- i.e. even-numbered brick `δ` has bricks `δ/2` and `δ/2-1`,
+Furthermore, Each brick on level `n` also has either one or two bricks "above"
+it on level `δ-1` -- i.e. even-numbered brick `δ` has bricks `δ/2` and `δ/2-1`,
 whereas odd-numbered brick `m` only has brick `δ/2`, above it.
 
 ```
@@ -147,7 +143,8 @@ build-via' (k , i) δ (inr (inr (n , sδ+n＝δ)))
 build-via'-below
  : ((k , i) : ℤ × ℤ) (δ : ℤ)
  → (η : trich-locate δ i)
- → build-via' (k , i) (succℤ δ) (ℤ-trich-succ δ i η) below build-via' (k , i) δ η
+ →       build-via' (k , i) (succℤ δ) (ℤ-trich-succ δ i η)
+   below build-via' (k , i) δ η
 build-via'-below (k , i) δ (inl (0           , sδ+n＝i))
  = above-implies-below _ _ (upRight-above k)
 build-via'-below (k , i) δ (inl (succ n      , sδ+n＝i))
@@ -173,15 +170,15 @@ Given that the lower bound of the interval encoded as `(k , -1) : ℤ × ℤ` is
 integer `k : ℤ` itself, we can build a representation of any integer like so.
 
 ```
-κ : ℤ → 𝕋
-κ k = build-via (k , negsucc 0)
+fromInt : ℤ → 𝕋
+fromInt k = build-via (k , negsucc 0)
 ```
 
 ## Representing closed intervals
 
-Given any specific brick on a specific level, i.e. `(k , δ) : ℤ × ℤ` representing
-`⟪ k , δ ⟫`, we can define the type of real numbers in the closed interval
-`⟪ k , δ ⟫`.
+Given any specific brick on a specific level, i.e. `(k , δ) : ℤ × ℤ`
+representing `⟪ k , δ ⟫`, we can define the type of real numbers in the closed
+interval `⟪ k , δ ⟫`.
 
 ```
 CompactInterval : ℤ × ℤ → 𝓤₀ ̇
@@ -250,114 +247,14 @@ replace-right x i
  where r = replace-right' ⟨ x ⟩ i
 ```
 
-It is the case that for all `α : 𝕋` and `i : ℤ`, `⟦ α ⟧ ＝ ⟦ replace-right α i ⟧`.
+It is the case that for all `α : 𝕋` and `i : ℤ`,
+`⟦ α ⟧ ＝ ⟦ replace-right α i ⟧`.
 
 What this means is that all information held at `x(δ)` about locating `⟦ x ⟧` is
 also held at `x(δ+1)` -- once you consider a level, levels higher than that can
 be trivially reconstructed.
 
-This will be further seen in the next section.
-
-# Part III - Relationship between Ternary Boehm Encodings and Real Numbers
-
-The real number represented by x : 𝕋 is defined as ⟦ x ⟧ : ℝ. Intuitively, ⟦ x ⟧
-is the infinite intersection ⋂ᵢ ⟪ ⟨ x ⟩ i ⟫.
-
-## Signed-digits are isomorphic to Ternary Boehm reals
-
-Recall that we previously represented numbers in the closed interval `[-1,1]`
-using signed-digit functions of type `ℕ → 𝟛`.
-
-```code
-⦉_⦊ : (ℕ → 𝟛) → ℝ
-⦉ α ⦊ = Σᵢ (α i / 2^{i+1})
-```
-
-This interval is represented by the Boehm "brick" `(-1 , -1) : ℤ × ℤ`.
-
-```
-[−1,1]-code : ℤ × ℤ
-[−1,1]-code = (negsucc 0 , negsucc 0)
-```
-
-The location structure of the signed-digit approach is actually
-isomorphic to the ternary Boehm approach.
-
-For example, the signed digit function
-
-`α ≔     { −1            ,  O           , +1             , ...} : ℕ → 𝟛`
-
-follows the same location structure as
-
-`x ≔ {-1 , downLeft x(0) , downMid x(1) , downRight x(2) , ...} : ℕ → ℤ`
-
-```
-𝟛-to-down : 𝟛 → (ℤ → ℤ)
-𝟛-to-down −1 = downLeft
-𝟛-to-down  O = downMid
-𝟛-to-down +1 = downRight
-
-signed-to-boehm' : (ℕ → 𝟛) → (ℕ → ℤ)
-signed-to-boehm' α 0 = negsucc 0
-signed-to-boehm' α (succ n) = 𝟛-to-down (α n) (signed-to-boehm' α n)
-
-𝟛-to-down-below : (t : 𝟛) (a : ℤ) → 𝟛-to-down t a below a
-𝟛-to-down-below −1 a = downLeft-below  a
-𝟛-to-down-below  O a = downMid-below   a
-𝟛-to-down-below +1 a = downRight-below a
-
-signed-to-boehm'-below
-  : (α : ℕ → 𝟛) → (n : ℕ)
-  → (signed-to-boehm' α (succ n)) below (signed-to-boehm' α n)
-signed-to-boehm'-below α n = 𝟛-to-down-below (α n) (signed-to-boehm' α n)
-
-signed-to-boehm : (ℕ → 𝟛) → CompactInterval [−1,1]-code
-signed-to-boehm α
- = {!!}
-```
-
-Therefore, it should be the case that, for all `x : ℕ → 𝟛`,
-`⦉ x ⦊ = ⟦ signed-to-boehm x ⟧`.
-
-Recall that we used an interval object specification of the real numbers `𝕀`.
-
-We already defined the following realisability map,
-
-```code
-q : 𝟛 → 𝕀
-q −1 = −1
-q  O =  O
-q +1 = +1
-
-𝕢 : (ℕ → 𝟛) → 𝕀
-𝕢 = M ∘ map ⟨_⟩
-```
-
-We also want to define the realisability map `𝕣 : CompactInterval [−1,1]-code →
-𝕀` such that for all `x : ℕ → 𝟛`, `𝕢 x = 𝕣 (signed-to-boehm x)`.
-
-We will do this by defining, `boehm-to-signed : CompactInterval [−1,1]-code
-→ (ℕ → 𝟛)` such that `boehm-to-signed ∘ signed-to-boehm ≃ id` and
-`signed-to-boehm ∘ boehm-to-signed ≃ id`.
-
-Then, by setting `𝕣 = 𝕢 ∘ boehm-to-signed`, we get that for all `x : ℕ → 𝟛`,
-`𝕢 x = (𝕢 ∘ boehm-to-signed) (signed-to-boehm x)`.
-
-## Using Dedekind reals instead
-
-Myself and Andrew Sneap define `⟦ x ⟧`, and are developing a version of the above
-relationship using Dedekind reals rather than the interval object.
-
-## The key difference
-
-The key difference between the signed digit approach and the Boehm approach is
-that,
- * With signed digit, the information kept in `x(n)` *depends on*
-                      the information in all `x(i)` such that `i < n`,
- * With Boehm codes,  the information kept in `x(n)` *includes*
-                      the information in all `x(i)` such that `i < n`.
-
-# Part IV - Recursive below/above and lower/upper bounds of compact intervals
+# Part III - Recursive below/above and lower/upper bounds of compact intervals
 
 ## Lower and upper
 
@@ -399,7 +296,8 @@ We now prove that these are in fact the lower and upper bounds.
 ci-lower-upper-<' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                   → (δ : ℤ)
                   → (n : ℕ) → succℤ i +pos n ＝ δ
-                  → rec k downLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k downRight (succ n) 
+                  → rec k downLeft (succ n) ≤ ⟨ ι x ⟩ δ
+                  ≤ rec k downRight (succ n) 
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ 0        refl
  = γx i
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ (succ n) refl
@@ -420,7 +318,9 @@ ci-lower-upper-<' (k , i) ((x , γx) , refl) δ (succ n) refl
 ci-lower-upper-< : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                  → (δ : ℤ)
                  → ((n , _) : i <ℤ δ)
-                 → rec k downLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k downRight (succ n) 
+                 → rec k downLeft  (succ n)
+                 ≤ ⟨ ι x ⟩ δ
+                 ≤ rec k downRight (succ n) 
 ci-lower-upper-< (k , i) x δ (n , i<δ) = ci-lower-upper-<' (k , i) x δ n i<δ
 
 ci-lower-upper->' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
@@ -430,8 +330,12 @@ ci-lower-upper->' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
 ci-lower-upper->' (k , i) ((x , γx) , refl) δ 0        refl
  = below-implies-above _ _ (γx δ)
 ci-lower-upper->' (k , i) ((x , γx) , refl) δ (succ n) refl
- = ℤ≤-trans _ _ _ (upLeft-monotone _ _ IHl) (pr₁ (below-implies-above _ _ (γx δ)))
- , ℤ≤-trans _ _ _ (pr₂ (below-implies-above _ _ (γx δ))) (upRight-monotone _ _ IHr)
+ = ℤ≤-trans _ _ _
+     (upLeft-monotone _ _ IHl)
+     (pr₁ (below-implies-above _ _ (γx δ)))
+ , ℤ≤-trans _ _ _
+     (pr₂ (below-implies-above _ _ (γx δ)))
+     (upRight-monotone _ _ IHr)
  where
    IH = ci-lower-upper->' (x i , i) ((x , γx) , refl)
           (succℤ δ) n (ℤ-left-succ-pos (succℤ δ) n)
@@ -443,7 +347,7 @@ ci-lower-upper->' (k , i) ((x , γx) , refl) δ (succ n) refl
 ci-lower-upper-> : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                  → (δ : ℤ)
                  → ((n , _) : δ <ℤ i)
-                 → rec k   upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k   upRight (succ n) 
+                 → rec k upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k upRight (succ n) 
 ci-lower-upper-> (k , i) x δ (n , δ<i) = ci-lower-upper->' (k , i) x δ n δ<i
 
 ci-lower-upper : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
@@ -545,9 +449,11 @@ upLeft-or-upRight k₁ k₂ c k₁≤k₂ ((m₁ , η₁) , (m₂ , η₂))
  = Cases (upLeft-or-upRight' (downLeft k₁) (downRight k₂) c m₁ m₂ η₁ η₂
            (downLeft≤<downRight k₁ k₂ k₁≤k₂))
      (λ l → inl (transport (_≤ upLeft c ≤ k₂) (upRight-downLeft k₁ ⁻¹)
-       (transport (upRight (downLeft k₁) ≤ upLeft c ≤_) (upLeft-downRight k₂) l)))
+       (transport (upRight (downLeft k₁) ≤ upLeft c ≤_)
+         (upLeft-downRight k₂) l)))
      (λ r → inr (transport (_≤ upRight c ≤ k₂) (upRight-downLeft k₁ ⁻¹)
-       (transport (upRight (downLeft k₁) ≤ upRight c ≤_) (upLeft-downRight k₂) r)))
+       (transport (upRight (downLeft k₁) ≤ upRight c ≤_)
+         (upLeft-downRight k₂) r)))
 
 lower-upper-below k c 0 = id
 lower-upper-below k c (succ n) l≤c≤u  
@@ -604,10 +510,10 @@ down-choices k₁ k₂ c k₁≤k₂ ((m₁ , η₁) , (m₂ , η₂)) with ℤ�
 lower-upper-above k c 0 = id
 lower-upper-above k c (succ n) l≤c≤u
  = Cases (down-choices _ _ _ (upLeft≤upRightⁿ k (succ n)) l≤c≤u)
-      (λ η → downLeft  c , below-implies-above _ _ (downLeft-below  c) , IH-l η)
-     (cases
-      (λ η → downMid   c , below-implies-above _ _ (downMid-below   c) , IH-m η)
-      (λ η → downRight c , below-implies-above _ _ (downRight-below c) , IH-r η))
+     (λ η → downLeft  c , below-implies-above _ _ (downLeft-below  c) , IH-l η)
+    (cases
+     (λ η → downMid   c , below-implies-above _ _ (downMid-below   c) , IH-m η)
+     (λ η → downRight c , below-implies-above _ _ (downRight-below c) , IH-r η))
  where
    IH-l = lower-upper-above k (downLeft  c) n
    IH-m = lower-upper-above k (downMid   c) n
@@ -672,7 +578,7 @@ below-lower-upper k c (succ n) (b , η , θ)
    IH₂ : rec k* downLeft (succ n) ≤ c ≤ rec k* downRight (succ n)
    IH₂ = below-lower-upper k* c n γ
 
-above-lower-upper = {!!}
+above-lower-upper = {!!} -- Similar proof method
 ```
 
 ## Replacement function
@@ -787,5 +693,9 @@ replace-above (k , i) (c , j) j<i b
    γ = replace-below (c , j) (k , i) j<i (aboveⁿ-implies-belowⁿ k c (pr₁ j<i) b)
 ```
 
-We continue our work in TernaryBoehmRealsSearch.lagda.md.
+Next, we define functions from the mathematical real space
+in `FunctionEncodings.lagda.md`.
+
+Them, we combine our work for the purpose of searchability in
+`TernaryBoehmRealsSearch.lagda.md`.
 

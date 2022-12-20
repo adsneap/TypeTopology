@@ -1,5 +1,6 @@
 ```agda
-{-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K --experimental-lossy-unification #-}
+{-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline
+            --experimental-lossy-unification #-}
 
 open import Integers.Addition renaming (_+_ to _+ℤ_)
 open import Integers.Order
@@ -15,6 +16,7 @@ open import UF.Quotient
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
+open import Todd.DyadicRationals
 open import Todd.Prelude
 
 module Todd.TernaryBoehmRealsSearch
@@ -25,7 +27,7 @@ module Todd.TernaryBoehmRealsSearch
   (dy : Dyadics)
   where
 
-open import Todd.TernaryBoehmReals pt fe pe sq hiding (_≤_≤_)
+open import Todd.TernaryBoehmReals pt fe pe sq
 open import Todd.FunctionEncodings pt fe pe sq dy hiding (r)
 
 open set-quotients-exist sq
@@ -290,54 +292,56 @@ every element of the `𝕋` sequence.
 Now we bring in our functions!
 
 ```
+_≡_ = Id
+
 record UniformContinuity (FM : FunctionMachine 1) : 𝓤₀ ̇  where
   open FunctionMachine FM
   field
-    κ'' : ℤ → ℤ
-    κ''-is-ucoracle
+    κ' : ℤ → ℤ
+    κ'-is-ucoracle
       : {(k , i) : 𝕀s}
       → (χ : CompactInterval (k , i)) → (ϵ : ℤ)
-      → pr₂ (join' (A [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) (κ'' ϵ)) ]))
+      → pr₂ (join' (A [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) (κ' ϵ)) ]))
       ≥ ϵ
-    κ''-relates-to-κ
+    κ'-relates-to-κ
       : {(k , i) : 𝕀s}
       → (χ : CompactInterval (k , i)) → (ϵ : ℤ)
-      → upRight-𝕀s (pr₁ (κ''-is-ucoracle χ ϵ))     (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ'' - ]) ϵ)
-      ≡ upRight-𝕀s (pr₁ (κ'-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ' [ ι χ ])      ϵ)
+      → upRight-𝕀s (pr₁ (κ'-is-ucoracle χ ϵ))     (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ)
+      ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ [ ι χ ])      ϵ)
 
 module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) where
 
   open FunctionMachine FM
   open UniformContinuity UC
 
-  Lem-628 : (χ γ : 𝕋) (ϵ : ℤ) → let (δχ , δγ) = (head (κ' [ χ ] ϵ) , head (κ' [ γ ] ϵ) ) in 
+  Lem-628 : (χ γ : 𝕋) (ϵ : ℤ) → let (δχ , δγ) = (head (κ [ χ ] ϵ) , head (κ [ γ ] ϵ) ) in 
             δχ ≡ δγ
           → ⟨ χ ⟩ δχ ≡ ⟨ γ ⟩ δγ
           → ⟨ f̂ [ χ ] ⟩ ϵ ≡ ⟨ f̂ [ γ ] ⟩ ϵ
   Lem-628 χ γ ϵ δχ≡δγ χδ≡γδ = ap pr₁ seven
    where
-     δχ = head (κ' [ χ ] ϵ)
-     δγ = head (κ' [ γ ] ϵ)
+     δχ = head (κ [ χ ] ϵ)
+     δγ = head (κ [ γ ] ϵ)
      one : A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ] ≡ A [ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]
      one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ δχ≡δγ)
      two : join' (A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ]) ≡ join' (A ([ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]))
      two = ap join' one
-     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) χ) ] (κ' [ χ ] ϵ)))
-          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) γ) ] (κ' [ γ ] ϵ)))
+     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) χ) ] (κ [ χ ] ϵ)))
+          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) γ) ] (κ [ γ ] ϵ)))
      two' = ap (join' ∘ A) (map₂-get _ _) ∙ two ∙ ap (join' ∘ A) (map₂-get _ _ ⁻¹) 
-     three : f̂'' [ TBR-to-sw-seq χ ] (κ' [ χ ]) ϵ ≡  f̂'' [ TBR-to-sw-seq γ ] (κ' [ γ ]) ϵ
+     three : f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ ≡  f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ
      three = two'
-     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ χ ] ϵ)) (f̂'' [ TBR-to-sw-seq χ ] (κ' [ χ ]) ϵ)
-           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ γ ] ϵ)) (f̂'' [ TBR-to-sw-seq γ ] (κ' [ γ ]) ϵ)
+     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ χ ] ϵ)) (f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ)
+           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ γ ] ϵ)) (f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ)
      seven = ap₂ upRight-𝕀s (≥-lemma _ _ ϵ (ap pr₂ three) (κ-is-coracle [ χ ] ϵ) (κ-is-coracle [ γ ] ϵ)) three
 
   Lem-629 : {(k , i) : ℤ × ℤ}
           → (χ γ : CompactInterval (k , i)) (ϵ : ℤ)
-          → ⟨ ι χ ⟩ (κ'' ϵ) ≡ ⟨ ι γ ⟩ (κ'' ϵ)
+          → ⟨ ι χ ⟩ (κ' ϵ) ≡ ⟨ ι γ ⟩ (κ' ϵ)
           → ⟨ f̂ [ ι χ ] ⟩ ϵ ≡ ⟨ f̂ [ ι γ ] ⟩ ϵ
   Lem-629 χ γ ϵ χδ≡γδ = ap pr₁ seven
    where
-     δ = κ'' ϵ
+     δ = κ' ϵ
      one : A [ sw-to-vw (⟨ ι χ ⟩ δ , δ) ] ≡ A [ sw-to-vw (⟨ ι γ ⟩ δ , δ) ]
      one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ refl)
      two : join' (A [ sw-to-vw (⟨ ι χ ⟩ δ , δ) ]) ≡ join' (A ([ sw-to-vw (⟨ ι γ ⟩ δ , δ) ]))
@@ -347,14 +351,14 @@ module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) whe
      two' = ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) ] [ δ ])
           ∙ two
           ∙ ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ) ] [ δ ] ⁻¹) 
-     three : f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ'' - ]) ϵ ≡  f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ'' - ]) ϵ
+     three : f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ ≡  f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ' - ]) ϵ
      three = two'
-     six : upRight-𝕀s (pr₁ (κ''-is-ucoracle χ ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ'' - ]) ϵ)
-         ≡ upRight-𝕀s (pr₁ (κ''-is-ucoracle γ ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ'' - ]) ϵ)
-     six = ap₂ upRight-𝕀s (≥-lemma _ _ ϵ (ap pr₂ three) (κ''-is-ucoracle χ ϵ) (κ''-is-ucoracle γ ϵ)) three
-     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ' [ ι χ ]) ϵ)
-           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ ι γ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (κ' [ ι γ ]) ϵ)
-     seven = κ''-relates-to-κ χ ϵ ⁻¹ ∙ six ∙ κ''-relates-to-κ γ ϵ
+     six : upRight-𝕀s (pr₁ (κ'-is-ucoracle χ ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ)
+         ≡ upRight-𝕀s (pr₁ (κ'-is-ucoracle γ ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ' - ]) ϵ)
+     six = ap₂ upRight-𝕀s (≥-lemma _ _ ϵ (ap pr₂ three) (κ'-is-ucoracle χ ϵ) (κ'-is-ucoracle γ ϵ)) three
+     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ [ ι χ ]) ϵ)
+           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ ι γ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (κ [ ι γ ]) ϵ)
+     seven = κ'-relates-to-κ χ ϵ ⁻¹ ∙ six ∙ κ'-relates-to-κ γ ϵ
 
   𝕋¹-uc-predicate : (𝕋 → Ω 𝓦) → 𝓦 ̇
   𝕋¹-uc-predicate {𝓦} p
@@ -389,7 +393,7 @@ module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) whe
            → 𝕋¹-uc-predicate {𝓦} p
            → 𝕋¹-uc-predicate-ki {𝓦} (k , i) (p ∘ f̂ ∘ [_] ∘ ι)
   p∘-is-uc p (δ , ϕ)
-    = κ'' δ
+    = κ' δ
     , λ χ γ χδ≡γδ → ϕ _ _ (Lem-629 χ γ δ χδ≡γδ)
 ```
 -- Therefore any 𝕋¹-uc-predicate can be searched
