@@ -34,10 +34,9 @@ open set-quotients-exist sq
 open Dyadics dy                                   
 ```
 
-## Searchable types
+# Part I - Searchable types
 
-Recall that in our general regression framework, we define searchable types as
-follows:
+We first define searchable types.
 
 ```agda
 decidable-predicate : {𝓤 𝓥 : Universe} → 𝓤 ̇ → 𝓤 ⊔ 𝓥 ⁺ ̇
@@ -50,52 +49,18 @@ searchable {𝓤} {𝓥} X
  , Σ x₀ ꞉ X , (Σ (pr₁ ∘ p) → pr₁ (p x₀))
 ```
 
-We often search only uniformly continuous predicates, which are defined by using
-closeness functions and then quotienting the type up to a certain closeness
-function.
-
-## Closeness function on 𝕋
-
-For every discrete-sequence type `ℕ → X` (where `X` is discrete), we have a
-canonical closeness function `c : (ℕ → X) × (ℕ → X) → ℕ∞`.
-
-Recall that for `x,y : ℕ → X` and any `δ : ℕ`,
-
-`c (x , y) ≼ ι δ ⇔ (x ≈ y) δ`,
-
-where `c(x , y) : ℕ∞` is the value of the discrete-sequence closeness function
-for `x` and `y`.
+We often search only uniformly continuous predicates, which -- for general
+sequence types -- are defined as follows.
 
 ```
 _≈'_ : {X : 𝓤 ̇ } → (ℕ → X) → (ℕ → X) → ℕ → 𝓤 ̇
 (α ≈' β) n = (i : ℕ) → i < n → α n ＝ β n
 ```
 
-From the canonical closeness function on `ℕ → ℤ`, we can define one on `𝕋`:
-
-```code
-c : 𝕋 × 𝕋 → ℕ∞
-c ((α , _) , (β , _)) = c (α ∘ pos , β ∘ pos)
-```
-
-Note that we only take into account positive precision-levels of  `x : 𝕋`; but,
-as we already said, for our purposes of encoding real numbers, the information
-kept in any `⟨ x ⟩ (pos n₁) : ℤ` includes the information kept in any
-`⟨ x ⟩ (negsucc n₂) : ℤ`.
-
-This closeness function, like that on signed-digits, gives the closeness of
-*encodings* of real numbers; not the real numbers themselves.
-
-## Predicates we wish to search
-
-The above closeness function will give us a way to search uniformly continuous
-decidable predicates on `𝕋`. These are those decidable predicates that can be
-decided by only examining a finite portion of the location information held in
-`𝕋`. We call the point `δ : ℤ` that we need to examine up to the "modulus of
-continuity" of the predicate.
-
-We could use the isomorphism between `𝕋` and `ℕ → 𝟛` to immediately give us a
-searcher on such unifoormly continuous predicates using the below properties:
+We could use this to define uniformly continuous predicates on 𝕋, and then
+prove searchability by using the isomorphism between `𝕋` and `ℕ → 𝟛` to
+immediately give us a searcher on such unifoormly continuous predicates using
+the below properties:
 
 ```agda
 decidable-predicate⌜_,_⌝⁻¹ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → X ≃ Y
@@ -128,13 +93,14 @@ searchable⌜ e , 𝓔 ⌝ (p , d)
 
 However, the searcher given by this isomorphism (like that on signed-digits)
 would search the *entire* prefix of the stream from point `pos 0` to point
-`pos δ`; despite the fact that the location information at `pos δ` *includes*
-all of the location information previous to that.
+`pos δ`; despite the fact that -- for ternary Boehm encodings --  the location
+information at `pos δ` *includes* all of the location information previous to
+that.
 
 Therefore, we prefer to use a different isomorphism: the one induced by the
-`replace` function in Section IV.
+`replace` function in `TernaryBoehmReals.lagda.md`.
 
-## Searching quotiented encodings of compact intervals
+# Part II -  Searching quotiented encodings of compact intervals
 
 First, we define the equivalence relation needed to determine uniformly
 continuous decidable predicates on Ternary Boehm encodings of any compact
@@ -144,18 +110,19 @@ This equivalence relation simply takes a modulus of continuity `δ : ℤ` and as
 if `⟨ ι x ⟩ δ ＝ ⟨ ι y ⟩ δ` given `x,y : CompactInterval (k , i)`.
 
 ```
-CompEqRel : (δ : ℤ) ((k , i) : ℤ × ℤ) → EqRel {𝓤₀} {𝓤₀} (CompactInterval (k , i))
-CompEqRel δ (k , i) = _≣≣_ , u , r , s , t
+CompEqRel : (δ : ℤ) ((k , i) : ℤ × ℤ)
+          → EqRel {𝓤₀} {𝓤₀} (CompactInterval (k , i))
+CompEqRel δ (k , i) = _≣_ , u , r , s , t
  where
-   _≣≣_ : CompactInterval (k , i) → CompactInterval (k , i) → 𝓤₀ ̇ 
-   (x ≣≣ y) = ⟨ ι x ⟩ δ ＝ ⟨ ι y ⟩ δ
-   u : is-prop-valued _≣≣_
+   _≣_ : CompactInterval (k , i) → CompactInterval (k , i) → 𝓤₀ ̇ 
+   (x ≣ y) = ⟨ ι x ⟩ δ ＝ ⟨ ι y ⟩ δ
+   u : is-prop-valued _≣_
    u x y = ℤ-is-set
-   r : reflexive _≣≣_
+   r : reflexive _≣_
    r x = refl
-   s : symmetric _≣≣_
+   s : symmetric _≣_
    s x y = _⁻¹
-   t : transitive _≣≣_
+   t : transitive _≣_
    t x y z = _∙_
 ```
 
@@ -257,7 +224,8 @@ every element of the `𝕋` sequence.
 ℤ[ l , l ]-searchable' 0 refl (p , d)
  = ((l , ℤ≤-refl l , ℤ≤-refl l))
  , λ ((z , l≤z≤u) , pz)
-   → transport (pr₁ ∘ p) (to-subtype-＝ ≤ℤ²-is-prop ((≤ℤ-antisym l z l≤z≤u) ⁻¹)) pz
+   → transport (pr₁ ∘ p)
+       (to-subtype-＝ ≤ℤ²-is-prop ((≤ℤ-antisym l z l≤z≤u) ⁻¹)) pz
 ℤ[ l , .(succℤ (l +pos n)) ]-searchable' (succ n) refl (p , d)
  = Cases (d u*) (λ pu → u* , (λ _ → pu))
     (λ ¬pu → ans ,
@@ -289,111 +257,117 @@ every element of the `𝕋` sequence.
      (lower≤upper (k , i) δ)) ⌝
 ```
 
-Now we bring in our functions!
+# Part III - Directly defining continuity and uniform continuity for 𝕋
+
+We can define uniform continuity on (for example, unary) predicates on 𝕋 as
+follows, and show that those on compact intervals are isomorphic to a predicate
+on the quotiented, searchable type considered above.
 
 ```
-_≡_ = Id
+𝕋¹-uc-predicate : (𝕋 → Ω 𝓦) → 𝓦 ̇
+𝕋¹-uc-predicate {𝓦} p
+ = Σ δ ꞉ ℤ , ((χ γ : 𝕋) → ⟨ χ ⟩ δ ＝ ⟨ γ ⟩ δ → p χ holds ⇔ p γ holds)
 
-record UniformContinuity (FM : FunctionMachine 1) : 𝓤₀ ̇  where
-  open FunctionMachine FM
-  field
-    κ' : ℤ → ℤ
-    κ'-is-ucoracle
-      : {(k , i) : 𝕀s}
-      → (χ : CompactInterval (k , i)) → (ϵ : ℤ)
-      → pr₂ (join' (A [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) (κ' ϵ)) ]))
-      ≥ ϵ
-    κ'-relates-to-κ
-      : {(k , i) : 𝕀s}
-      → (χ : CompactInterval (k , i)) → (ϵ : ℤ)
-      → upRight-𝕀s (pr₁ (κ'-is-ucoracle χ ϵ))     (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ)
-      ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ [ ι χ ])      ϵ)
+𝕋¹-uc-predicate-ki : ((k , i) : 𝕀s) → (CompactInterval (k , i) → Ω 𝓦) → 𝓦 ̇
+𝕋¹-uc-predicate-ki (k , i) p
+   = Σ δ ꞉ ℤ , ((χ γ : CompactInterval (k , i))
+             → ⟨ ι χ ⟩ δ ＝ ⟨ ι γ ⟩ δ → p χ holds ⇔ p γ holds)
 
-module SearchContinuity (FM : FunctionMachine 1) (UC : UniformContinuity FM) where
-
-  open FunctionMachine FM
-  open UniformContinuity UC
-
-  Lem-628 : (χ γ : 𝕋) (ϵ : ℤ) → let (δχ , δγ) = (head (κ [ χ ] ϵ) , head (κ [ γ ] ϵ) ) in 
-            δχ ≡ δγ
-          → ⟨ χ ⟩ δχ ≡ ⟨ γ ⟩ δγ
-          → ⟨ f̂ [ χ ] ⟩ ϵ ≡ ⟨ f̂ [ γ ] ⟩ ϵ
-  Lem-628 χ γ ϵ δχ≡δγ χδ≡γδ = ap pr₁ seven
-   where
-     δχ = head (κ [ χ ] ϵ)
-     δγ = head (κ [ γ ] ϵ)
-     one : A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ] ≡ A [ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]
-     one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ δχ≡δγ)
-     two : join' (A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ]) ≡ join' (A ([ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]))
-     two = ap join' one
-     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) χ) ] (κ [ χ ] ϵ)))
-          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) γ) ] (κ [ γ ] ϵ)))
-     two' = ap (join' ∘ A) (map₂-get _ _) ∙ two ∙ ap (join' ∘ A) (map₂-get _ _ ⁻¹) 
-     three : f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ ≡  f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ
-     three = two'
-     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ χ ] ϵ)) (f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ)
-           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ γ ] ϵ)) (f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ)
-     seven = ap₂ upRight-𝕀s (≥-lemma _ _ ϵ (ap pr₂ three) (κ-is-coracle [ χ ] ϵ) (κ-is-coracle [ γ ] ϵ)) three
-
-  Lem-629 : {(k , i) : ℤ × ℤ}
-          → (χ γ : CompactInterval (k , i)) (ϵ : ℤ)
-          → ⟨ ι χ ⟩ (κ' ϵ) ≡ ⟨ ι γ ⟩ (κ' ϵ)
-          → ⟨ f̂ [ ι χ ] ⟩ ϵ ≡ ⟨ f̂ [ ι γ ] ⟩ ϵ
-  Lem-629 χ γ ϵ χδ≡γδ = ap pr₁ seven
-   where
-     δ = κ' ϵ
-     one : A [ sw-to-vw (⟨ ι χ ⟩ δ , δ) ] ≡ A [ sw-to-vw (⟨ ι γ ⟩ δ , δ) ]
-     one = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ χδ≡γδ refl)
-     two : join' (A [ sw-to-vw (⟨ ι χ ⟩ δ , δ) ]) ≡ join' (A ([ sw-to-vw (⟨ ι γ ⟩ δ , δ) ]))
-     two = ap join' one
-     two' : join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ)) ] [ δ ]))
-          ≡ join' (A (vec-map₂ [ ((seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ)) ] [ δ ]))
-     two' = ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι χ) ] [ δ ])
-          ∙ two
-          ∙ ap (join' ∘ A) (map₂-get [ (seq-sw-to-vw ∘ TBR-to-sw-seq) (ι γ) ] [ δ ] ⁻¹) 
-     three : f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ ≡  f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ' - ]) ϵ
-     three = two'
-     six : upRight-𝕀s (pr₁ (κ'-is-ucoracle χ ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (λ - → [ κ' - ]) ϵ)
-         ≡ upRight-𝕀s (pr₁ (κ'-is-ucoracle γ ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (λ - → [ κ' - ]) ϵ)
-     six = ap₂ upRight-𝕀s (≥-lemma _ _ ϵ (ap pr₂ three) (κ'-is-ucoracle χ ϵ) (κ'-is-ucoracle γ ϵ)) three
-     seven : upRight-𝕀s (pr₁ (κ-is-coracle [ ι χ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι χ) ] (κ [ ι χ ]) ϵ)
-           ≡ upRight-𝕀s (pr₁ (κ-is-coracle [ ι γ ] ϵ)) (f̂'' [ TBR-to-sw-seq (ι γ) ] (κ [ ι γ ]) ϵ)
-     seven = κ'-relates-to-κ χ ϵ ⁻¹ ∙ six ∙ κ'-relates-to-κ γ ϵ
-
-  𝕋¹-uc-predicate : (𝕋 → Ω 𝓦) → 𝓦 ̇
-  𝕋¹-uc-predicate {𝓦} p
-   = Σ δ ꞉ ℤ
-   , ((χ γ : 𝕋)
-     → ⟨ χ ⟩ δ ≡ ⟨ γ ⟩ δ
-     → p χ holds ⇔ p γ holds)
-
-  𝕋¹-uc-predicate-ki : ((k , i) : ℤ × ℤ)
-                     → (CompactInterval (k , i) → Ω 𝓦)
-                     → 𝓦 ̇
-  𝕋¹-uc-predicate-ki (k , i) p
-   = Σ δ ꞉ ℤ
-   , ((χ γ : CompactInterval (k , i))
-     → ⟨ ι χ ⟩ δ ≡ ⟨ ι γ ⟩ δ
-     → p χ holds ⇔ p γ holds)
-
-  𝕋¹-uc-predicate-equiv
-   : {k i : ℤ} → (p : CompactInterval (k , i) → Ω 𝓦)
-   → ((δ , _) : 𝕋¹-uc-predicate-ki (k , i) p)
-   → ∃! p* ꞉ (CompactInterval (k , i) / CompEqRel δ (k , i) → Ω 𝓦)
-   , p* ∘ η/ (CompEqRel δ (k , i)) ∼ p
-  𝕋¹-uc-predicate-equiv {𝓦} {k} {i} p (δ , ϕ)
-   = /-universality (CompEqRel δ (k , i))
-      (Ω-is-set (fe 𝓦 𝓦) (pe 𝓦))
-      p
-      (λ ≡δ → Ω-extensionality (fe 𝓦 𝓦) (pe 𝓦)
-                (pr₁ (ϕ _ _ ≡δ))
-                (pr₂ (ϕ _ _ ≡δ)))
-
-  p∘-is-uc : {(k , i) : 𝕀s} (p : 𝕋 → Ω 𝓦)
-           → 𝕋¹-uc-predicate {𝓦} p
-           → 𝕋¹-uc-predicate-ki {𝓦} (k , i) (p ∘ f̂ ∘ [_] ∘ ι)
-  p∘-is-uc p (δ , ϕ)
-    = κ' δ
-    , λ χ γ χδ≡γδ → ϕ _ _ (Lem-629 χ γ δ χδ≡γδ)
+𝕋¹-uc-predicate-equiv
+ : {k i : ℤ} → (p : CompactInterval (k , i) → Ω 𝓦)
+ → ((δ , _) : 𝕋¹-uc-predicate-ki (k , i) p)
+ → ∃! p* ꞉ (CompactInterval (k , i) / CompEqRel δ (k , i) → Ω 𝓦)
+ , p* ∘ η/ (CompEqRel δ (k , i)) ∼ p
+𝕋¹-uc-predicate-equiv {𝓦} {k} {i} p (δ , ϕ)
+ = /-universality (CompEqRel δ (k , i))
+    (Ω-is-set (fe 𝓦 𝓦) (pe 𝓦))
+    p
+    (λ ≡δ → Ω-extensionality (fe 𝓦 𝓦) (pe 𝓦)
+              (pr₁ (ϕ _ _ ≡δ))
+              (pr₂ (ϕ _ _ ≡δ)))
 ```
--- Therefore any 𝕋¹-uc-predicate can be searched
+
+We also define continuity and uniform continuity directly on (for example,
+unary) functions of type 𝕋 → 𝕋.
+
+```
+𝕋¹-c-function : (𝕋 → 𝕋) → 𝓤₀  ̇
+𝕋¹-c-function f
+ = (ϵ : ℤ) (χ : 𝕋)
+ → Σ δ ꞉ ℤ , ((γ : 𝕋) → ⟨ χ ⟩ δ ＝ ⟨ γ ⟩ δ → ⟨ f χ ⟩ ϵ ＝ ⟨ f γ ⟩ ϵ)
+
+𝕋¹-uc-function-ki : ((k , i) : 𝕀s) → (CompactInterval (k , i) → 𝕋) → 𝓤₀  ̇
+𝕋¹-uc-function-ki (k , i) f
+ = (ϵ : ℤ)
+ → Σ δ ꞉ ℤ , ((χ γ : CompactInterval (k , i))
+           → ⟨ ι χ ⟩ δ ＝ ⟨ ι γ ⟩ δ → ⟨ f χ ⟩ ϵ ＝ ⟨ f γ ⟩ ϵ)
+{-
+𝕋¹-uc-implies-c-function : (f : 𝕋 → 𝕋) → 𝕋¹-uc-function f → 𝕋¹-c-function f
+𝕋¹-uc-implies-c-function f ϕ ϵ χ = pr₁ (ϕ ϵ) , pr₂ (ϕ ϵ) χ
+-}
+```
+
+# Part IV - Searching function encodings on ternary Boehm encodings
+
+We now bring in our functions as defined in `FunctionEncodings.lagda.md`.
+
+We first prove that, using our continuity oracle, each function defined
+using the machinery in that file is continuous. We use the unary case to
+illustrate the proof method.
+
+```
+𝕋¹-Fs-are-continuous : (F : FunctionMachine 1)
+                     → 𝕋¹-c-function (FunctionMachine.f̂ F ∘ [_])
+pr₁ (𝕋¹-Fs-are-continuous F ϵ χ) = head (FunctionMachine.κ F [ χ ] ϵ)
+pr₂ (𝕋¹-Fs-are-continuous F ϵ χ) γ χδ＝γδ = ap pr₁ III
+ where
+   open FunctionMachine F
+   δχ = head (κ [ χ ] ϵ)
+   δγ = head (κ [ γ ] ϵ)
+   δ＝ : δχ ＝ δγ
+   δ＝ = {!!}
+   I : A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ]
+     ＝ A [ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]
+   I = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ (χδ＝γδ ∙ ap (⟨ γ ⟩) δ＝) δ＝)
+   II : f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ
+      ＝ f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ
+   II = ap join' (ap A (map₂-get _ _) ∙ I ∙ ap A (map₂-get _ _ ⁻¹))
+   III : upRight-𝕀s (pr₁ (κ-is-coracle [ χ ] ϵ))
+                    (f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ)
+       ＝ upRight-𝕀s (pr₁ (κ-is-coracle [ γ ] ϵ))
+                    (f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ)
+   III = ap₂ upRight-𝕀s
+           (≥-lemma _ _ ϵ (ap pr₂ II)
+             (κ-is-coracle [ χ ] ϵ) (κ-is-coracle [ γ ] ϵ))
+           II
+```
+
+We eventually want to show that each function defined using the machinery in
+that file yields a uniform continuity oracle that proves it is uniformly
+continuous.
+
+However, for now, we instead assume this fact, and use it to show that any
+predicate `p : 𝕋 → Ω` and function built via our machinery `f : 𝕋 → 𝕋` yields
+a predicate `(p ∘ f) : 𝕋 → Ω` that is searchable on any compact interval given
+by a specific-width interval `(k , i) : 𝕀s`.
+```
+
+continuity-plus-compactness-gives-u-continuity
+ : FunctionMachine 1 → 𝕀s → 𝓤₀  ̇ 
+continuity-plus-compactness-gives-u-continuity F (k , i)
+ = 𝕋¹-uc-function-ki (k , i) (FunctionMachine.f̂ F ∘ [_] ∘ ι)
+  
+p∘-is-uc : (F : FunctionMachine 1) {(k , i) : 𝕀s}
+         → continuity-plus-compactness-gives-u-continuity F (k , i)
+         → (p : 𝕋 → Ω 𝓦) → 𝕋¹-uc-predicate {𝓦} p
+         → 𝕋¹-uc-predicate-ki {𝓦} (k , i) (p ∘ FunctionMachine.f̂ F ∘ [_] ∘ ι)
+p∘-is-uc F uc p (δ , ϕ)
+ = pr₁ (uc δ) , λ χ γ χδ≡γδ → ϕ (f̂ [ ι χ ]) (f̂ [ ι γ ]) (pr₂ (uc δ) χ γ χδ≡γδ)
+ where open FunctionMachine F
+```
+
+Therefore, using the above and `𝕋¹-uc-predicate-equiv`, we have shown the method
+of proving that any encoded function on 𝕋 built from our machinery is searchable
+on any compact interval given by a specific-width interval encoding.
+
+We conclude here.

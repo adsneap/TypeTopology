@@ -908,22 +908,6 @@ FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
 FunctionMachine.κ Negation _ ϵ = [ ϵ ]
 FunctionMachine.κ-is-coracle Negation [ χ ] ϵ = 0 , refl
 
-_-min_ : ℤ → ℤ → ℕ
-x -min y with ℤ-dichotomous x y
-... | inl x≤y = 0
-... | inr (n , refl) = n
-
-Addition : FunctionMachine 2
-FunctionMachine.f Addition (x ∷ [ y ]) = x ℝd+ y
-FunctionMachine.A Addition
-  ((((l₁ , r₁) , i₁) , l≤₁r) ∷ [ (((l₂ , r₂) , i₂) , l≤₂r) ])
-  = ((pos (2^ (i₂  -min i₁)) ℤ* l₁ ℤ+ pos (2^ (i₁ -min i₂)) ℤ* l₂
-    , (pos (2^ (i₂  -min i₁)) ℤ* r₁ ℤ+ pos (2^ (i₁ -min i₂)) ℤ* r₂))
-    , maxℤ i₁ i₂)
-    , {!!}
-FunctionMachine.κ Addition _ ϵ = (ϵ +pos 2) ∷ [ ϵ +pos 2 ]
-FunctionMachine.κ-is-coracle Addition (χ ∷ [ γ ]) ϵ = {!!}
-
 𝕋-_ : 𝕋 → 𝕋
 𝕋- x = FunctionMachine.f̂ Negation [ x ]
 ```
