@@ -26,7 +26,7 @@ open import Todd.DyadicRationals
 open import Todd.Prelude 
 open import Todd.upValue
 
-module Todd.FunctionEncodings
+module Todd.2-FunctionEncodings
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -35,7 +35,7 @@ module Todd.FunctionEncodings
  where
 
 open import Todd.DyadicReals pe pt fe dy renaming (located to located')
-open import Todd.TernaryBoehmReals pt fe pe sq hiding (ι)
+open import Todd.1-TernaryBoehmReals pt fe pe sq hiding (ι)
 
 open PropositionalTruncation pt
 open Dyadics dy

@@ -19,7 +19,7 @@ open import UF.Subsingletons-FunExt
 open import Todd.DyadicRationals
 open import Todd.Prelude
 
-module Todd.TernaryBoehmRealsSearch
+module Todd.3-TernaryBoehmRealsSearch
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -27,8 +27,8 @@ module Todd.TernaryBoehmRealsSearch
   (dy : Dyadics)
   where
 
-open import Todd.TernaryBoehmReals pt fe pe sq
-open import Todd.FunctionEncodings pt fe pe sq dy hiding (r)
+open import Todd.1-TernaryBoehmReals pt fe pe sq
+open import Todd.2-FunctionEncodings pt fe pe sq dy hiding (r)
 
 open set-quotients-exist sq
 open Dyadics dy                                   

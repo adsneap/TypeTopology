@@ -15,7 +15,7 @@ open import UF.Subsingletons
 
 open import Todd.Prelude
 
-module Todd.TernaryBoehmReals
+module Todd.1-TernaryBoehmReals
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
