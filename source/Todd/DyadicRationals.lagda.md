@@ -4,6 +4,7 @@
             
 open import Integers.Addition renaming (_+_ to _+ℤ_ ; _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
+open import Integers.Negation renaming (-_ to ℤ-_)
 open import Integers.Order
 open import Integers.Type
 open import MLTT.Spartan
@@ -206,8 +207,8 @@ instance
 record Dyadics : 𝓤₁ ̇ where
  field
   _ℤ[1/2]+_     : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
-  ℤ[1/2]+-comm  : commutative _ℤ[1/2]+_
-  ℤ[1/2]+-assoc : associative _ℤ[1/2]+_
+  -- ℤ[1/2]+-comm  : commutative _ℤ[1/2]+_
+  -- ℤ[1/2]+-assoc : associative _ℤ[1/2]+_
   ℤ[1/2]-_      : ℤ[1/2] → ℤ[1/2]
 
  infix 20  ℤ[1/2]-_
@@ -217,78 +218,80 @@ record Dyadics : 𝓤₁ ̇ where
  p ℤ[1/2]- q = p ℤ[1/2]+ (ℤ[1/2]- q)
 
  field
-  ℤ[1/2]+-inv   : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (x ℤ[1/2]+ y) ＝ 0ℤ[1/2]
+  -- ℤ[1/2]+-inv   : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (x ℤ[1/2]+ y) ＝ 0ℤ[1/2]
   _ℤ[1/2]*_     : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
-  ℤ[1/2]*-comm   : commutative _ℤ[1/2]*_
-  ℤ[1/2]*-assoc  : associative _ℤ[1/2]*_
-  ℤ[1/2]-mult-left-id : (x : ℤ[1/2]) → 1ℤ[1/2] ℤ[1/2]* x ＝ x
-  ℤ[1/2]-negation-involutive : (x : ℤ[1/2]) → x ＝ ℤ[1/2]- (ℤ[1/2]- x)
-  ℤ[1/2]-minus-dist
+  -- ℤ[1/2]*-comm   : commutative _ℤ[1/2]*_
+  -- ℤ[1/2]*-assoc  : associative _ℤ[1/2]*_
+  -- ℤ[1/2]-mult-left-id : (x : ℤ[1/2]) → 1ℤ[1/2] ℤ[1/2]* x ＝ x
+  -- ℤ[1/2]-negation-involutive : (x : ℤ[1/2]) → x ＝ ℤ[1/2]- (ℤ[1/2]- x)
+  {- ℤ[1/2]-minus-dist
    : (x y : ℤ[1/2])
-   → (ℤ[1/2]- (x ℤ[1/2]+ y))＝ ((ℤ[1/2]- x) ℤ[1/2]+ (ℤ[1/2]- y))
-  min : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
-  max : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
+   → (ℤ[1/2]- (x ℤ[1/2]+ y))＝ ((ℤ[1/2]- x) ℤ[1/2]+ (ℤ[1/2]- y)) -}
+  -- min : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
+  -- max : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
   ℤ[1/2]-abs : ℤ[1/2] → ℤ[1/2]
-  ℤ[1/2]-dist
+  {- ℤ[1/2]-dist
    : (x y z : ℤ[1/2])
-   → (x ℤ[1/2]* z) ℤ[1/2]+ (y ℤ[1/2]* z) ＝ ((x ℤ[1/2]+ y) ℤ[1/2]* z)
+   → (x ℤ[1/2]* z) ℤ[1/2]+ (y ℤ[1/2]* z) ＝ ((x ℤ[1/2]+ y) ℤ[1/2]* z) -}
   trans  : (x y z : ℤ[1/2]) → x < y → y < z → x < z
   trans' : (x y z : ℤ[1/2]) → x ≤ y → y ≤ z → x ≤ z
-  no-min : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (y < x)
-  no-max : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (x < y)
+  -- no-min : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (y < x)
+  -- no-max : (x : ℤ[1/2]) → Σ y ꞉ ℤ[1/2] , (x < y)
   dense  : (x y : ℤ[1/2]) → (x < y) → Σ k ꞉ ℤ[1/2] , (x < k) × (k < y)
-  trans<≤ : (x y z : ℤ[1/2]) → x < y → y ≤ z → x < z
+  -- trans<≤ : (x y z : ℤ[1/2]) → x < y → y ≤ z → x < z
   ≤-refl : (x : ℤ[1/2]) → x ≤ x
   <-is-≤ℤ[1/2] : (x y : ℤ[1/2]) → x < y → x ≤ y
   diff-positive : (x y : ℤ[1/2]) → x < y → 0ℤ[1/2] < (y ℤ[1/2]- x)
-  diff-positive' : (x y : ℤ[1/2]) → x ≤ y → 0ℤ[1/2] ≤ (y ℤ[1/2]- x)
+  -- diff-positive' : (x y : ℤ[1/2]) → x ≤ y → 0ℤ[1/2] ≤ (y ℤ[1/2]- x)
   <-swap : (x y : ℤ[1/2]) → x < y → (ℤ[1/2]- y) < (ℤ[1/2]- x)
   ≤-swap : (x y : ℤ[1/2]) → x ≤ y → (ℤ[1/2]- y) ≤ (ℤ[1/2]- x)
+  ≤-swap' : (x y : ℤ[1/2]) → (ℤ[1/2]- x) ≤ (ℤ[1/2]- y) → y ≤ x
   ≤-split : (x y : ℤ[1/2]) → x ≤ y → x < y + (x ＝ y)
-  <-swap-consequence : (x y z : ℤ[1/2]) → x < (y ℤ[1/2]+ z) → (x ℤ[1/2]- y) < z
-  <-pos-mult
+  -- <-swap-consequence : (x y z : ℤ[1/2]) → x < (y ℤ[1/2]+ z) → (x ℤ[1/2]- y) < z
+  {- <-pos-mult
    : (x y z : ℤ[1/2]) → 0ℤ[1/2] < z
-   → x < y → (x ℤ[1/2]* z) < (y ℤ[1/2]* z)
+   → x < y → (x ℤ[1/2]* z) < (y ℤ[1/2]* z) -}
   <-pos-mult'
    : (x y : ℤ[1/2]) → 0ℤ[1/2] < x
    → 0ℤ[1/2] < y → 0ℤ[1/2] < (x ℤ[1/2]* y)
-  ℤ[1/2]-minus-zero : 0ℤ[1/2] ＝ (ℤ[1/2]- 0ℤ[1/2])
+  -- ℤ[1/2]-minus-zero : 0ℤ[1/2] ＝ (ℤ[1/2]- 0ℤ[1/2])
   ℤ[1/2]<-+ : (x y : ℤ[1/2]) → 0ℤ[1/2] < y → x < (x ℤ[1/2]+ y)
-  ℤ[1/2]<-+' : (x y z : ℤ[1/2]) → x < (y ℤ[1/2]+ z) → (x ℤ[1/2]- y) < z
+  -- ℤ[1/2]<-+' : (x y z : ℤ[1/2]) → x < (y ℤ[1/2]+ z) → (x ℤ[1/2]- y) < z
   ℤ[1/2]<-neg : (x y : ℤ[1/2]) → 0ℤ[1/2] < y → (x ℤ[1/2]- y) < x
-  ℤ[1/2]<-neg' : (x y z : ℤ[1/2]) → (x ℤ[1/2]- y) < z → x < (z ℤ[1/2]+ y)
+  -- ℤ[1/2]<-neg' : (x y z : ℤ[1/2]) → (x ℤ[1/2]- y) < z → x < (z ℤ[1/2]+ y)
   ℤ[1/2]<-rearrange : (x y z : ℤ[1/2]) → (x ℤ[1/2]+ y) < z → y < (z ℤ[1/2]- x)
-  ℤ[1/2]-pos-abs
-   : (x y : ℤ[1/2]) → x < y → y ℤ[1/2]- x ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
-  ℤ[1/2]-pos-abs'
-   : (x y : ℤ[1/2]) → x ≤ y → y ℤ[1/2]- x ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
-  ℤ[1/2]≤-adding
-   : (x y u v : ℤ[1/2]) → x ≤ y → u ≤ v → (x ℤ[1/2]+ u) ≤ (y ℤ[1/2]+ v)
-  ℤ[1/2]<-adding
-   : (x y u v : ℤ[1/2]) → x < y → u < v → (x ℤ[1/2]+ u) < (y ℤ[1/2]+ v)
-  ℤ[1/2]<-+cancel
-   : (x y z : ℤ[1/2]) → (z ℤ[1/2]+ x) < (z ℤ[1/2]+ y) → x < y
-  ℤ[1/2]-te
-   : (x y : ℤ[1/2])
-   → ℤ[1/2]-abs (x ℤ[1/2]+ y) ≤ (ℤ[1/2]-abs x ℤ[1/2]+ ℤ[1/2]-abs y)
-  ℤ[1/2]<-to-abs
-   : (x y : ℤ[1/2]) → ((ℤ[1/2]- y) < x) × (x < y) → ℤ[1/2]-abs x < y
-  ℤ[1/2]-abs-lemma
-   : (x y : ℤ[1/2]) → ℤ[1/2]-abs (x ℤ[1/2]- y) ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
+  -- ℤ[1/2]-pos-abs
+  -- : (x y : ℤ[1/2]) → x < y → y ℤ[1/2]- x ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
+  -- ℤ[1/2]-pos-abs'
+  -- : (x y : ℤ[1/2]) → x ≤ y → y ℤ[1/2]- x ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
+  -- ℤ[1/2]≤-adding
+  --  : (x y u v : ℤ[1/2]) → x ≤ y → u ≤ v → (x ℤ[1/2]+ u) ≤ (y ℤ[1/2]+ v)
+  -- ℤ[1/2]<-adding
+  -- : (x y u v : ℤ[1/2]) → x < y → u < v → (x ℤ[1/2]+ u) < (y ℤ[1/2]+ v)
+  -- ℤ[1/2]<-+cancel
+  --  : (x y z : ℤ[1/2]) → (z ℤ[1/2]+ x) < (z ℤ[1/2]+ y) → x < y
+  -- ℤ[1/2]-te
+  -- : (x y : ℤ[1/2])
+  -- → ℤ[1/2]-abs (x ℤ[1/2]+ y) ≤ (ℤ[1/2]-abs x ℤ[1/2]+ ℤ[1/2]-abs y)
+  -- ℤ[1/2]<-to-abs
+  --  : (x y : ℤ[1/2]) → ((ℤ[1/2]- y) < x) × (x < y) → ℤ[1/2]-abs x < y
+  -- ℤ[1/2]-abs-lemma
+  -- : (x y : ℤ[1/2]) → ℤ[1/2]-abs (x ℤ[1/2]- y) ＝ ℤ[1/2]-abs (y ℤ[1/2]- x)
   ℤ[1/2]-1/2-< : (x : ℤ[1/2]) → 0ℤ[1/2] < x → (1/2ℤ[1/2] ℤ[1/2]* x) < x
-  normalise-<
+  {- normalise-<
    : ((k , p) : ℤ × ℤ)
-   → normalise (k , p) < normalise ((k +pos 2) , p)
+   → normalise (k , p) < normalise ((k +pos 2) , p) -}
   normalise-≤
    : (n : ℕ) → ((k , p) : ℤ × ℤ)
    → normalise (k , p) ≤ normalise ((k +pos n) , p)
-  normalise-≤2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p) 
-  normalise-equality : ((k , p) : ℤ × ℤ)
+  
+  {- normalise-equality : ((k , p) : ℤ × ℤ)
                      → normalise (pos 1 , predℤ p)
-                     ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p)
+                     ＝ normalise (k +pos 2 , p) ℤ[1/2]- normalise (k , p) -}
   ℤ[1/2]-ordering-property
    : (a b c d : ℤ[1/2]) → (a ℤ[1/2]- b) < (c ℤ[1/2]- d) → (a < c) + (d < b)
-  normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n)
+  {-
+  normalise-succ : (z n : ℤ) → normalise (z , n) ≤ normalise (z +ℤ z , succℤ n) -}
   normalise-succ' : (z n : ℤ) → normalise (z , n)
                               ＝ normalise (z +ℤ z , succℤ n)
   normalise-pred' : (z n : ℤ) → normalise (z , predℤ n)
@@ -297,24 +300,28 @@ record Dyadics : 𝓤₁ ̇ where
    : (a b : ℤ[1/2]) → is-positive a → is-positive b → is-positive (a ℤ[1/2]* b)
   ℤ[1/2]-find-lower : (ε : ℤ[1/2]) → is-positive ε
                     → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
+  
   normalise-negation
    : (a b c : ℤ)
    → normalise (a , c) ℤ[1/2]- normalise (b , c) ＝ normalise (a ℤ- b , c)
+  normalise-negation' : (a b : ℤ)
+                      → ℤ[1/2]- normalise (a , b) ＝ normalise (ℤ- a , b)
   from-normalise-≤-same-denom
    : (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
-   
+   {-
  metric : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
  metric p q = ℤ[1/2]-abs (p ℤ[1/2]- q)
 
  Bℤ[1/2] : (x y ε : ℤ[1/2]) → 0ℤ[1/2] < ε → 𝓤₀ ̇
  Bℤ[1/2] p q ε l = metric p q < ε
-
+ -}
+{-
  field
   ℤ[1/2]-metric-neg : (x y ε : ℤ[1/2]) (l : 0ℤ[1/2] < ε)
                     → metric x y < ε → metric (ℤ[1/2]- x) (ℤ[1/2]- y) < ε
   ℤ[1/2]-metric-comm : (x y ε : ℤ[1/2]) (l : 0ℤ[1/2] < ε)
                     → Bℤ[1/2] x y ε l → Bℤ[1/2] y x ε l
-
+-}
  ℤ[1/2]<-≤ : (x y z : ℤ[1/2]) → x < y → y ≤ z → x < z
  ℤ[1/2]<-≤ x y z x<y y≤z with ≤-split y z y≤z
  ... | inl y<z = trans x y z x<y y<z
@@ -324,7 +331,7 @@ record Dyadics : 𝓤₁ ̇ where
  ℤ[1/2]≤-< x y z x≤y y<z with ≤-split x y x≤y
  ... | inl x<y = trans x y z x<y y<z
  ... | inr x＝y = transport (_< z) (x＝y ⁻¹) y<z
-
+{-
  trans₂ : (w x y z : ℤ[1/2]) → w < x → x < y → y < z → w < z
  trans₂ w x y z w<x x<y y<z = trans w x z w<x (trans x y z x<y y<z)
 
@@ -332,16 +339,19 @@ record Dyadics : 𝓤₁ ̇ where
  <-swap' x y l
   = transport₂ _<_ (ℤ[1/2]-negation-involutive y ⁻¹)
       (ℤ[1/2]-negation-involutive x ⁻¹) (<-swap (ℤ[1/2]- x) (ℤ[1/2]- y) l)
-
+-}
  0<1/2ℤ[1/2] : 0ℤ[1/2] < 1/2ℤ[1/2]
  0<1/2ℤ[1/2] = 0 , refl
-
+{-
  1/2ℤ[1/2]<1ℤ[1/2] : 1/2ℤ[1/2] < 1ℤ[1/2]
  1/2ℤ[1/2]<1ℤ[1/2] = 0 , refl
-
+-}
  0<1ℤ[1/2] : 0ℤ[1/2] < 1ℤ[1/2]
  0<1ℤ[1/2] = 0 , refl
 
+ normalise-≤2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
+ normalise-≤2 l r p (j , refl) = normalise-≤ j (l , p)
+ {-
  numerator-≤ : (((a , x) , l₁) ((b , y) , l₂) : ℤ[1/2])
              → x ＝ y → a ≤ b → ((a , x) , l₁) ≤ ((b , y) , l₂)
  numerator-≤ ((a , x) , l₁) ((b , y) , l₂) e l
@@ -417,8 +427,8 @@ record Dyadics : 𝓤₁ ̇ where
          ＝⟨ ap (λ z → k' ℤ* (pos (2^ ε') ℤ* pos z)) (prod-of-powers 2 n₁ n₂) ⟩
        k' ℤ* (pos (2^ ε') ℤ* pos (2^ (n₁ +ℕ n₂)))
          ＝⟨ ℤ*-assoc k' (pos (2^ ε')) (pos (2^ (n₁ +ℕ n₂))) ⁻¹ ⟩
-       k' ℤ* pos (2^ ε') ℤ* pos (2^ (n₁ +ℕ n₂))    ∎
-
+       k' ℤ* pos (2^ ε') ℤ* pos (2^ (n₁ +ℕ n₂))    ∎ -}
+ {-
  normalise-≤'' : ((k , δ) : ℤ × ℕ) → ((m , ε) : ℤ × ℕ)
              → k ℤ* pos (2^ (succ δ)) ≤ m ℤ* pos (2^ (succ ε))
              → normalise (k , negsucc δ) ≤ normalise (m , negsucc ε)
@@ -429,6 +439,6 @@ record Dyadics : 𝓤₁ ̇ where
     (ℤ*-comm k (pos (2^ (succ δ)))
     ∙ ap₂ (λ z z' → z ℤ* pos (2^ z')) (e₁ ⁻¹) (e₄ ⁻¹))
     (ℤ*-comm m (pos (2^ (succ ε)))
-    ∙ ap₂ (λ z z' → z ℤ* pos (2^ z')) (e₃ ⁻¹) (e₂ ⁻¹))
+    ∙ ap₂ (λ z z' → z ℤ* pos (2^ z')) (e₃ ⁻¹) (e₂ ⁻¹)) -}
 ```
 
