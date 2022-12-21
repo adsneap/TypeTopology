@@ -20,7 +20,8 @@ open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
 open import Todd.BelowAndAbove
-  using (downLeft-upRight ; downRight-upRight ; dL-transform ; downRight＝downLeft)
+  using (downLeft-upRight ; downRight-upRight ; dL-transform
+       ; downRight＝downLeft)
 open import Todd.DyadicRationals
   renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
 open import Todd.Prelude 
@@ -491,7 +492,9 @@ Normalisation preserves locatedness and nestedness.
 ```
 normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
 normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
-... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ) (ρ k ⁻¹) l))
+... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ
+                      (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ)
+                        (ρ k ⁻¹) l))
 
 go-up-preserves-fully-nested
  : (k : ℤ → ℕ) (ζ : ℤ → 𝕀s)
@@ -752,7 +755,17 @@ FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
                            = ((ℤ- r , ℤ- l) , i)
                            , ℤ≤-swap l r l≤r
-FunctionMachine.A-nested Negation as bs x = {!!}
+FunctionMachine.A-nested Negation
+ [ iv ] [ iv' ]
+ ((l≤ , r≤) , ⋆)
+ = transport₂ _≤_
+     (normalise-negation' (v-right iv ) (v-prec iv ))
+     (normalise-negation' (v-right iv') (v-prec iv'))
+     (≤-swap _ _ r≤)
+ , transport₂ _≤_
+     (normalise-negation' (v-left iv') (v-prec iv'))
+     (normalise-negation' (v-left iv ) (v-prec iv ))
+     (≤-swap _ _ l≤)
 FunctionMachine.κ Negation _ ϵ = [ ϵ ]
 FunctionMachine.κ-is-coracle Negation [ χ ] ϵ = 0 , refl
 FunctionMachine.κ-increasing Negation [ χ ] ϵ₁ ϵ₂ ϵ≤ = ϵ≤ , ⋆
