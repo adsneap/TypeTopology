@@ -301,46 +301,11 @@ unary) functions of type 𝕋 → 𝕋.
  = (ϵ : ℤ)
  → Σ δ ꞉ ℤ , ((χ γ : CompactInterval (k , i))
            → ⟨ ι χ ⟩ δ ＝ ⟨ ι γ ⟩ δ → ⟨ f χ ⟩ ϵ ＝ ⟨ f γ ⟩ ϵ)
-{-
-𝕋¹-uc-implies-c-function : (f : 𝕋 → 𝕋) → 𝕋¹-uc-function f → 𝕋¹-c-function f
-𝕋¹-uc-implies-c-function f ϕ ϵ χ = pr₁ (ϕ ϵ) , pr₂ (ϕ ϵ) χ
--}
 ```
 
 # Part IV - Searching function encodings on ternary Boehm encodings
 
 We now bring in our functions as defined in `FunctionEncodings.lagda.md`.
-
-We first prove that, using our continuity oracle, each function defined
-using the machinery in that file is continuous. We use the unary case to
-illustrate the proof method.
-
-```
-𝕋¹-Fs-are-continuous : (F : FunctionMachine 1)
-                     → 𝕋¹-c-function (FunctionMachine.f̂ F ∘ [_])
-pr₁ (𝕋¹-Fs-are-continuous F ϵ χ) = head (FunctionMachine.κ F [ χ ] ϵ)
-pr₂ (𝕋¹-Fs-are-continuous F ϵ χ) γ χδ＝γδ = ap pr₁ III
- where
-   open FunctionMachine F
-   δχ = head (κ [ χ ] ϵ)
-   δγ = head (κ [ γ ] ϵ)
-   δ＝ : δχ ＝ δγ
-   δ＝ = {!!}
-   I : A [ sw-to-vw (⟨ χ ⟩ δχ , δχ) ]
-     ＝ A [ sw-to-vw (⟨ γ ⟩ δγ , δγ) ]
-   I = ap (A ∘ [_] ∘ sw-to-vw) (ap₂ _,_ (χδ＝γδ ∙ ap (⟨ γ ⟩) δ＝) δ＝)
-   II : f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ
-      ＝ f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ
-   II = ap join' (ap A (map₂-get _ _) ∙ I ∙ ap A (map₂-get _ _ ⁻¹))
-   III : upRight-𝕀s (pr₁ (κ-is-coracle [ χ ] ϵ))
-                    (f̂'' [ TBR-to-sw-seq χ ] (κ [ χ ]) ϵ)
-       ＝ upRight-𝕀s (pr₁ (κ-is-coracle [ γ ] ϵ))
-                    (f̂'' [ TBR-to-sw-seq γ ] (κ [ γ ]) ϵ)
-   III = ap₂ upRight-𝕀s
-           (≥-lemma _ _ ϵ (ap pr₂ II)
-             (κ-is-coracle [ χ ] ϵ) (κ-is-coracle [ γ ] ϵ))
-           II
-```
 
 We eventually want to show that each function defined using the machinery in
 that file yields a uniform continuity oracle that proves it is uniformly
@@ -351,14 +316,13 @@ predicate `p : 𝕋 → Ω` and function built via our machinery `f : 𝕋 → �
 a predicate `(p ∘ f) : 𝕋 → Ω` that is searchable on any compact interval given
 by a specific-width interval `(k , i) : 𝕀s`.
 ```
-
-continuity-plus-compactness-gives-u-continuity
+F-u-continuous
  : FunctionMachine 1 → 𝕀s → 𝓤₀  ̇ 
-continuity-plus-compactness-gives-u-continuity F (k , i)
+F-u-continuous F (k , i)
  = 𝕋¹-uc-function-ki (k , i) (FunctionMachine.f̂ F ∘ [_] ∘ ι)
   
 p∘-is-uc : (F : FunctionMachine 1) {(k , i) : 𝕀s}
-         → continuity-plus-compactness-gives-u-continuity F (k , i)
+         → F-u-continuous F (k , i)
          → (p : 𝕋 → Ω 𝓦) → 𝕋¹-uc-predicate {𝓦} p
          → 𝕋¹-uc-predicate-ki {𝓦} (k , i) (p ∘ FunctionMachine.f̂ F ∘ [_] ∘ ι)
 p∘-is-uc F uc p (δ , ϕ)

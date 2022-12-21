@@ -458,6 +458,43 @@ vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦
 vec-satisfy p [] = 𝟙
 vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
+pairwise₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ} → (p : X → Y → 𝓦 ̇ )
+          → Vec X n → Vec Y n → 𝓦 ̇
+pairwise₂ p []       []       = 𝟙
+pairwise₂ p (x ∷ xs) (y ∷ ys) = p x y × pairwise₂ p xs ys
+
+vec-map₂-∼ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓦 ̇ } {n : ℕ}
+           → (f : Y → Z) (gs : Vec (X → Y) n)
+           → (xs : Vec X n)
+           → vec-map f (vec-map₂ gs xs) ＝ vec-map₂ (vec-map (f ∘_) gs) xs
+vec-map₂-∼ f [] [] = refl
+vec-map₂-∼ f (g ∷ gs) (x ∷ xs) = ap (f (g x) ∷_) (vec-map₂-∼ f gs xs)
+
+pairwise₂-extend : {X : 𝓤 ̇ } {Y : 𝓥  ̇ } {Z : 𝓣  ̇ } {n : ℕ}
+                 → (p₁ : X → 𝓦  ̇ )
+                 → (p₂ : Y → Y → 𝓦'  ̇ )
+                 → (p₃ : Z → Z → 𝓣'  ̇ )
+                 → (f : X → Y → Z)
+                 → (∀ x i j → p₁ x → p₂ i j → p₃ (f x i) (f x j))
+                 → (xs : Vec X n)
+                 → (is : Vec Y n) (js : Vec Y n)
+                 → vec-satisfy p₁ xs
+                 → pairwise₂ p₂ is js
+                 → pairwise₂ p₃ (vec-map₂ (vec-map f xs) is) (vec-map₂ (vec-map f xs) js)
+pairwise₂-extend p₁ p₂ p₃ f g [] [] [] _ x = ⋆
+pairwise₂-extend p₁ p₂ p₃ f g (x ∷ xs) (i ∷ is) (j ∷ js) (px , pxs) (pij , pisjs)
+ = g x i j px pij , pairwise₂-extend p₁ p₂ p₃ f g xs is js pxs pisjs
+
+
+vec-satisfy₁ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
+             → (p : Y → 𝓦 ̇ )
+             → (f : X → Y)
+             → (∀ x → p (f x))
+             → (xs : Vec X n)
+             → vec-satisfy p (vec-map f xs)
+vec-satisfy₁ p f Πp [] = ⋆
+vec-satisfy₁ p f Πp (x ∷ xs) = Πp x , (vec-satisfy₁ p f Πp xs)
+
 vec-satisfy-preserved-by : {X : 𝓤 ̇ }
                          → {n : ℕ} (xs : Vec (ℤ → X) n) → (ks : Vec ℤ n) 
                          → (p : X → 𝓦 ̇ )
@@ -466,11 +503,6 @@ vec-satisfy-preserved-by : {X : 𝓤 ̇ }
 vec-satisfy-preserved-by [] [] p ⋆ = ⋆
 vec-satisfy-preserved-by (x ∷ xs) (k ∷ ks) p (px , pxs)
  = px k , vec-satisfy-preserved-by xs ks p pxs
-
-map₂-get : {X : 𝓤 ̇ } {Y : 𝓥 ̇ }
-         → (fs : Vec (X → Y) 1) → (xs : Vec X 1)
-         → vec-map₂ fs xs ＝ [ head fs (head xs) ]
-map₂-get [ f ] [ x ] = refl
 
 _+++_ : {X : 𝓤 ̇ } {n : ℕ} → Vec X n → X → Vec X (succ n)
 [] +++ x = [ x ]

@@ -20,7 +20,7 @@ open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
 open import Todd.BelowAndAbove
-  using (downLeft-upRight ; downRight-upRight ; dL-transform)
+  using (downLeft-upRight ; downRight-upRight ; dL-transform ; downRight＝downLeft)
 open import Todd.DyadicRationals
   renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
 open import Todd.Prelude 
@@ -366,6 +366,9 @@ sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
  = preserves-trans seq-sw-to-vw _ _ _ located sw-located-preserves-vw vw-located-preserves
 
+sw-nested-preserves : seq-sw-to-vw preserves sw-nested as vw-nested
+sw-nested-preserves ζ = id
+
 covers-is-prop : ∀ a b → is-prop (a covers b)
 covers-is-prop a b = ×-is-prop (≤ℤ[1/2]-is-prop (ld a) (ld b)) (≤ℤ[1/2]-is-prop (rd b) (rd a))
 
@@ -455,63 +458,6 @@ upRight-covers (c , i) = leftproof c i , rightproof c i
       I : quotient (c ℤ+ pos 2 , n)
         ≤ quotient (pos 2 ℤ* (upRight c ℤ+ pos 2) , n)
       I = normalise-≤2 (c ℤ+ pos 2) (pos 2 ℤ* (upRight c ℤ+ pos 2)) n III
-
-upRight-preserves-order : (x y : 𝕀s) → quotient x ≤ quotient y
-                        → quotient (upRight* x) ≤ quotient (upRight* y)
-upRight-preserves-order x y = {!!}
-
-upRight-preserves-covering : (ci kj : 𝕀s) → swi ci covers swi kj
-                           → swi (upRight* ci) covers swi (upRight* kj)
-upRight-preserves-covering (c , i) (k , j) ((n , v₁) , v₂) = to1 , to2
- where
-  from1 : quotient (c , i) ≤ quotient (k , j)
-  from1 = n , v₁
-
-  from2 : quotient (k ℤ+ pos 2 , j) ≤ quotient (c ℤ+ pos 2 , i)
-  from2 = v₂
-
-  to1 to1' : quotient (upRight c , predℤ i) ≤ quotient (upRight k , predℤ j)
-  to1 = upRight-preserves-order (c , i) (k , j) (n , v₁)
-  to1' = {!n / 2 !} , {!!}
-
-  to2 : quotient ((upRight k +pos 2) , predℤ j)
-      ≤ quotient ((upRight c +pos 2) , predℤ i)
-  to2 = {!!}
-
-upRight-covers-lemma : ((c , i) (k , j) : 𝕀s) → i < j
-                     → swi (c , i) covers swi (k , j)
-                     → swi (c , i) covers swi (upRight* (k , j))
-upRight-covers-lemma (c , i) (k , j) i<j v = {!!} , {!!}
-
-upRight-covers' : (ci kj : 𝕀s) → swi ci covers swi kj
-                → swi (upRight* ci) covers swi kj
-upRight-covers' _ _ = covers-trans _ _ _ (upRight-covers _)
-
-upRightⁿ-covers : (k : ℕ) → (ci : 𝕀s) → swi (upRight-𝕀s k ci) covers swi ci
-upRightⁿ-covers 0 _ = covers-refl _
-upRightⁿ-covers (succ k) ci
- = covers-trans _ _ _ (upRightⁿ-covers k (upRight* ci)) (upRight-covers ci)
-
-upRightⁿ-covers' : (k : ℕ) → (ci kj : 𝕀s) → swi ci covers swi kj
-                 → swi (upRight-𝕀s k ci) covers swi kj
-upRightⁿ-covers' _ _ _ = covers-trans _ _ _ (upRightⁿ-covers _ _)
-
-upRight-≤'-covers
- : (k₁ k₂ : ℕ) → ((c , i) (k , j) : 𝕀s) → i ℤ- pos k₁ ≤ j ℤ- pos k₂
- → swi (c , i) covers swi (k , j)
- → swi (upRight-𝕀s k₁ (c , i)) covers swi (upRight-𝕀s k₂ (k , j))
-upRight-≤'-covers k₁ zero (c , i) (k , j) k≤
- = upRightⁿ-covers' k₁ (c , i) (k , j)
-upRight-≤'-covers zero (succ k₂) (c , i) (k , j) k≤ v
- = upRight-≤'-covers 0 k₂ (c , i) (upRight* (k , j))
-     (ℤ≤-trans _ _ _ k≤ (1 , (ap succℤ {!!} ∙ succpredℤ _)))
-     (upRight-covers-lemma (c , i) (k , j) {!!} v)
-upRight-≤'-covers (succ k₁) (succ k₂) (c , i) (k , j) k≤ v
- = upRight-≤'-covers k₁ k₂ (upRight* (c , i)) (upRight* (k , j))
-     (transport₂ _≤_
-        (pred-shift i (pos k₁) ⁻¹)
-        (pred-shift j (pos k₂) ⁻¹) k≤)
-     (upRight-preserves-covering (c , i) (k , j) v)
 ```
 
 Next, we use `upRight-𝕀s` to define `go-up`, a functional that takes a schema
@@ -553,7 +499,7 @@ go-up-preserves-fully-nested
  → sw-fully-nested ζ
  → sw-fully-nested (go-up k ζ)
 go-up-preserves-fully-nested k ζ f ρ n m n≤m
- = upRight-≤'-covers (k n) (k m) (ζ n) (ζ m) (f n m n≤m) (ρ n m n≤m)
+ = {!!} 
 
 normalise-preserves-fully-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                                  → sw-fully-nested ζ
@@ -645,32 +591,27 @@ normalised-nested-seq-yields-belowness χ η nsted n = 2a≤b , b≤2a+2
            (≤-succℤ' (succℤ b) (succℤ (downRight a))
             (transport ((b +pos 2) ≤_) I l₇))
 
-belowness-yields-nested-seq : (χ : ℤ → 𝕀s)
-                            → ((n : ℤ) → pr₁ (χ (succℤ n)) below pr₁ (χ n))
-                            → sw-nested χ
-belowness-yields-nested-seq χ b n = γ₁ , {!γ₂!}
+belowness-yields-nested-seq : (χ : 𝕋) → sw-nested (TBR-to-sw-seq χ)
+belowness-yields-nested-seq (χ , b) n = left  (χ n) (χ (succℤ n)) n (pr₁ (b n))
+                                      , right (χ n) (χ (succℤ n)) n (pr₂ (b n))
  where
-  is-n : is-normalised (TBR-to-sw-seq ((λ n → pr₁ (χ n)) , b))
-  is-n = TBR-to-sw-is-normalised (pr₁ ∘ χ , b)
-  
-  I : (downLeft (pr₁ (χ n)) ≤ pr₁ (χ (succℤ n)))
-    × (pr₁ (χ (succℤ n)) ≤ downRight (pr₁ (χ n)))
-  I = b n
+  left : ∀ x y i → downLeft x ≤ y → l (x , i) ≤ l (y , succℤ i)
+  left x y i (j , dLx+j≡y)
+   = transport₂ _≤_ (normalise-succ' x i ⁻¹) (ap (l ∘ (_, succℤ i)) dLx+j≡y)
+       (normalise-≤ j (downLeft x , succℤ i))
 
-  III : quotient (pr₁ (χ n) ℤ+ pr₁ (χ n) , succℤ (pr₂ (χ n)))
-      ≤ quotient (pr₁ (χ (succℤ n))      , pr₂ (χ (succℤ n)))
-  III = {!normalise-≤!}
-
-  II : quotient (pr₁ (χ n) ℤ+ pr₁ (χ n) , succℤ (pr₂ (χ n)))
-     ≤ quotient (pr₁ (χ (succℤ n))      , pr₂ (χ (succℤ n)))
-  II = transport
-         (λ ∎ → quotient (pr₁ (χ n) ℤ+ pr₁ (χ n) , ∎)
-              ≤ quotient (pr₁ (χ (succℤ n))      , pr₂ (χ (succℤ n))))
-         (is-n (succℤ (pr₂ (χ n)))) III
-
-  γ₁ : quotient (χ n) ≤ quotient (χ (succℤ n))
-  γ₁ = transport (_≤ quotient (χ (succℤ n)))
-         (normalise-succ' (pr₁ (χ n)) (pr₂ (χ n)) ⁻¹) II
+  right : ∀ x y i → y ≤ downRight x → r (y , succℤ i) ≤ r (x , i)
+  right x y i (j , y+j≡dRx)
+   = transport (r (y , succℤ i) ≤_)
+       (ap (l ∘ (_, succℤ i))
+         (ℤ-left-succ-pos (succℤ y) j
+         ∙ ap succℤ (ℤ-left-succ-pos y j
+           ∙ ap succℤ y+j≡dRx))
+       ∙ ap (l ∘ (_, succℤ i))
+           (ap (succℤ ^ 2) (downRight＝downLeft x)
+           ∙ downRight＝downLeft (succℤ x))
+       ∙ normalise-succ' (x +pos 2) i ⁻¹)
+       (normalise-≤ j (y +pos 2 , succℤ i))
 
 normalised-seq-to-TBR : (χ : ℤ → 𝕀s) → is-normalised χ → sw-nested χ → 𝕋
 normalised-seq-to-TBR χ η₁ η₂
@@ -690,7 +631,8 @@ We use all of our infrastructure thus far to define the map from TBRs to ℝ.
 ⟦ χ  ⟧ = ⦅ seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)) ⦆
             (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
                (sw-is-intervalled (TBR-to-sw-seq χ)))
-            (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ))
+            (belowness-yields-nested-seq χ)
+            -- (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ))
             (sw-located-preserves (TBR-to-sw-seq χ)
               (normalised-is-located (TBR-to-sw-seq χ)
                 (TBR-to-sw-is-normalised χ)))
@@ -716,123 +658,6 @@ We need to prove that `join` preserves nestedness, which requires the
 completion of the following proofs.
 
 ```
-upValue-covers-lemma : (a b c d : ℤ)
-                     → (l₁ : a ≤ b) → (l₂ : b ≤ c) → (l₃ : c ≤ d) → (l₄ : a ≤ d)
-                     → upValue b c l₂ ≤ upValue a d l₄
-upValue-covers-lemma = {!!}
-
-andrew-hole' : (ζn ζm : 𝕀v)
-             → vwi ζn covers vwi ζm
-             → v-prec ζn ≤ v-prec ζm
-             → let up-n = upValue (v-left ζn) (v-right ζn) (v-l≤r ζn)
-                   up-m = upValue (v-left ζm) (v-right ζm) (v-l≤r ζm) in
-               v-prec ζn ℤ- (pos up-n) ≤ v-prec ζm ℤ- (pos up-m)
-andrew-hole' (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm) v pn≤pm = γ
- where
-  I : upValue lm rm l≤rm ≤ upValue ln rn l≤rn
-  I = upValue-covers-lemma ln lm rm rn {!!} l≤rm {!!} l≤rn
-
-  II : pos (upValue lm rm l≤rm) ≤ pos (upValue ln rn l≤rn)
-  II = ℕ≤-to-ℤ≤ (upValue lm rm l≤rm) (upValue ln rn l≤rn) I
-
-  III : ℤ- pos (upValue ln rn l≤rn) ≤ ℤ- pos (upValue lm rm l≤rm)
-  III = ℤ≤-swap (pos (upValue lm rm l≤rm)) (pos (upValue ln rn l≤rn)) II
-
-  γ : pn ℤ- pos (upValue ln rn l≤rn) ≤ pm ℤ- pos (upValue lm rm l≤rm)
-  γ = ℤ≤-adding pn pm
-        (ℤ- pos (upValue ln rn l≤rn))
-        (ℤ- pos (upValue lm rm l≤rm))
-        pn≤pm III
-
-andrew-hole'' : (ζn ζm : 𝕀v)
-              → vwi ζn covers vwi ζm
-              → v-prec ζm ≤ v-prec ζn
-              → let up-n = upValue (v-left ζn) (v-right ζn) (v-l≤r ζn)
-                    up-m = upValue (v-left ζm) (v-right ζm) (v-l≤r ζm) in
-                v-prec ζn ℤ- (pos up-n) ≤ v-prec ζm ℤ- (pos up-m)
-andrew-hole'' (((ln , rn) , pn) , (α , α'))
-              (((lm , rm) , pm) , (β , β')) v (z , e)
- = transport₂ _≤_ X XI IX
- where
-  I : pos z ＝ pn ℤ- pm
-  I = pos z                  ＝⟨ ap (_ ℤ+_) (ℤ-sum-of-inverse-is-zero _ ⁻¹) ⟩
-      pos z ℤ+ (pm ℤ- pm)    ＝⟨ ℤ+-assoc _ _ _ ⁻¹ ⟩
-      pos z ℤ+ pm ℤ+ (ℤ- pm) ＝⟨ ap (_ℤ- pm) (ℤ+-comm _ _) ⟩
-      pm ℤ+ pos z ℤ- pm      ＝⟨ ap (_ℤ- pm) e  ⟩
-      pn ℤ- pm               ∎
-  II : pos (z ℕ+ upValue lm rm (β , β'))
-     ＝ pn ℤ- (pm ℤ- pos (upValue lm rm (β , β'))) 
-  II = pos (z ℕ+ upValue lm rm (β , β'))
-         ＝⟨ distributivity-pos-addition z (upValue lm rm (β , β')) ⁻¹ ⟩
-       pos z ℤ+ pos (upValue lm rm (β , β'))
-         ＝⟨ ap (_ℤ+ pos (upValue lm rm (β , β'))) I ⟩
-       pn ℤ- pm ℤ+ pos (upValue lm rm (β , β'))
-         ＝⟨ ℤ+-assoc pn (ℤ- pm) (pos (upValue lm rm (β , β')))  ⟩
-       pn ℤ+ ((ℤ- pm) ℤ+ pos (upValue lm rm (β , β')))
-         ＝⟨ ap (λ ∎ → pn ℤ+ ((ℤ- pm) ℤ+ ∎))
-                (minus-minus-is-plus (pos (upValue lm rm (β , β'))) ⁻¹) ⟩
-       pn ℤ+ ((ℤ- pm) ℤ+ (ℤ- (ℤ- pos (upValue lm rm (β , β')))))
-         ＝⟨ ap (pn ℤ+_) (negation-dist pm (ℤ- pos (upValue lm rm (β , β')))) ⟩
-       pn ℤ- (pm ℤ- pos (upValue lm rm (β , β'))) ∎
-  III : lm ℤ* pos (2^ z) ≤ rm ℤ* pos (2^ z)
-  III = positive-multiplication-preserves-order' lm rm (pos (2^ z))
-          (power-of-pos-positive z) (β , β')
-  IV : z ℕ+ upValue lm rm (β , β')
-     ≤ upValue (lm ℤ* pos (2^ z)) (rm ℤ* pos (2^ z)) III
-  IV = {!!}
-  
-  V : upValue (lm ℤ* pos (2^ z)) (rm ℤ* pos (2^ z)) III
-    ≤ upValue ln rn (α , α')
-  V = {!!}
-  
-  VI : z ℕ+ upValue lm rm (β , β') ≤ upValue ln rn (α , α')
-  VI = ≤-trans _ _ _ IV V
-  
-  VII : pos (z ℕ+ upValue lm rm (β , β')) ≤ pos (upValue ln rn (α , α'))
-  VII = ℕ≤-to-ℤ≤ _ _ VI
-  
-  VIII : pn ℤ- (pm ℤ- pos (upValue lm rm (β , β')))
-       ≤ pos (upValue ln rn (α , α'))
-  VIII = transport (_≤ pos (upValue ln rn (α , α'))) II VII
-
-  IX : {!!}
-  IX = ℤ≤-adding' _ _
-         (pm ℤ- pos (upValue lm rm (β , β')) ℤ- pos (upValue ln rn (α , α')))
-         VIII  
-
-  X : pn ℤ- (pm ℤ- pos (upValue lm rm (β , β')))
-         ℤ+ (pm ℤ- pos (upValue lm rm (β , β'))
-         ℤ- pos (upValue ln rn (α , α')))
-    ＝ pn ℤ- pos (upValue ln rn (α , α'))
-  X = ℤ+-assoc _ _ _ ⁻¹
-    ∙ ap (_ℤ- _) (ℤ+-assoc _ _ _)
-    ∙ ap (λ ∎ → _ ℤ+ ∎ ℤ- _) (ℤ-sum-of-inverse-is-zero' _)
-
-  XI : pos (upValue ln rn (α , α'))
-         ℤ+ (pm ℤ- pos (upValue lm rm (β , β'))
-         ℤ- pos (upValue ln rn (α , α')))
-     ＝ pm ℤ- pos (upValue lm rm (β , β'))
-  XI = ap (_ ℤ+_) (ℤ+-comm _ _)
-     ∙ ℤ+-assoc _ _ _ ⁻¹
-     ∙ ap (_ℤ+ _) (ℤ-sum-of-inverse-is-zero _)
-     ∙ ℤ-zero-left-neutral _ 
-
--- TODO: Rename
-andrew-hole : (ζn ζm : 𝕀v) → vwi ζn covers vwi ζm
-            → let up-n = upValue (v-left ζn) (v-right ζn) (v-l≤r ζn)
-                  up-m = upValue (v-left ζm) (v-right ζm) (v-l≤r ζm) in
-              v-prec ζn ℤ- (pos up-n) ≤ v-prec ζm ℤ- (pos up-m)
-andrew-hole (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm) v
- with ℤ-trichotomous pn pm 
-... | (inl pn<pm)
- = andrew-hole' (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm)
-     v (<-is-≤ pn pm pn<pm)
-... | inr (inl pn＝pm)
- = andrew-hole' (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm)
-     v (transport (pn ≤_) pn＝pm (ℤ≤-refl pn))
-... | inr (inr pm<pn)
- = andrew-hole'' (((ln , rn) , pn) , l≤rn) (((lm , rm) , pm) , l≤rm)
-     v (<-is-≤ pm pn pm<pn)
 ```
 
 Using these, we can show that join preserves nestedness.
@@ -840,13 +665,7 @@ Using these, we can show that join preserves nestedness.
 ```
 join-preserves-fully-nested : (ζ : ℤ → 𝕀v) → vw-fully-nested ζ
                             → sw-fully-nested (join ζ)
-join-preserves-fully-nested ζ v n m n≤m
- = upRight-≤'-covers (upValue (v-left (ζ n)) (v-right (ζ n)) (v-l≤r (ζ n)))
-                     (upValue (v-left (ζ m)) (v-right (ζ m)) (v-l≤r (ζ m)))
-                     (v-left (ζ n) , v-prec (ζ n))
-                     (v-left (ζ m) , v-prec (ζ m))
-                     (andrew-hole _ _ (v n m n≤m))
-                     {!!} -- Todd
+join-preserves-fully-nested ζ v n m n≤m = {!!}
 
 join-preserves-nested : (ζ : ℤ → 𝕀v) → vw-nested ζ → sw-nested (join ζ)
 join-preserves-nested ζ v
@@ -865,7 +684,12 @@ and continuity oracles, as defined in the paper.
 record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
   field
     f  : Vec ℝ-d d → ℝ-d
+    
     A  : Vec 𝕀v d → 𝕀v
+    A-nested : (as bs : Vec 𝕀v d)
+             → pairwise₂ _covers_ (vec-map vwi as) (vec-map vwi bs)
+             → vwi (A as) covers vwi (A bs)
+             
     κ : Vec 𝕋 d → ℤ → Vec ℤ d
     κ-is-coracle
       : (χs : Vec 𝕋 d) → (ϵ : ℤ)
@@ -873,25 +697,48 @@ record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
           (join'
             (A (vec-map₂ (vec-map (seq-sw-to-vw ∘ TBR-to-sw-seq) χs) (κ χs ϵ))))
         ≥ ϵ
+        
+    κ-increasing : (χs : Vec 𝕋 d) → (ϵ₁ ϵ₂ : ℤ) → ϵ₁ ≤ ϵ₂
+                 → pairwise₂ _≤_ (κ χs ϵ₁) (κ χs ϵ₂)
+                 
   f̂'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
   f̂'  χs k n = A (vec-map₂ χs (k n))
-  g'  : Vec (ℤ → 𝕀v) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀v)
-  g'  χs k n = A (vec-map₂ χs (k n))
+  
   f̂'' : Vec (ℤ → 𝕀s) d → (k : ℤ → Vec ℤ d) → (ℤ → 𝕀s)
   f̂'' χs k = join (f̂' (vec-map seq-sw-to-vw χs) k)
+  
   κ'-is-coracle : (χs : Vec 𝕋 d)
                 → is-prenormalised (f̂'' (vec-map TBR-to-sw-seq χs) (κ χs))
   κ'-is-coracle χs ϵ
    = transport (λ ■ → ϵ ≤ pr₂ (join' (A (vec-map₂ ■ (κ χs ϵ)))))
        (vec-map-∼ TBR-to-sw-seq seq-sw-to-vw χs)
        (κ-is-coracle χs ϵ)
+  
+  f̂'-preserves-nested : (ζs : Vec (ℤ → 𝕀v) d) → vec-satisfy vw-nested ζs
+                      → (is js : Vec ℤ d) → pairwise₂ _≤_ is js
+                      → vwi (A (vec-map₂ ζs is)) covers vwi (A (vec-map₂ ζs js))
+  f̂'-preserves-nested ζs vn is js is≤js
+   = A-nested (vec-map₂ ζs is) (vec-map₂ ζs js)
+       (transport₂ (pairwise₂ _covers_)
+          (vec-map₂-∼ vwi ζs is ⁻¹) (vec-map₂-∼ vwi ζs js ⁻¹)
+          (pairwise₂-extend vw-nested _≤_ _covers_ (_∘_ vwi)
+             (λ ζ i j ζ-nested i≤j → nested-implies-fully-nested (vwi ∘ ζ) ζ-nested i j i≤j)
+             ζs is js vn is≤js))
+  
   f̂   : Vec 𝕋 d → 𝕋
   f̂   χs   = prenormalised-seq-to-TBR
                  (f̂'' (vec-map TBR-to-sw-seq χs) (κ χs))
                (κ'-is-coracle χs)
                (join-preserves-nested
                  (f̂' (vec-map (seq-sw-to-vw) (vec-map TBR-to-sw-seq χs)) (κ χs))
-                 {!!})
+                 (λ n → f̂'-preserves-nested _
+                 (transport (vec-satisfy vw-nested)
+                   (vec-map-∼ TBR-to-sw-seq seq-sw-to-vw χs)
+                   (vec-satisfy₁ vw-nested (seq-sw-to-vw ∘ TBR-to-sw-seq)
+                     belowness-yields-nested-seq
+                     χs))
+                 (κ χs n) (κ χs (succℤ n))
+                          (κ-increasing χs n (succℤ n) (1 , refl))))
 ```
 
 # Part VI - Examples of function encodings
@@ -905,8 +752,10 @@ FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]
                            = ((ℤ- r , ℤ- l) , i)
                            , ℤ≤-swap l r l≤r
+FunctionMachine.A-nested Negation as bs x = {!!}
 FunctionMachine.κ Negation _ ϵ = [ ϵ ]
 FunctionMachine.κ-is-coracle Negation [ χ ] ϵ = 0 , refl
+FunctionMachine.κ-increasing Negation [ χ ] ϵ₁ ϵ₂ ϵ≤ = ϵ≤ , ⋆
 
 𝕋-_ : 𝕋 → 𝕋
 𝕋- x = FunctionMachine.f̂ Negation [ x ]
