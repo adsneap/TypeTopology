@@ -693,9 +693,9 @@ replace-above (k , i) (c , j) j<i b
    γ = replace-below (c , j) (k , i) j<i (aboveⁿ-implies-belowⁿ k c (pr₁ j<i) b)
 ```
 
-Next, we define functions from the mathematical real space
-in `FunctionEncodings.lagda.md`.
+Next, we define functions from the mathematical real space in
+[`FunctionEncodings`](2-FunctionEncodings.lagda.md)
 
-Them, we combine our work for the purpose of searchability in
-`TernaryBoehmRealsSearch.lagda.md`.
+Then, we combine our work for the purpose of searchability in
+[`TernaryBoehmRealsSearch`](3-TernaryBoehmRealsSearch.lagda.md).
 

@@ -98,7 +98,7 @@ information at `pos δ` *includes* all of the location information previous to
 that.
 
 Therefore, we prefer to use a different isomorphism: the one induced by the
-`replace` function in `TernaryBoehmReals.lagda.md`.
+`replace` function in [`TernaryBoehmReals`](1-TernaryBoehmReals.lagda.md).
 
 # Part II -  Searching quotiented encodings of compact intervals
 
@@ -305,7 +305,8 @@ unary) functions of type 𝕋 → 𝕋.
 
 # Part IV - Searching function encodings on ternary Boehm encodings
 
-We now bring in our functions as defined in `FunctionEncodings.lagda.md`.
+We now bring in our functions as defined in
+[`FunctionEncodings`](2-FunctionEncodings.lagda.md).
 
 We eventually want to show that each function defined using the machinery in
 that file yields a uniform continuity oracle that proves it is uniformly

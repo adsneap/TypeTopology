@@ -527,19 +527,14 @@ normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
 normalise-preserves-nested ζ ρ swn
  = fully-nested-implies-nested _
      (normalise-preserves-fully-nested ζ ρ (nested-implies-fully-nested _ swn))
-{-
-go-up-covers : (ζ : ℤ → 𝕀s) → (μ : ℤ → ℕ) → (n : ℤ)
-             →        seq-of-sw-intervals (go-up μ ζ) n
-               covers seq-of-sw-intervals          ζ  n 
-go-up-covers ζ μ n = {!refl!}
--}
 
 ```
 
 # Part IV - Ternary Boehm Real encodings
 
-Bringing in ternary Boehm real encodings from `TernaryBoehmReals.lagda.md`, we
-first relate them to specific-width interval encodings.
+Bringing in ternary Boehm real encodings from
+[`TernaryBoehmReals`](1-TernaryBoehmReals.lagda.md), we first relate them to
+specific-width interval encodings.
 
 ```
 TBR-to-sw-seq : 𝕋 → (ℤ → 𝕀s)
@@ -777,5 +772,5 @@ FunctionMachine.κ-increasing Negation [ χ ] ϵ₁ ϵ₂ ϵ≤ = ϵ≤ , ⋆
 ```
 
 We conclude our work for the purpose of searchability in
-`TernaryBoehmRealsSearch.lagda.md`.
+[`TernaryBoehmRealsSearch`](3-TernaryBoehmRealsSearch.lagda.md).
 
