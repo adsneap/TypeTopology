@@ -365,13 +365,15 @@ sw-located-preserves-vw ζ = id
 
 sw-located-preserves : seq-of-sw-intervals preserves sw-located as located
 sw-located-preserves
- = preserves-trans seq-sw-to-vw _ _ _ located sw-located-preserves-vw vw-located-preserves
+ = preserves-trans seq-sw-to-vw _ _ _
+     located sw-located-preserves-vw vw-located-preserves
 
 sw-nested-preserves : seq-sw-to-vw preserves sw-nested as vw-nested
 sw-nested-preserves ζ = id
 
 covers-is-prop : ∀ a b → is-prop (a covers b)
-covers-is-prop a b = ×-is-prop (≤ℤ[1/2]-is-prop (ld a) (ld b)) (≤ℤ[1/2]-is-prop (rd b) (rd a))
+covers-is-prop a b
+ = ×-is-prop (≤ℤ[1/2]-is-prop (ld a) (ld b)) (≤ℤ[1/2]-is-prop (rd b) (rd a))
 
 sw-nested-is-prop : ∀ ζ → is-prop (sw-nested ζ)
 sw-nested-is-prop ζ = Π-is-prop (fe 𝓤₀ 𝓤₀) λ _ → covers-is-prop _ _
@@ -725,7 +727,7 @@ record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
        (transport₂ (pairwise₂ _covers_)
           (vec-map₂-∼ vwi ζs is ⁻¹) (vec-map₂-∼ vwi ζs js ⁻¹)
           (pairwise₂-extend vw-nested _≤_ _covers_ (_∘_ vwi)
-             (λ ζ i j ζ-nested i≤j → nested-implies-fully-nested (vwi ∘ ζ) ζ-nested i j i≤j)
+             (nested-implies-fully-nested ∘ (vwi ∘_))
              ζs is js vn is≤js))
   
   f̂   : Vec 𝕋 d → 𝕋

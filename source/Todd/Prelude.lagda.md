@@ -458,7 +458,7 @@ vec-satisfy : {X : 𝓤 ̇ } {n : ℕ} → (X → 𝓦 ̇ ) → Vec X n → 𝓦
 vec-satisfy p [] = 𝟙
 vec-satisfy p (x ∷ xs) = p x × vec-satisfy p xs
 
-pairwise₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ} → (p : X → Y → 𝓦 ̇ )
+pairwise₂ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ} (p : X → Y → 𝓦 ̇ )
           → Vec X n → Vec Y n → 𝓦 ̇
 pairwise₂ p []       []       = 𝟙
 pairwise₂ p (x ∷ xs) (y ∷ ys) = p x y × pairwise₂ p xs ys
@@ -475,16 +475,17 @@ pairwise₂-extend : {X : 𝓤 ̇ } {Y : 𝓥  ̇ } {Z : 𝓣  ̇ } {n : ℕ}
                  → (p₂ : Y → Y → 𝓦'  ̇ )
                  → (p₃ : Z → Z → 𝓣'  ̇ )
                  → (f : X → Y → Z)
-                 → (∀ x i j → p₁ x → p₂ i j → p₃ (f x i) (f x j))
+                 → (∀ x → p₁ x → ∀ i j → p₂ i j → p₃ (f x i) (f x j))
                  → (xs : Vec X n)
                  → (is : Vec Y n) (js : Vec Y n)
                  → vec-satisfy p₁ xs
                  → pairwise₂ p₂ is js
-                 → pairwise₂ p₃ (vec-map₂ (vec-map f xs) is) (vec-map₂ (vec-map f xs) js)
+                 → pairwise₂ p₃ (vec-map₂ (vec-map f xs) is)
+                                (vec-map₂ (vec-map f xs) js)
 pairwise₂-extend p₁ p₂ p₃ f g [] [] [] _ x = ⋆
-pairwise₂-extend p₁ p₂ p₃ f g (x ∷ xs) (i ∷ is) (j ∷ js) (px , pxs) (pij , pisjs)
- = g x i j px pij , pairwise₂-extend p₁ p₂ p₃ f g xs is js pxs pisjs
-
+pairwise₂-extend p₁ p₂ p₃ f g
+                 (x ∷ xs) (i ∷ is) (j ∷ js) (px , pxs) (pij , pisjs)
+ = g x px i j pij , pairwise₂-extend p₁ p₂ p₃ f g xs is js pxs pisjs
 
 vec-satisfy₁ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {n : ℕ}
              → (p : Y → 𝓦 ̇ )
@@ -631,7 +632,8 @@ drop-lst-< : {X : 𝓤 ̇ } (n k : ℕ) → (k<n : k <ℕ n) (k<sn : k <ℕ (suc
            → (drop-lst xs !! k) k<n
            ＝ (         xs !! k) k<sn
 drop-lst-< n zero k<n k<sn (x ∷ (y ∷ xs)) = refl
-drop-lst-< (succ n) (succ k) k<n k<sn (x ∷ (y ∷ xs)) = drop-lst-< n k k<n k<sn (y ∷ xs)
+drop-lst-< (succ n) (succ k) k<n k<sn (x ∷ (y ∷ xs))
+ = drop-lst-< n k k<n k<sn (y ∷ xs)
 
 drop-fst-< : {X : 𝓤 ̇ } → (n k : ℕ) → (k<n : k <ℕ n)
            → (xs : Vec X (succ n))
