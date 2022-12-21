@@ -267,25 +267,6 @@ seq-convert-＝ : seq-of-sw-intervals ＝ (seq-of-vw-intervals ∘ seq-sw-to-vw)
 seq-convert-＝ = refl
 ```
 
-TODO: Move to Prelude.lagda.md
-
-```agda
-_preserves_as_ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (X → Y) → (X → 𝓦 ̇ ) → (Y → 𝓣 ̇ )
-               → 𝓤 ⊔ 𝓦 ⊔ 𝓣 ̇ 
-f preserves A as B  = ∀ x → A x → B (f x)
-
-_preserves_ : {X : 𝓤 ̇ } → (X → X) → (X → 𝓦 ̇ ) → 𝓤 ⊔ 𝓦 ̇
-f preserves A = f preserves A as A
-
-preserves-trans : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓤' ̇ }
-                → (f : X → Y) → (g : Y → Z)
-                → (A : X → 𝓦 ̇ ) → (B : Y → 𝓣 ̇ ) → (C : Z → 𝓥' ̇ )
-                → f preserves A as B
-                → g preserves B as C
-                → (g ∘ f) preserves A as C
-preserves-trans f g A B C p₁ p₂ x Ax = p₂ (f x) (p₁ x Ax)
-```
-
 Now we define the three key properties on sequences of dyadic intervals on
 variable-width encodings.
 
@@ -408,13 +389,6 @@ upRight-𝕀s : ℕ → 𝕀s → 𝕀s
 upRight-𝕀s 0 = id
 upRight-𝕀s (succ k) = upRight-𝕀s k ∘ upRight*
 
--- TODO: Move or find elsewhere
-pred-shift : ∀ a b → predℤ a ℤ- b ＝ a ℤ- succℤ b
-pred-shift a b = ℤ-left-pred a (ℤ- b)
-               ∙ ℤ-right-pred a (ℤ- b) ⁻¹
-               ∙ ap (a ℤ+_) (succℤ-lc (succpredℤ _ ∙ succpredℤ _ ⁻¹
-                                      ∙ ap succℤ (negation-dist b (pos 1))))
-
 upRight-𝕀s-＝ : ∀ k c i → pr₂ (upRight-𝕀s k (c , i)) ＝ i ℤ- pos k
 upRight-𝕀s-＝ zero c i = refl
 upRight-𝕀s-＝ (succ k) c i = upRight-𝕀s-＝ k (upRight c) (predℤ i)
@@ -516,11 +490,13 @@ normalise-preserves-fully-nested ζ ρ
    γ n m
     = transport₂ (λ ■₁ ■₂ → ■₁ ℤ- pos (pr₁ (ρ n)) ≤ ■₂ ℤ- pos (pr₁ (ρ m)))
         (pr₂ (ρ n)) (pr₂ (ρ m))
-    ∘ (transport₂ _≤_ (e n (pos (pr₁ (ρ n))) ⁻¹) (e m (pos (pr₁ (ρ m))) ⁻¹))
+    ∘ (transport₂ _≤_
+        (e n (pos (pr₁ (ρ n))) ⁻¹)
+        (e m (pos (pr₁ (ρ m))) ⁻¹))
     where
-      e : ∀ a b → ((a ℤ+ b) ℤ- b) ＝ a -- TODO: Find this elsewhere
+      e : ∀ a b → ((a ℤ+ b) ℤ- b) ＝ a
       e a b = ℤ+-assoc _ _ _ ∙ ap (a ℤ+_) (ℤ-sum-of-inverse-is-zero b)
-
+       
 normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
                            → sw-nested ζ
                            → sw-nested (normalise ζ ρ)

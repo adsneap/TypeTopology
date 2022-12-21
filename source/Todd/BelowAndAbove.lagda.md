@@ -35,9 +35,6 @@ pred-downRight a = predsuccℤ _
 pred-pred-downRight : (a : ℤ) → predℤ (predℤ (downRight a)) ＝ downLeft a
 pred-pred-downRight a = ap predℤ (predsuccℤ _) ∙ predsuccℤ _
 
-downLeft≠downRight : (a b : ℤ) → a ＝ b → downLeft a ≠ downRight a
-downLeft≠downRight a a refl dL＝dR = b<a→a≠b _ _ (1 , refl) (dL＝dR ⁻¹)
-
 downLeft-monotone' : (a b : ℤ) → ((n , _) : a ≤ℤ b)
                    → downLeft a +pos (n ℕ+ n) ＝ downLeft b
 downLeft-monotone' a b (n , refl)
@@ -113,6 +110,15 @@ downRightⁿ-monotone a b (succ n) a≤b
 downLeft≤<downRight : (a b : ℤ) → a ≤ℤ b → downLeft a <ℤ downRight b
 downLeft≤<downRight a b a≤b
  = ℤ≤<-trans _ _ _ (downLeft-monotone _ _ a≤b) (downLeft<downRight b 0)
+
+downLeft≠downRight : (a b : ℤ) → a ＝ b → downLeft a ≠ downRight a
+downLeft≠downRight a a refl
+ = ℤ-less-not-equal (downLeft a) (downRight a)
+     (downLeft≤<downRight a a (ℤ≤-refl a))
+
+downRight＝downLeft : (a : ℤ) → downRight a ＝ downLeft (succℤ a)
+downRight＝downLeft a = ap succℤ (ℤ-left-succ a a ⁻¹ ∙ ℤ+-comm (succℤ a) a)
+                     ∙ ℤ-left-succ a (succℤ a) ⁻¹
 ```
 
 below and below'
@@ -244,6 +250,14 @@ upRight-monotone = ≤-succ-to-monotone upRight upRight-≤-succ
 
 upLeft-monotone : (a b : ℤ) → a ≤ℤ b → upLeft a ≤ℤ upLeft b
 upLeft-monotone a b (n , refl) = upRight-monotone _ _ (n , ℤ-left-pred-pos a n)
+
+upRight≤upLeft-succ : (a : ℤ) → upRight a ＝ upLeft (succℤ a)
+upRight≤upLeft-succ a = ap upRight (predsuccℤ _ ⁻¹)
+
+upRight≤upLeft : (a b : ℤ) → a <ℤ b → upRight a ≤ℤ upLeft b
+upRight≤upLeft a b (n      , refl)
+ = transport (_≤ℤ upLeft (succℤ a +pos n)) (upRight≤upLeft-succ a ⁻¹)
+     (upLeft-monotone _ _ (n , refl))
 
 upRight-<-succ-succ : (a : ℤ) → upRight a <ℤ upRight (succℤ (succℤ a))
 upRight-<-succ-succ a = transport (upRight a <ℤ_) (upRight-suc a ⁻¹) (0 , refl)
@@ -574,20 +588,10 @@ aboveⁿ-implies-belowⁿ a c n
  = sigma-witness→inv _above_ _below_ above-implies-below c a n
 ```
 
-TODO Move elsewhere
+
 
 ```agda
-upRight≤upLeft-succ : (a : ℤ) → upRight a ＝ upLeft (succℤ a)
-upRight≤upLeft-succ a = ap upRight (predsuccℤ _ ⁻¹)
 
-upRight≤upLeft : (a b : ℤ) → a <ℤ b → upRight a ≤ℤ upLeft b
-upRight≤upLeft a b (n      , refl)
- = transport (_≤ℤ upLeft (succℤ a +pos n)) (upRight≤upLeft-succ a ⁻¹)
-     (upLeft-monotone _ _ (n , refl))
-
-downRight＝downLeft : (a : ℤ) → downRight a ＝ downLeft (succℤ a)
-downRight＝downLeft a = ap succℤ (ℤ-left-succ a a ⁻¹ ∙ ℤ+-comm (succℤ a) a)
-                     ∙ ℤ-left-succ a (succℤ a) ⁻¹
 
 apparently : (k₁ k₂ c : ℤ)
            → downRight (upLeft k₁) ≤ℤ c ≤ℤ downLeft (upRight k₂)

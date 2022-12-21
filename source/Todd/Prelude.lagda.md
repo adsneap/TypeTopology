@@ -140,8 +140,16 @@ div-by-two' (succ k)
 Integer order definitions and properties
 
 ```
-b<a→a≠b : ∀ a b → (b <ℤ a) → a ≠ b -- TODO find elsewhere
-b<a→a≠b a a (n , a<a) refl = γ γ'
+pred-shift : (a b : ℤ) → predℤ a ℤ- b ＝ a ℤ- succℤ b
+pred-shift a b = ℤ-left-pred a (ℤ- b)
+               ∙ ℤ-right-pred a (ℤ- b) ⁻¹
+               ∙ ap (a +ℤ_)
+                   (succℤ-lc (succpredℤ _
+                             ∙ succpredℤ _ ⁻¹
+                             ∙ ap succℤ (negation-dist b (pos 1))))
+
+ℤ-less-not-equal : (a b : ℤ) → a <ℤ b → a ≠ b
+ℤ-less-not-equal a a (n , a<a) refl = γ γ'
  where
    γ' : 0 ＝ succ n
    γ' = pos-lc (ℤ+-lc _ _ a (a<a ⁻¹ ∙ ℤ-left-succ-pos a n))
@@ -422,6 +430,26 @@ div-by-two (negsucc x)
    ℤ- pos ((succ x +ℕ succ x) /2)
      ＝⟨ ap (λ z → ℤ- pos z) (div-by-two' (succ x)) ⟩
    negsucc x ∎
+```
+
+
+Preserves-as properties
+
+```agda
+_preserves_as_ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (X → Y) → (X → 𝓦 ̇ ) → (Y → 𝓣 ̇ )
+               → 𝓤 ⊔ 𝓦 ⊔ 𝓣 ̇ 
+f preserves A as B  = ∀ x → A x → B (f x)
+
+_preserves_ : {X : 𝓤 ̇ } → (X → X) → (X → 𝓦 ̇ ) → 𝓤 ⊔ 𝓦 ̇
+f preserves A = f preserves A as A
+
+preserves-trans : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : 𝓤' ̇ }
+                → (f : X → Y) → (g : Y → Z)
+                → (A : X → 𝓦 ̇ ) → (B : Y → 𝓣 ̇ ) → (C : Z → 𝓥' ̇ )
+                → f preserves A as B
+                → g preserves B as C
+                → (g ∘ f) preserves A as C
+preserves-trans f g A B C p₁ p₂ x Ax = p₂ (f x) (p₁ x Ax)
 ```
 
 Vector definition and properties
