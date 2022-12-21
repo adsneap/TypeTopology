@@ -71,7 +71,7 @@ intervals -- the condition we add is that each brick `x(δ)` is "below" the bric
 Each brick on level `δ` has exactly three bricks below it on level `δ+1` -- i.e.
 brick `δ` has bricks `2δ`, `2δ+1` and `2δ+2` below it.
 
-```
+```agda
 downLeft downMid downRight : ℤ → ℤ
 downLeft  k = (k ℤ+ k)
 downMid   k = (k ℤ+ k) +pos 1
@@ -82,7 +82,7 @@ Furthermore, Each brick on level `n` also has either one or two bricks "above"
 it on level `δ-1` -- i.e. even-numbered brick `δ` has bricks `δ/2` and `δ/2-1`,
 whereas odd-numbered brick `m` only has brick `δ/2`, above it.
 
-```
+```agda
 upRight upLeft : ℤ → ℤ
 upRight k = sign k (num k /2)
 upLeft  k = upRight (predℤ k)
@@ -90,14 +90,14 @@ upLeft  k = upRight (predℤ k)
 
 As shown above, the integer `a` is below `b` if `downLeft b ≤ a ≤ downRight b`.
 
-```
+```agda
 _below_ : ℤ → ℤ → 𝓤₀ ̇
 a below b = downLeft b ≤ a ≤ downRight b
 ```
 
 The integer `a` is above `b` if `upLeft b ≤ a ≤ upRight b`.
 
-```
+```agda
 _above_ : ℤ → ℤ → 𝓤₀ ̇
 a above b = upLeft b ≤ a ≤ upLeft b
 ```
@@ -106,7 +106,7 @@ Of course, `a below b` implies `b above a`, and vice versa, though the proof is
 tedious. It, along with other proofs about `below` and `above` and their
 relationship to each other, are outsourced to the following file.
 
-```
+```agda
 open import Todd.BelowAndAbove
   hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_)
 ```
@@ -116,7 +116,7 @@ open import Todd.BelowAndAbove
 We now define `𝕋` as functions where each "brick" on "precision-level" `n+1` is
 below that on `n`.
 
-```
+```agda
 𝕋 : 𝓤₀ ̇ 
 𝕋 = Σ x ꞉ (ℤ → ℤ) , ((δ : ℤ) → x (succℤ δ) below x δ)
 
@@ -131,7 +131,7 @@ below that on `n`.
 We can build simple elements of `𝕋` that go 'via' a given interval encoding, and
 use `upRight` and `downLeft` to construct all other precision-levels.
 
-```
+```agda
 build-via' : ((k , i) : ℤ × ℤ) (δ : ℤ) → trich-locate δ i → ℤ
 build-via' (k , i) δ (inl      (n , sδ+n＝i))
  = rec k upRight  (succ n)
@@ -169,7 +169,7 @@ build-via (k , i)
 Given that the lower bound of the interval encoded as `(k , -1) : ℤ × ℤ` is the
 integer `k : ℤ` itself, we can build a representation of any integer like so.
 
-```
+```agda
 fromInt : ℤ → 𝕋
 fromInt k = build-via (k , negsucc 0)
 ```
@@ -180,7 +180,7 @@ Given any specific brick on a specific level, i.e. `(k , δ) : ℤ × ℤ`
 representing `⟪ k , δ ⟫`, we can define the type of real numbers in the closed
 interval `⟪ k , δ ⟫`.
 
-```
+```agda
 CompactInterval : ℤ × ℤ → 𝓤₀ ̇
 CompactInterval (k , δ) = Σ (x , _) ꞉ 𝕋 , x(δ) ＝ k
 ```
@@ -189,7 +189,7 @@ Any encoding of a real in a compact interval is an encoding of a real, and any
 encoding of a real is an encoding of a real in any compact interval it can be
 approximated to.
 
-```
+```agda
 ι : {i : ℤ × ℤ} → CompactInterval i → 𝕋
 ι = pr₁
 
@@ -199,7 +199,7 @@ approximated to.
 
 We can easily build a trivial element of any closed interval using `build-via`.
 
-```
+```agda
 build-via'-correct : ((k , i) : ℤ × ℤ)
                    → (ζ : trich-locate i i)
                    → build-via' (k , i) i ζ ＝ k
@@ -217,7 +217,7 @@ Given any `x : 𝕋` and `i : ℤ`, we can replace all precision levels `δ < i`
 `(upRight ^ (i - δ)) (⟨ x ⟩ i)` (or `upLeft`) and still represent the same real
 number.
 
-```
+```agda
 replace-right' : (ℤ → ℤ) → (i : ℤ) → (δ : ℤ) → trich-locate δ i → ℤ
 replace-right' x i δ (inl (n , δ+sn＝i)) = (upRight ^ succ n) (x i) 
 replace-right' x i δ (inr         i≤δ ) = x δ
@@ -272,7 +272,7 @@ At level `n = i`, the lower and upper bounds are exactly `k`.
 At level `n > i`, the lower bound is `(upLeft    ^ (i − n)) k`
               and the upper bound is `(upRight   ^ (i − n)) k`.
 
-```
+```agda
 lower upper : ℤ × ℤ → ℤ → ℤ
 lower (k , i) δ with ℤ-trichotomous i δ
 ... | inl      (n , si+n＝δ)  = rec k downLeft (succ n)
@@ -292,7 +292,7 @@ lower≤upper (k , i) δ with ℤ-trichotomous i δ
 
 We now prove that these are in fact the lower and upper bounds.
 
-```
+```agda
 ci-lower-upper-<' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                   → (δ : ℤ)
                   → (n : ℕ) → succℤ i +pos n ＝ δ
@@ -381,7 +381,7 @@ called "recursively below or above" (`below/above`), which holds if either:
   * `i ＝ δ` and `k ＝ c`,
   * `i ＝ δ + n` and `(c aboveⁿ k) n`.
 
-```
+```agda
 _below/above_ : ℤ × ℤ → ℤ × ℤ → 𝓤₀ ̇
 ((c , δ) below/above (k , i)) with ℤ-trichotomous i δ
 ... | inl      (n , i<δ)  = (c belowⁿ k) n
@@ -402,7 +402,7 @@ and only if `c` is either (1) below `k` if `i < δ`, (2) above `k` if `i > δ`, 
 
 First, we show that left implies right:
 
-```
+```agda
 lower-upper-below : (k c : ℤ) (n : ℕ)
                   → rec k downLeft (succ n) ≤ c ≤ rec k downRight (succ n)
                   → (c belowⁿ k) n
@@ -423,7 +423,7 @@ lower/upper-implies-below/above (k , i) (c , δ) with ℤ-trichotomous i δ
 Formalising the lemmas `lower-upper-below` and `lower-upper-above` is tedious.
 The work is shown below:
 
-```
+```agda
 upLeft-or-upRight' : (k₁ k₂ c : ℤ) (n m : ℕ)
                    → k₁ +pos n ＝ c
                    → c +pos m ＝ k₂
@@ -522,7 +522,7 @@ lower-upper-above k c (succ n) l≤c≤u
 
 Next, we show that right implies left:
 
-```
+```agda
 below-lower-upper : (k c : ℤ) (n : ℕ)
                   → (c belowⁿ k) n
                   → rec k downLeft (succ n) ≤ c ≤ rec k downRight (succ n)
@@ -549,7 +549,7 @@ Formalising the lemmas `below-lower-upper` and `above-lower-upper` is tedious.
 
 The work is shown below:
 
-```
+```agda
 below-lower-upper k c zero = id
 below-lower-upper k c (succ n) (b , η , θ)
  = ℤ≤-trans _ _ _ (transport (_≤ rec k* downLeft (succ n))
@@ -587,7 +587,7 @@ Given two interval encodings `(k , i), (c , δ) : ℤ × ℤ` where `c below/abo
 then we can construct a real encoding `x : CompactInterval (k , i)` that "goes
 via" `(c , δ) : ℤ × ℤ`.
 
-```
+```agda
 replace-below
          : ((k , i) (c , δ) : ℤ × ℤ)
          → ((n , _) : i < δ) → (c belowⁿ k) n
@@ -619,7 +619,7 @@ determine that, given two interval encodings `(k , i), (c , δ) : ℤ × ℤ` wh
 `lower (k , i) δ ≤ c ≤ upper (k , i) δ`, then we can construct a real encoding
 `x : CompactInterval (k , i)` that "goes via" `(c , δ) : ℤ × ℤ`. 
 
-```
+```agda
 replace : ((k , i) (c , δ) : ℤ × ℤ)
         → lower (k , i) δ ≤ c ≤ upper (k , i) δ
         → Σ ((x , _) , _) ꞉ CompactInterval (k , i) , x δ ＝ c
@@ -632,7 +632,7 @@ consequence).
 
 The work is shown below:
 
-```
+```agda
 replace-below (k , i) (c , j) (n , i<j') b with build-via-ci (k , i)
 ... | ((x , u) , refl) = α
  where

@@ -19,7 +19,7 @@ module Todd.Prelude where
 
 ℤ-elimination
 
-```
+```agda
 ℤ-elim : (P : ℤ → 𝓤 ̇ )
        → ((n : ℕ) → P (pos n)) → ((n : ℕ) → P (negsucc n))
        → Π P
@@ -29,7 +29,7 @@ module Todd.Prelude where
 
 Monotone and rec properties
 
-```
+```agda
 succ-to-monotone' : (P : ℤ → ℤ → 𝓤 ̇ )
                   → ((a : ℤ) → P a a)
                   → ((a b c : ℤ) → P a b → P b c → P a c)
@@ -69,7 +69,7 @@ rec-f-＝ f x (succ n) = ap f (rec-f-＝ f x n)
 
 Sign and num for integers
 
-```
+```agda
 sign : ℤ → (ℕ → ℤ)
 sign (pos     _) = pos
 sign (negsucc _) = negsucc
@@ -81,7 +81,7 @@ num  (negsucc n) = n
 
 Natural number functions definitions and properties
 
-```
+```agda
 _/2 : ℕ → ℕ
 0 /2 = 0
 1 /2 = 0
@@ -259,7 +259,7 @@ _≤_≤_ = _≤ℤ_≤ℤ_
 
 Parity definitions and properties
 
-```
+```agda
 odd even : ℤ → 𝓤₀ ̇
 odd (pos                   0) = 𝟘
 odd (pos                   1) = 𝟙
@@ -426,7 +426,7 @@ div-by-two (negsucc x)
 
 Vector definition and properties
 
-```
+```agda
 data Vec (A : 𝓤 ̇ ) : ℕ → 𝓤 ̇  where
   []  : Vec A 0
   _∷_ : {n : ℕ} → A → Vec A n → Vec A (succ n)

@@ -16,7 +16,7 @@ module Todd.BelowAndAbove where
 
 downLeft, downMid and downRight
 
-```
+```agda
 downLeft downMid downRight : ℤ → ℤ
 downLeft  a = a ℤ+ a
 downMid   a = succℤ (downLeft a)
@@ -25,7 +25,7 @@ downRight a = succℤ (downMid  a)
 
 downLeft and downRight properties
 
-```
+```agda
 pred-downMid : (a : ℤ) → predℤ (downMid a) ＝ downLeft a
 pred-downMid a = predsuccℤ _
 
@@ -117,7 +117,7 @@ downLeft≤<downRight a b a≤b
 
 below and below'
 
-```
+```agda
 _below_ : ℤ → ℤ → 𝓤₀ ̇ 
 a below b = downLeft b ≤ℤ a ≤ℤ downRight b
 
@@ -175,7 +175,7 @@ below-implies-below' a b ((succ (succ (succ n)) , e) , (succ (succ (succ m))
 
 upLeft and upRight
 
-```
+```agda
 upRight : ℤ → ℤ
 upRight x = sign x (num x /2)
 
@@ -185,7 +185,7 @@ upLeft x = upRight (predℤ x)
 
 upLeft and upRight properties
 
-```
+```agda
 upRight-suc : (a : ℤ) → upRight (succℤ (succℤ a)) ＝ succℤ (upRight a)
 upRight-suc (pos zero) = refl
 upRight-suc (pos (succ zero)) = refl
@@ -222,7 +222,6 @@ upRight-succ-pos (succ (succ a))
    IH = upRight-succ-pos a
    m = pr₁ IH
 
-
 upRight-succ-negsucc : (a : ℕ)
                      → upRight (negsucc a) ≤ℤ upRight (succℤ (negsucc a))
 upRight-succ-negsucc 0 = 1 , refl
@@ -235,7 +234,6 @@ upRight-succ-negsucc (succ (succ a))
  where
    IH = upRight-succ-negsucc a
    m = pr₁ IH
-
 
 upRight-≤-succ : (a : ℤ) → upRight a ≤ℤ upRight (succℤ a)
 upRight-≤-succ = ℤ-elim (λ a → upRight a ≤ℤ upRight (succℤ a))
@@ -273,12 +271,11 @@ upLeft-<< a b (n , refl)
  = upRight-<< (predℤ a) b
      (n , (ap (_+pos n) (succpredℤ _) ∙ predsuccℤ _ ⁻¹
          ∙ ap predℤ (ℤ-left-succ-pos a n ⁻¹)))
-
 ```
 
 above and above'
 
-```
+```agda
 _above_ : ℤ → ℤ → 𝓤₀ ̇ 
 b above a = upLeft a ≤ℤ b ≤ℤ upRight a
 
@@ -349,7 +346,7 @@ above-implies-above' a b (l≤a , a≤r)
 
 Relationship between below and above
 
-```
+```agda
 upRight-downLeft-pos : (b : ℕ) → pos b ＝ upRight (downLeft (pos b))
 upRight-downLeft-pos 0 = refl
 upRight-downLeft-pos (succ b)
@@ -520,7 +517,7 @@ above-downRight a = below-implies-above (downRight a) a (downRight-below a)
 
 Recursive above and below
 
-```
+```agda
 _aboveⁿ_ _belowⁿ_ _aboveⁿ-vec_ _belowⁿ-vec_ : (a c : ℤ) → ℕ → 𝓤₀ ̇ 
 _aboveⁿ_     = sigma-witness  _above_
 _belowⁿ_     = sigma-witness  _below_
@@ -579,7 +576,7 @@ aboveⁿ-implies-belowⁿ a c n
 
 TODO Move elsewhere
 
-```
+```agda
 upRight≤upLeft-succ : (a : ℤ) → upRight a ＝ upLeft (succℤ a)
 upRight≤upLeft-succ a = ap upRight (predsuccℤ _ ⁻¹)
 

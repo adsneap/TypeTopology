@@ -40,7 +40,6 @@ The definition of the reals follows, by first defining the four properties that
 a real satisfies.
 
 ```agda
-
  inhabited-left : (L : 𝓟 ℤ[1/2]) → 𝓤₀ ̇
  inhabited-left L = ∃ p ꞉ ℤ[1/2] , p ∈ L
 
@@ -69,14 +68,12 @@ a real satisfies.
 
  ℝ-d : 𝓤₁  ̇
  ℝ-d = Σ (L , R) ꞉ 𝓟 ℤ[1/2] × 𝓟 ℤ[1/2] , isCut L R
-
 ```
 
 Now we can introduce notation to obtain specific cuts, or refer to a rational
 inhabiting a cut. This is useful for readability purposes.
 
 ```agda
-
  lower-cut-of : ℝ-d → 𝓟 ℤ[1/2]
  lower-cut-of ((L , R) , _) = L
 
@@ -141,7 +138,7 @@ inhabiting a cut. This is useful for readability purposes.
 
 We now define negation and addition from the operations on dyadic rationals.
 
-```
+```agda
  ℝd- : ℝ-d → ℝ-d
  ℝd- x = (L , R) , {!!}
   where

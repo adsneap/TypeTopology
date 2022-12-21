@@ -53,7 +53,7 @@ We use the type ℤ[1/2] × ℤ[1/2] to encode intervals of dyadic rational numb
 
 `ld` and `rd` are used to get the lower and upper endpoints, respectively.
 
-```
+```agda
 ld rd : ℤ[1/2] × ℤ[1/2] → ℤ[1/2]
 ld (l , r) = l
 rd (l , r) = r
@@ -61,7 +61,7 @@ rd (l , r) = r
 
 An interval [la,ra] covers another interval [lb,rb] if la ≤ lb and rb ≤ ra.
 
-```
+```agda
 _covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
 a covers b = (ld a ≤ ld b) × (rd b ≤ rd a)
 
@@ -77,7 +77,7 @@ covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂)
 We define three key properties for sequences of dyadic intervals
 ζ : ℤ → ℤ[1/2] × ℤ[1/2]. 
 
-```
+```agda
 intervalled nested located : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
 nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
@@ -110,7 +110,7 @@ fully-nested-implies-nested ζ ρ n = ρ n (succℤ n) (1 , refl)
 Any sequence of dyadic intervals that satisfies these three properties yields a
 real number.
 
-```
+```agda
 ⦅_⦆ : (ζ : ℤ → ℤ[1/2] × ℤ[1/2])
       → intervalled ζ → nested ζ → located ζ
       → ℝ-d
@@ -221,7 +221,7 @@ encodes the interval `[l/2^i,r/2^i]`.
 Meanwhile, a specific-width interval code `(k,i) : 𝕀s` encodes the interval
 `[k/2^i,(k+2)/2^i]`.
 
-```
+```agda
 𝕀v 𝕀s : 𝓤₀  ̇
 𝕀v = Σ ((l , r) , i) ꞉ ((ℤ × ℤ) × ℤ) , l ≤ r 
 𝕀s = ℤ × ℤ
@@ -250,7 +250,7 @@ v-dist z = pr₁ (v-l≤r z)
 Every specific-width interval code gives a variable-width interval code.
 Furthermore, a sequence of either gives a sequence of dyadic-rational intervals.
 
-```
+```agda
 sw-to-vw : 𝕀s → 𝕀v
 sw-to-vw (k , i) = ((k , k +pos 2) , i) , (2 , refl)
 
@@ -269,7 +269,7 @@ seq-convert-＝ = refl
 
 TODO: Move to Prelude.lagda.md
 
-```
+```agda
 _preserves_as_ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (X → Y) → (X → 𝓦 ̇ ) → (Y → 𝓣 ̇ )
                → 𝓤 ⊔ 𝓦 ⊔ 𝓣 ̇ 
 f preserves A as B  = ∀ x → A x → B (f x)
@@ -291,7 +291,7 @@ variable-width encodings.
 
 We show that the properties are equivalent to each other where necessary.
 
-```
+```agda
 vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
 vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
@@ -347,7 +347,7 @@ v-dist-lemma ζ n = II
 
 Then, we do the same for specific-width encodings.
 
-```
+```agda
 sw-intervalled sw-nested sw-located : (ℤ → 𝕀s) → 𝓤₀ ̇ 
 sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
@@ -384,7 +384,7 @@ sw-nested-is-prop ζ = Π-is-prop (fe 𝓤₀ 𝓤₀) λ _ → covers-is-prop _
 We now define what it means for a specific-width sequence encoding to be
 normalised and prenormalised.
 
-```
+```agda
 is-normalised    : (ℤ → ℤ × ℤ) → 𝓤₀ ̇ 
 is-normalised    ζ = (n : ℤ) → pr₂ (ζ n) ＝ n
 
@@ -400,7 +400,7 @@ normalised-implies-prenormalised ζ ρ n = 0 , (ρ n ⁻¹)
 The `upRight` function can be extended to specific-width intervals.
 We define this, and prove a variety of properties related to it.
 
-```
+```agda
 upRight* : 𝕀s → 𝕀s
 upRight* (c , i) = upRight c , predℤ i
 
@@ -467,7 +467,7 @@ Next, we use `upRight-𝕀s` to define `go-up`, a functional that takes a schema
 function k : ℤ → ℕ and a specific-width sequence encoding ζ, and returns a
 specific-width sequence encoding that takes each (ζ n) upRight (k n)-many times.
 
-```
+```agda
 go-up : (ℤ → ℕ) → (ζ : ℤ → 𝕀s) → (ℤ → 𝕀s)
 go-up k ζ n = upRight-𝕀s (k n) (ζ n)
 ```
@@ -475,7 +475,7 @@ go-up k ζ n = upRight-𝕀s (k n) (ζ n)
 We use this to define `normalise`, which brings a prenormalised funciton
 `upRight` the appropriate amount to normalise it.
 
-```
+```agda
 normalise : (ζ : ℤ → 𝕀s) → is-prenormalised ζ → (ℤ → 𝕀s)
 normalise ζ ρ = go-up (λ n → pr₁ (ρ n)) ζ
 
@@ -491,7 +491,7 @@ normalise-yields-normalised ζ ρ n
 
 Normalisation preserves locatedness and nestedness.
 
-```
+```agda
 normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
 normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
 ... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ
@@ -527,7 +527,6 @@ normalise-preserves-nested : (ζ : ℤ → 𝕀s) → (ρ : is-prenormalised ζ)
 normalise-preserves-nested ζ ρ swn
  = fully-nested-implies-nested _
      (normalise-preserves-fully-nested ζ ρ (nested-implies-fully-nested _ swn))
-
 ```
 
 # Part IV - Ternary Boehm Real encodings
@@ -536,7 +535,7 @@ Bringing in ternary Boehm real encodings from
 [`TernaryBoehmReals`](1-TernaryBoehmReals.lagda.md), we first relate them to
 specific-width interval encodings.
 
-```
+```agda
 TBR-to-sw-seq : 𝕋 → (ℤ → 𝕀s)
 TBR-to-sw-seq (χ , b) n = χ n , n
 
@@ -626,13 +625,12 @@ prenormalised-seq-to-TBR χ η₁ η₂ = normalised-seq-to-TBR (normalise χ η
 
 We use all of our infrastructure thus far to define the map from TBRs to ℝ.
 
-```
+```agda
 ⟦_⟧ : 𝕋 → ℝ-d
 ⟦ χ  ⟧ = ⦅ seq-of-vw-intervals (seq-sw-to-vw (TBR-to-sw-seq χ)) ⦆
             (vw-intervalled-preserves (seq-sw-to-vw (TBR-to-sw-seq χ))
                (sw-is-intervalled (TBR-to-sw-seq χ)))
             (belowness-yields-nested-seq χ)
-            -- (belowness-yields-nested-seq (TBR-to-sw-seq χ) (pr₂ χ))
             (sw-located-preserves (TBR-to-sw-seq χ)
               (normalised-is-located (TBR-to-sw-seq χ)
                 (TBR-to-sw-is-normalised χ)))
@@ -645,7 +643,7 @@ narrowest variable width-interval possible.
 
 This can be extended to sequences, which we call `join`.
 
-```
+```agda
 join' : 𝕀v → 𝕀s
 join' z = upRight-𝕀s (upValue (v-left z) (v-right z) (v-l≤r z))
                      (v-left z , v-prec z)
@@ -654,15 +652,9 @@ join : (ℤ → 𝕀v) → (ℤ → 𝕀s)
 join = join' ∘_
 ```
 
-We need to prove that `join` preserves nestedness, which requires the
-completion of the following proofs.
+We need to prove that `join` preserves nestedness.
 
-```
-```
-
-Using these, we can show that join preserves nestedness.
-
-```
+```agda
 join-preserves-fully-nested : (ζ : ℤ → 𝕀v) → vw-fully-nested ζ
                             → sw-fully-nested (join ζ)
 join-preserves-fully-nested ζ v n m n≤m = {!!}
@@ -680,7 +672,7 @@ The following record defines our  machinery for converting functions on the real
 space to encoded functions on ternary Boehm encodings. This uses approximators
 and continuity oracles, as defined in the paper.
 
-```
+```agda
 record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
   field
     f  : Vec ℝ-d d → ℝ-d
@@ -746,7 +738,7 @@ record FunctionMachine (d : ℕ) : 𝓤₁  ̇ where
 We have begun formalising examples of encoding functions by instantiating the
 above record.
 
-```
+```agda
 Negation : FunctionMachine 1
 FunctionMachine.f Negation [ x ] = ℝd- x
 FunctionMachine.A Negation [ (((l , r) , i) , l≤r) ]

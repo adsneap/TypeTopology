@@ -52,7 +52,7 @@ searchable {𝓤} {𝓥} X
 We often search only uniformly continuous predicates, which -- for general
 sequence types -- are defined as follows.
 
-```
+```agda
 _≈'_ : {X : 𝓤 ̇ } → (ℕ → X) → (ℕ → X) → ℕ → 𝓤 ̇
 (α ≈' β) n = (i : ℕ) → i < n → α n ＝ β n
 ```
@@ -109,7 +109,7 @@ interval `⟪ k , i ⟫`.
 This equivalence relation simply takes a modulus of continuity `δ : ℤ` and asks
 if `⟨ ι x ⟩ δ ＝ ⟨ ι y ⟩ δ` given `x,y : CompactInterval (k , i)`.
 
-```
+```agda
 CompEqRel : (δ : ℤ) ((k , i) : ℤ × ℤ)
           → EqRel {𝓤₀} {𝓤₀} (CompactInterval (k , i))
 CompEqRel δ (k , i) = _≣_ , u , r , s , t
@@ -132,7 +132,7 @@ level into the type `ℤ[ lower (k , i) δ , upper (k , i) δ ]`.
 Indeed, the quotient type `CompactInterval (k , i) / CompEqRel δ (k , i)` is
 *equivalent* to the type `ℤ[ lower (k , i) δ , upper (k , i) δ ]`
 
-```
+```agda
 Conv→ : (δ : ℤ) → ((k , i) : ℤ × ℤ)
       → CompactInterval (k , i) → ℤ[ lower (k , i) δ , upper (k , i) δ ]
 Conv→ δ (k , i) x = ⟨ ι x ⟩ δ , ci-lower-upper (k , i) x δ
@@ -218,7 +218,7 @@ This gives us a much more efficient searcher for Ternary Boehm reals in compact
 intervals, because the searcher on finite subsets of `ℤ` does not need to check
 every element of the `𝕋` sequence.
 
-```
+```agda
 ℤ[_,_]-searchable' : (l u : ℤ) → (n : ℕ) → l +pos n ＝ u
                   → searchable {𝓤₀} {𝓦} (ℤ[ l , u ])
 ℤ[ l , l ]-searchable' 0 refl (p , d)
@@ -263,7 +263,7 @@ We can define uniform continuity on (for example, unary) predicates on 𝕋 as
 follows, and show that those on compact intervals are isomorphic to a predicate
 on the quotiented, searchable type considered above.
 
-```
+```agda
 𝕋¹-uc-predicate : (𝕋 → Ω 𝓦) → 𝓦 ̇
 𝕋¹-uc-predicate {𝓦} p
  = Σ δ ꞉ ℤ , ((χ γ : 𝕋) → ⟨ χ ⟩ δ ＝ ⟨ γ ⟩ δ → p χ holds ⇔ p γ holds)
@@ -290,7 +290,7 @@ on the quotiented, searchable type considered above.
 We also define continuity and uniform continuity directly on (for example,
 unary) functions of type 𝕋 → 𝕋.
 
-```
+```agda
 𝕋¹-c-function : (𝕋 → 𝕋) → 𝓤₀  ̇
 𝕋¹-c-function f
  = (ϵ : ℤ) (χ : 𝕋)
@@ -316,7 +316,8 @@ However, for now, we instead assume this fact, and use it to show that any
 predicate `p : 𝕋 → Ω` and function built via our machinery `f : 𝕋 → 𝕋` yields
 a predicate `(p ∘ f) : 𝕋 → Ω` that is searchable on any compact interval given
 by a specific-width interval `(k , i) : 𝕀s`.
-```
+
+```agda
 F-u-continuous
  : FunctionMachine 1 → 𝕀s → 𝓤₀  ̇ 
 F-u-continuous F (k , i)

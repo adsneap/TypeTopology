@@ -27,7 +27,7 @@ This file defines dyadic rationals as a record, along with many widely
 accepted operations, relations and results on dyadic rationals. They
 are denoted ℤ[1/2].
 
-```
+```agda
 ℤ[1/2] : 𝓤₀ ̇
 ℤ[1/2] = Σ (z , n) ꞉ ℤ × ℕ , (n ＝ 0) + ((n ≠ 0) × odd z)
 
