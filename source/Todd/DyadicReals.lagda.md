@@ -137,52 +137,11 @@ inhabiting a cut. This is useful for readability purposes.
 
   Strict-Order-ℝ-d-ℤ[1/2] : Strict-Order ℝ-d ℤ[1/2]
   _<_ {{Strict-Order-ℝ-d-ℤ[1/2]}} = λ y q → in-upper-cut q y
+```
+
+We now define negation and addition from the operations on dyadic rationals.
 
 ```
-The following proofs are incomplete, but can be completed easily by
-modelling the proofs in the lagda file which uses usual
-rationals.
-
-```agda
- ℝ-d-left-cut-equal-gives-right-cut-equal : (x y : ℝ-d)
-                                          → lower-cut-of x ＝ lower-cut-of y
-                                          → upper-cut-of x ＝ upper-cut-of y
- ℝ-d-left-cut-equal-gives-right-cut-equal x y lx＝ly
-  with ⊆-refl-consequence (lower-cut-of x) (lower-cut-of y) lx＝ly 
- ... | (lx⊆ly , ly⊆lx)
-  = subset-extensionality (pe 𝓤₀) (fe 𝓤₀ 𝓤₁) rx⊆ry {!ry⊆rx!}
-  where
-   rx⊆ry : upper-cut-of x ⊆ upper-cut-of y
-   rx⊆ry q q∈Rx = ∥∥-rec (∈-is-prop (upper-cut-of y) q) I
-                    (rounded-from-real-R1 x q q∈Rx)
-    where
-     I : Σ k ꞉ ℤ[1/2] , k < q × k ∈ upper-cut-of x → q ∈ upper-cut-of y
-     I (k , (k<q , x<k)) = ∥∥-rec (∈-is-prop (upper-cut-of y) q) II
-                             (located-from-real y k q k<q)
-      where
-       II : k ∈ lower-cut-of y + q ∈ upper-cut-of y → q ∈ upper-cut-of y
-       II (inl k<y) = 𝟘-elim {!ℤ[1/2]<-not-itself!}
-       II (inr y<q) = {!!}
- 
- 
- ℝ-d-equality-from-left-cut : {x y : ℝ-d}
-                            → lower-cut-of x ⊆ lower-cut-of y
-                            → lower-cut-of y ⊆ lower-cut-of x
-                            → x ＝ y
- ℝ-d-equality-from-left-cut { x } { y } Lx⊆Ly Ly⊆Lx = {!!}
- 
- embedding-ℤ[1/2]-to-ℝ-d : ℤ[1/2] → ℝ-d
- embedding-ℤ[1/2]-to-ℝ-d z = (L , R) , {!!}
-  where
-   L : 𝓟 ℤ[1/2]
-   L p = p < z , <ℤ[1/2]-is-prop p z
-   R : 𝓟 ℤ[1/2]
-   R q = z < q , <ℤ[1/2]-is-prop z q
- 
- instance
-  canonical-map-ℤ[1/2]-to-ℝ-d : Canonical-Map ℤ[1/2] ℝ-d
-  ι {{canonical-map-ℤ[1/2]-to-ℝ-d}} = embedding-ℤ[1/2]-to-ℝ-d
- 
  ℝd- : ℝ-d → ℝ-d
  ℝd- x = (L , R) , {!!}
   where
