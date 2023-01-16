@@ -37,10 +37,10 @@ module Discrete
  iso-to-id : {a b : A} → _≅_ 𝓤 pcDiscrete a b → a ＝ b
  iso-to-id {a} {b} (f , _) = f
 
- comp1 : {a b : A} (x : _≅_ 𝓤 pcDiscrete a b) → id-to-iso (iso-to-id x) ＝ x
+ comp1 : {a b : A} (x : _≅_ 𝓤 pcDiscrete a b) → (id-to-iso ∘' iso-to-id) x ＝ id x
  comp1 {a} {.a} (refl , refl , refl , refl) = refl
 
- comp2 : {a b : A} → (x : a ＝ b) → iso-to-id (id-to-iso x) ＝ x
+ comp2 : {a b : A} → (x : a ＝ b) → (iso-to-id ∘' id-to-iso) x ＝ x
  comp2 {a} {b} _ = refl
 
  id-to-iso-has-section : {a b : A} → has-section (id-to-iso {a} {b})
@@ -72,20 +72,6 @@ module Set where
   (ua : is-univalent 𝓤)
   (fe : FunExt)
    where
-
-  {-
-
-  jjjj : {(a , a-is-set) (b , b-is-set) : hSet 𝓤}
-       → is-equiv (idtoeq a b)
-  jjjj {a , a-is-set} {b , b-is-set} = ua a b
-
-  whatthis : {(a , a-is-set) (b , b-is-set) : hSet 𝓤} → a ≃ b
-  whatthis = {!!}
-
-  ≃-to-≅ : {(a , a-is-set) (b , b-is-set) : hSet 𝓤} → a ≃ b → _≅_ (𝓤 ⁺) (pcSet fe) (a , a-is-set) (b , b-is-set)
-  ≃-to-≅ {a , a-is-set} {b , b-is-set} (f , (g , hs) , g' , is) = f , g , {!!} , {!!}
-
-  -}
 
   idtoiso-Set : {a b : hSet 𝓤} → a ＝ b → _≅_ (𝓤 ⁺) (pcSet fe) a b
   idtoiso-Set refl = id , id , refl , refl
@@ -183,5 +169,59 @@ module Preorder
   cpartialorder : category pcPreorder
   cpartialorder = record { idtoiso-is-equiv = partial-order-satisfies-equivalence
                          }
+-- Fundamental Pregroupoid Category
+
+module FP 
+  (X : 𝓤 ̇)
+ where
+
+ open import UF.PropTrunc
+
+ module _
+   (pt : propositional-truncations-exist)
+  where
+
+  open PropositionalTruncation pt
+ 
+  pcFP : precategory
+  pcFP = record
+           { ob = X
+           ; hom = λ a b → ∥ a ＝ b ∥
+           ; hom-set = props-are-sets ∥∥-is-prop
+           ; u = ∣ refl ∣
+           ; _∘_ = λ f g → ∥∥-functor₂ (λ u v → v ∙ u) f g
+           ; unit-l = λ f → ∥∥-is-prop (∥∥-functor₂ (λ u v → v ∙ u) ∣ refl ∣ f) f
+           ; unit-r = λ f → ∥∥-is-prop (∥∥-functor₂ (λ u v → v ∙ u) f ∣ refl ∣) f
+           ; assoc = λ f g h → ∥∥-is-prop (∥∥-functor₂ (λ u v → v ∙ u) h (∥∥-functor₂ (λ u v → v ∙ u) g f))
+                                          (∥∥-functor₂ (λ u v → v ∙ u) (∥∥-functor₂ (λ u v → v ∙ u) h g) f)
+           }
+
+-- Homotopy Precategory Of Types
+
+module HP
+  (𝓤 : Universe)
+ where
+ 
+ open import UF.PropTrunc
+
+ module _
+   (pt : propositional-truncations-exist)
+  where
+
+  open PropositionalTruncation pt
+
+  hpPC : precategory
+  hpPC = record
+           { ob = 𝓤 ̇
+           ; hom = λ X Y → ∥ (X → Y) ∥
+           ; hom-set = props-are-sets ∥∥-is-prop
+           ; u = ∣ id ∣
+           ; _∘_ = ∥∥-functor₂ _∘'_
+           ; unit-l = λ f → ∥∥-is-prop (∥∥-functor₂ _∘'_ ∣ id ∣ f) f
+           ; unit-r = λ f → ∥∥-is-prop (∥∥-functor₂ _∘'_ f ∣ id ∣) f
+           ; assoc = λ f g h → ∥∥-is-prop (∥∥-functor₂ _∘'_ h (∥∥-functor₂ _∘'_ g f))
+                                         (∥∥-functor₂  _∘'_ (∥∥-functor₂ _∘'_ h g) f)
+           }
+
 
 \end{code}

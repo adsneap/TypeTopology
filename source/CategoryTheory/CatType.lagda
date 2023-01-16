@@ -14,7 +14,7 @@ record category {𝓤 𝓥 : Universe} (pC : precategory {𝓤} {𝓥}) : 𝓤 �
  open precategory {𝓤} {𝓥} pC 
  field
   idtoiso-is-equiv : {a b : ob} → (a ＝ b) ≃ (_≅_ 𝓤 pC a b)
-
+ 
 module _
   (𝓤 : Universe)
   (pC : precategory {𝓤} {𝓥})
