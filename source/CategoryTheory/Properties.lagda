@@ -17,17 +17,17 @@ module _
  open precategory pC
 
  isomorphism : {a b : ob} → (f : hom a b) → 𝓥 ̇
- isomorphism {a} {b} f = Σ g ꞉ hom b a , (g ∘ f ＝ 1ₐ) × (f ∘ g ＝ 1ₐ)
+ isomorphism {a} {b} f = Σ g ꞉ hom b a , (g ∘ f ＝ u) × (f ∘ g ＝ u)
 
  isomorphism-is-prop : {a b : ob} → {f : hom a b} → is-prop (isomorphism f)
  isomorphism-is-prop {_} {_} {f} (g , η , ε) (g' , η' , ε') = to-subtype-＝ (λ _ → ×-is-prop hom-set hom-set) g-equals-g'
    where
     g-equals-g' : g ＝ g'
     g-equals-g' = g              ＝⟨ unit-r g ⁻¹ ⟩
-                  g ∘ 1ₐ         ＝⟨ ap (g ∘_) (ε' ⁻¹) ⟩
+                  g ∘ u          ＝⟨ ap (g ∘_) (ε' ⁻¹) ⟩
                   g ∘ (f ∘ g')   ＝⟨ assoc g' f g ⟩
                   (g ∘ f) ∘ g'   ＝⟨ ap (_∘ g') η ⟩
-                  1ₐ ∘ g'        ＝⟨ unit-l g' ⟩
+                  u ∘ g'         ＝⟨ unit-l g' ⟩
                   g'             ∎
 
  _≅_ : (a b : ob) → 𝓥 ̇
@@ -44,24 +44,24 @@ module _
  ! (f , g , p1 , p2) = g , f , p2 , p1
 
  idtoiso : {a b : ob} → a ＝ b → a ≅ b
- idtoiso refl = 1ₐ , 1ₐ , (unit-l 1ₐ) , (unit-r 1ₐ)
+ idtoiso refl = u , u , (unit-l u) , (unit-r u)
 
  _≅∘_ : {a b c : ob} → a ≅ b → b ≅ c → a ≅ c
  (f , g , η , ε) ≅∘ (f' , g' , η' , ε') = f' ∘ f , (g ∘ g') , I , II
   where
-   I : (g ∘ g') ∘ (f' ∘ f) ＝ 1ₐ
+   I : (g ∘ g') ∘ (f' ∘ f) ＝ u
    I = (g ∘ g') ∘ (f' ∘ f)      ＝⟨ assoc f f' (g ∘ g') ⟩
        ((g ∘ g') ∘ f') ∘ f      ＝⟨ ap (_∘ f) (assoc f' g' g ⁻¹) ⟩
        (g ∘ (g' ∘ f')) ∘ f      ＝⟨ ap (λ - → (g ∘ -) ∘ f) η' ⟩
-       (g ∘ 1ₐ) ∘ f             ＝⟨ ap (_∘ f) (unit-r g) ⟩
+       (g ∘ u) ∘ f              ＝⟨ ap (_∘ f) (unit-r g) ⟩
        g ∘ f                    ＝⟨ η ⟩
-       1ₐ  ∎
-   II : (f' ∘ f) ∘ (g ∘ g') ＝ 1ₐ
+       u  ∎
+   II : (f' ∘ f) ∘ (g ∘ g') ＝ u
    II = (f' ∘ f) ∘ (g ∘ g')   ＝⟨ assoc g' g (f' ∘ f) ⟩
         ((f' ∘ f) ∘ g) ∘ g'   ＝⟨ ap (_∘ g') (assoc g f f' ⁻¹) ⟩
         ((f' ∘ (f ∘ g)) ∘ g') ＝⟨ ap (λ - → (f' ∘ -) ∘ g') ε ⟩
-        (f' ∘ 1ₐ) ∘ g'        ＝⟨ ap (_∘ g') (unit-r f') ⟩
+        (f' ∘ u) ∘ g'         ＝⟨ ap (_∘ g') (unit-r f') ⟩
         f' ∘ g'               ＝⟨ ε' ⟩
-        1ₐ ∎
+        u ∎
 
 \end{code}
