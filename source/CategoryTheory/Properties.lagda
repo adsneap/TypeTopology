@@ -29,7 +29,7 @@ module _
                   (g ∘ f) ∘ g'   ＝⟨ ap (_∘ g') η ⟩
                   u ∘ g'         ＝⟨ unit-l g' ⟩
                   g'             ∎
-
+  
  _≅_ : (a b : ob) → 𝓥 ̇
  a ≅ b = Σ f ꞉ hom a b , isomorphism f
 

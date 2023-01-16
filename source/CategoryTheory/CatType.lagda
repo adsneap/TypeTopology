@@ -20,17 +20,17 @@ module _
   (pC : precategory {𝓤} {𝓥})
   (C : category pC)
  where
- 
+
  open precategory pC
  open category C
 
  isotoid : {a b : ob} → _≅_ 𝓤 pC a b → a ＝ b
- isotoid iso = back-eqtofun idtoiso-is-equiv iso
+ isotoid = back-eqtofun idtoiso-is-equiv
 
  object-type-is-set : {X Y : ob} → is-set (X ＝ Y)
  object-type-is-set {X} {Y} = equiv-to-set idtoiso-is-equiv (isomorphism-is-set 𝓤 pC)
  
- not-sure : {a a' b b' : ob} {f : hom a b} {p : a ＝ a'} {q : b ＝ b'} → transport₂ hom p q f ＝ (pr₁ (idtoiso 𝓤 pC q) ∘ f) ∘ (pr₁ (idtoiso 𝓤 pC (p ⁻¹)))
+ not-sure : {a a' b b' : ob} {f : hom a b} {p : a ＝ a'} {q : b ＝ b'} → transport₂ hom p q f ＝ (pr₁ (idtoiso 𝓤 pC q) ∘ f) ∘ pr₁ (idtoiso 𝓤 pC (p ⁻¹))
  not-sure {_} {_} {_} {_} {f} {refl} {refl} = unit-r f ⁻¹ ∙ ap (_∘ u) (unit-l f ⁻¹)
 
  idtoiso-inverse : {a a' : ob} {p : a ＝ a'} → idtoiso 𝓤 pC (p ⁻¹) ＝ ! 𝓤 pC (idtoiso 𝓤 pC p)
@@ -46,7 +46,5 @@ module _
    P : (x : ob) (p : x ＝ x) → p ＝ refl
    P x refl = refl
  -}
-
- 
   
 \end{code}
