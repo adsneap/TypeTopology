@@ -87,7 +87,10 @@ module Set where
     II : a ＝ b
     II = eqtoid ua a b (f , (g , λ x → ap (λ id → id x) fg)
                           ,  g , λ x → ap (λ id → id x) gf)
- 
+
+  -- _≅_ ≃ _≃_ (for set)
+  -- _≃_ ≃ _=_
+  
   Setcomp1 : {a b : hSet 𝓤} → (iso : _≅_ (𝓤 ⁺) (pcSet fe) a b)
            → idtoiso-Set {a} {b} (isotoid-Set iso) ＝ iso
   Setcomp1 {a , a-is-set} {b , b-is-set} (f , g , fg , gf) = {!!}
@@ -224,4 +227,28 @@ module HP
            }
 
 
+-- Rel
+
+module Rel where
+
+ open import UF.PropTrunc
+
+ module _
+   (pt : propositional-truncations-exist)
+  where
+
+  open PropositionalTruncation pt
+
+  RelPC : precategory { 𝓤 ⁺ }
+  RelPC {𝓤} = record
+            { ob = hSet 𝓤 
+            ; hom = λ (A , _) (B , _) → A → B → 𝓤 ̇ -- hProp
+            ; hom-set = λ {(A , A-is-set)} {(B , B-is-set)} p q → {!!}
+            ; u = λ {(A , A-is-set)} → λ a b → a ＝ b
+            ; _∘_ = λ {(A , A-is-set) (B , B-is-set) (C , C-is-set)} f g a c → ∥ (Σ b ꞉ B , f b c × g a b) ∥
+            ; unit-l = λ f → {!!}
+            ; unit-r = λ f → {!!}
+            ; assoc = λ f g h → {!!}
+            }
+  
 \end{code}

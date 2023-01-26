@@ -17,5 +17,8 @@ record precategory {𝓤 𝓥 : Universe} : 𝓤 ⁺ ⊔ (𝓥 ⁺) ̇ where
   unit-r : {a b : ob} → (f : hom a b) → (f ∘ u) ＝ f
   assoc : {a b c d : ob} → (f : hom a b) → (g : hom b c) → (h : hom c d) → (h ∘ (g ∘ f)) ＝ ((h ∘ g) ∘ f)
 
+ type-of-object : (𝓤 ⁺) ̇
+ type-of-object = type-of ob
+
 \end{code}
 
