@@ -14,6 +14,40 @@ open import UF.Base
 
 module CategoryTheory.Examples where
 
+pc𝟘 : precategory { 𝓤 } { 𝓥 }
+pc𝟘 = record
+        { ob = 𝟘
+        ; hom = λ x y → 𝟘-elim x
+        ; hom-set = λ {a} → 𝟘-elim a
+        ; u = λ {a} → 𝟘-elim a
+        ; _∘_ = λ {a} → 𝟘-elim a
+        ; unit-l = λ {a} → 𝟘-elim a
+        ; unit-r = λ {a} → 𝟘-elim a
+        ; assoc = λ {a} → 𝟘-elim a
+        }
+
+c𝟘 : category { 𝓤 } { 𝓥 } pc𝟘
+c𝟘 = record { idtoiso-is-equiv = λ {a} → 𝟘-elim a }
+
+open import MLTT.Unit-Properties
+open import UF.Subsingletons
+
+{-
+＝-hom-set : (p : ⋆ ＝ ⋆) → (q : p ＝ p) → q ＝ refl
+＝-hom-set p refl = refl
+
+pc𝟙 : precategory { 𝓤 } { 𝓥 }
+pc𝟙 = record
+        { ob = 𝟙
+        ; hom = λ a b → {!!}
+        ; hom-set = {!!}
+        ; u = λ {a} → refl
+        ; _∘_ = λ e₁ e₂ → e₂ ∙ e₁
+        ; unit-l = refl-right-neutral
+        ; unit-r = λ f → refl-left-neutral 
+        ; assoc = ∙assoc
+        }
+-}
 module Discrete
   (A : 𝓤 ̇)
   (A-is-1-type : (x y : A) → is-set (x ＝ y))
@@ -73,6 +107,57 @@ module Set where
   (fe : FunExt)
    where
 
+  univalence-says : {A B : hSet 𝓤} → {!!}
+  univalence-says {A , A-is-set} {B , B-is-set} = ua A B
+ 
+  {-
+  eq-to-id : {(A , A-is-set) (B , B-is-set) : hSet 𝓤} → A ≃ B → A ＝ B
+  eq-to-id = eqtoid ua _ _
+
+  eqtoiso : {(A , A-is-set) (B , B-is-set) : hSet 𝓤} → A ≃ B
+                                                     → _≅_ (𝓤 ⁺) (pcSet fe) (A , A-is-set) (B , B-is-set)
+  eqtoiso {A , A-is-set} {B , B-is-set} eq =
+   idtoiso (𝓤 ⁺) (pcSet fe) (to-subtype-＝ {𝓤 ⁺} { 𝓤 } { 𝓤 ̇ } { is-set } { A } { B } { A-is-set } { B-is-set }
+                             (λ U → being-set-is-prop (fe 𝓤 𝓤)) II)
+   where
+    II : A ＝ B
+    II = eqtoid ua A B eq -- eq
+
+  isotoeq : {(A , A-is-set) (B , B-is-set) : hSet 𝓤} → _≅_ (𝓤 ⁺) (pcSet fe) (A , A-is-set) (B , B-is-set) → A ≃ B 
+  isotoeq {A , A-is-set} {B , B-is-set} (f , g , gf , fg) = f , ((g , λ x → ap (λ id → id x) fg) ,
+                                                                  g , λ x → ap (λ id → id x) gf)
+
+  idtoiso-Set : {a b : hSet 𝓤} → a ＝ b → _≅_ (𝓤 ⁺) (pcSet fe) a b
+  idtoiso-Set = {!!}
+
+  isotoid-Set : {a b : hSet 𝓤}  → _≅_ (𝓤 ⁺) (pcSet fe) a b → a ＝ b
+  isotoid-Set {a , a-is-set} {b , b-is-set} (f , g , gf , fg) = {!!}
+
+  Setcomp1 : {a b : hSet 𝓤} → (iso : _≅_ (𝓤 ⁺) (pcSet fe) a b)
+           → idtoiso-Set {a} {b} (isotoid-Set iso) ＝ iso
+  Setcomp1 = {!!}
+
+  Setcomp2 : {a b : hSet 𝓤} → (x : a ＝ b) → isotoid-Set (idtoiso-Set x) ＝ x
+  Setcomp2 = {!!}
+
+  idtoiso-Set-has-section : {a b : hSet 𝓤} → has-section (idtoiso-Set {a} {b})
+  idtoiso-Set-has-section {a} {b} = isotoid-Set , Setcomp1
+
+  idtoiso-Set-is-section : {a b : hSet 𝓤} → is-section (idtoiso-Set {a} {b})
+  idtoiso-Set-is-section {a} {b} = isotoid-Set , Setcomp2
+
+  idtoiso-Set-is-equiv : {a b : hSet 𝓤} → is-equiv (idtoiso-Set {a} {b})
+  idtoiso-Set-is-equiv {a} {b} = idtoiso-Set-has-section , idtoiso-Set-is-section
+
+  univalent-set-satisfies-equivalence : {a b : hSet 𝓤} → (a ＝ b) ≃ _≅_ (_ ⁺) (pcSet fe) a b
+  univalent-set-satisfies-equivalence = idtoiso-Set , idtoiso-Set-is-equiv
+
+  cSet : (fe : FunExt)
+       → is-univalent (𝓤 ⁺)
+       → category {𝓤 ⁺} { _ } (pcSet fe)
+  cSet fe u = record { idtoiso-is-equiv = univalent-set-satisfies-equivalence }
+  -}
+  {-
   idtoiso-Set : {a b : hSet 𝓤} → a ＝ b → _≅_ (𝓤 ⁺) (pcSet fe) a b
   idtoiso-Set refl = id , id , refl , refl
 
@@ -118,6 +203,7 @@ module Set where
        → category {𝓤 ⁺} { _ } (pcSet fe)
   cSet fe u = record { idtoiso-is-equiv = univalent-set-satisfies-equivalence
                      }
+  -}
 
 module Preorder
  (A : 𝓤 ̇)
@@ -238,11 +324,12 @@ module Rel where
   where
 
   open PropositionalTruncation pt
+  open import UF.Powerset
 
   RelPC : precategory { 𝓤 ⁺ }
   RelPC {𝓤} = record
             { ob = hSet 𝓤 
-            ; hom = λ (A , _) (B , _) → A → B → 𝓤 ̇ -- hProp
+            ; hom = λ (A , _) (B , _) → A → B → 𝓤 ̇
             ; hom-set = λ {(A , A-is-set)} {(B , B-is-set)} p q → {!!}
             ; u = λ {(A , A-is-set)} → λ a b → a ＝ b
             ; _∘_ = λ {(A , A-is-set) (B , B-is-set) (C , C-is-set)} f g a c → ∥ (Σ b ꞉ B , f b c × g a b) ∥
@@ -250,5 +337,5 @@ module Rel where
             ; unit-r = λ f → {!!}
             ; assoc = λ f g h → {!!}
             }
-  
+
 \end{code}
