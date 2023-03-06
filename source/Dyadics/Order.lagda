@@ -182,8 +182,8 @@ order. For example, a proof of strict order gives a proof of inclusive order.
 ℤ[1/2]≤-refl : (p : ℤ[1/2]) → p ≤ p
 ℤ[1/2]≤-refl ((z , a) , α)  = ℤ≤-refl (z * pos (2^ a))
 
-ℤ[1/2]<-courser-than-≤ : (p q : ℤ[1/2]) → p < q → p ≤ q
-ℤ[1/2]<-courser-than-≤ ((p , a) , _) ((q , b) , _) l = γ 
+ℤ[1/2]<-coarser-than-≤ : (p q : ℤ[1/2]) → p < q → p ≤ q
+ℤ[1/2]<-coarser-than-≤ ((p , a) , _) ((q , b) , _) l = γ 
  where
   l' : p * pos (2^ b) < q * pos (2^ a)
   l' = l
