@@ -18,28 +18,44 @@ open import UF.Subsingletons
 
 module Dyadics.Order where
 
-_<ℤ[1/2]_ _≤ℤ[1/2]_ : ℤ[1/2] → ℤ[1/2] → 𝓤₀ ̇
-((x , m) , _) <ℤ[1/2] ((y , n) , _) = x * pos (2^ n) < y * pos (2^ m)
-((x , m) , _) ≤ℤ[1/2] ((y , n) , _) = x * pos (2^ n) ≤ y * pos (2^ m)
+_ℤ[1/2]<'_ _ℤ[1/2]≤'_ : ℤ × ℕ → ℤ × ℕ → 𝓤₀ ̇
+(x , m) ℤ[1/2]<' (y , n) = x * pos (2^ n) < y * pos (2^ m)
+(x , m) ℤ[1/2]≤' (y , n) = x * pos (2^ n) ≤ y * pos (2^ m)
+
+_ℤ[1/2]<_ _ℤ[1/2]≤_ : ℤ[1/2] → ℤ[1/2] → 𝓤₀ ̇
+(p , _) ℤ[1/2]< (q , _) = p ℤ[1/2]<' q
+(p , _) ℤ[1/2]≤ (q , _) = p ℤ[1/2]≤' q
 
 instance
  Order-ℤ[1/2]-ℤ[1/2] : Order ℤ[1/2] ℤ[1/2]
- _≤_ {{Order-ℤ[1/2]-ℤ[1/2]}} = _≤ℤ[1/2]_
+ _≤_ {{Order-ℤ[1/2]-ℤ[1/2]}} = _ℤ[1/2]≤_
 
  Strict-Order-ℤ[1/2]-ℤ[1/2] : Strict-Order ℤ[1/2] ℤ[1/2]
- _<_ {{Strict-Order-ℤ[1/2]-ℤ[1/2]}} = _<ℤ[1/2]_
+ _<_ {{Strict-Order-ℤ[1/2]-ℤ[1/2]}} = _ℤ[1/2]<_
 
-ℤ[1/2]<-is-prop : (p q : ℤ[1/2]) → is-prop (p < q)
-ℤ[1/2]<-is-prop ((p , a) , m) ((q , b) , n) = γ
+ Order-ℤℕ-ℤℕ : Order (ℤ × ℕ) (ℤ × ℕ)
+ _≤_ {{Order-ℤℕ-ℤℕ}} = _ℤ[1/2]≤'_
+
+ Strict-Order-ℤℕ-ℤℕ : Strict-Order (ℤ × ℕ) (ℤ × ℕ)
+ _<_ {{Strict-Order-ℤℕ-ℤℕ}} = _ℤ[1/2]<'_
+
+ℤ[1/2]<'-is-prop : (p q : ℤ × ℕ) → is-prop (p < q)
+ℤ[1/2]<'-is-prop (p , a) (q , b) = γ
  where
-  γ : is-prop (((p , a) , m) < ((q , b) , n))
+  γ : is-prop (p * pos (2^ b) < q * pos (2^ a))
   γ = ℤ<-is-prop (p * pos (2^ b)) (q * pos (2^ a))
 
-ℤ[1/2]≤-is-prop : (p q : ℤ[1/2]) → is-prop (p ≤ q)
-ℤ[1/2]≤-is-prop ((p , a) , m) ((q , b) , n) = γ
+ℤ[1/2]<-is-prop : (p q : ℤ[1/2]) → is-prop (p < q)
+ℤ[1/2]<-is-prop (p , _) (q , _) = ℤ[1/2]<'-is-prop p q
+
+ℤ[1/2]≤'-is-prop : (p q : ℤ × ℕ) → is-prop (p ≤ q)
+ℤ[1/2]≤'-is-prop (p , a) (q , b) = γ
  where
-  γ : is-prop (((p , a) , m) ≤ ((q , b) , n))
+  γ : is-prop ((p , a) ≤ (q , b))
   γ = ℤ≤-is-prop (p * pos (2^ b)) (q * pos (2^ a))
+
+ℤ[1/2]≤-is-prop : (p q : ℤ[1/2]) → is-prop (p ≤ q)
+ℤ[1/2]≤-is-prop (p , _) (q , _) = ℤ[1/2]≤'-is-prop p q
 
 \end{code}
 
@@ -173,6 +189,13 @@ order. For example, a proof of strict order gives a proof of inclusive order.
 
   γ : p * pos (2^ b) ≤ q * pos (2^ a)
   γ = <-is-≤ _ _ l
+
+\end{code}
+
+\begin{code}
+
+-- normalise-pos-< : (p q : ℤ × ℕ) → {!!}
+-- normalise-pos-< = {!!}
 
 \end{code}
 
