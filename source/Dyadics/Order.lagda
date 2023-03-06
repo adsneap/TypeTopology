@@ -158,7 +158,7 @@ cancellation that x * pos (2^ c) ≤ z * pos (2^ a).
 \end{code}
 
 Simple properties of dyadic order follow by reducing to properts of integers
-order. For example, strict order gives way for usual order.
+order. For example, a proof of strict order gives a proof of inclusive order.
 
 \begin{code}
 
