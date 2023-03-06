@@ -14,6 +14,7 @@ open import Integers.Order
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Notation.Order
 open import UF.Base
+open import UF.Subsingletons
 
 module Dyadics.Order where
 
@@ -27,6 +28,18 @@ instance
 
  Strict-Order-ℤ[1/2]-ℤ[1/2] : Strict-Order ℤ[1/2] ℤ[1/2]
  _<_ {{Strict-Order-ℤ[1/2]-ℤ[1/2]}} = _<ℤ[1/2]_
+
+ℤ[1/2]<-is-prop : (p q : ℤ[1/2]) → is-prop (p < q)
+ℤ[1/2]<-is-prop ((p , a) , m) ((q , b) , n) = γ
+ where
+  γ : is-prop (((p , a) , m) < ((q , b) , n))
+  γ = ℤ<-is-prop (p * pos (2^ b)) (q * pos (2^ a))
+
+ℤ[1/2]≤-is-prop : (p q : ℤ[1/2]) → is-prop (p ≤ q)
+ℤ[1/2]≤-is-prop ((p , a) , m) ((q , b) , n) = γ
+ where
+  γ : is-prop (((p , a) , m) ≤ ((q , b) , n))
+  γ = ℤ≤-is-prop (p * pos (2^ b)) (q * pos (2^ a))
 
 \end{code}
 
@@ -142,7 +155,24 @@ cancellation that x * pos (2^ c) ≤ z * pos (2^ a).
         (pos (2^ b))
          (exponents-of-two-positive b) VIII
 
+\end{code}
+
+Simple properties of dyadic order follow by reducing to properts of integers
+order. For example, strict order gives way for usual order.
+
+\begin{code}
+
 ℤ[1/2]≤-refl : (p : ℤ[1/2]) → p ≤ p
 ℤ[1/2]≤-refl ((z , a) , α)  = ℤ≤-refl (z * pos (2^ a))
 
+ℤ[1/2]<-courser-than-≤ : (p q : ℤ[1/2]) → p < q → p ≤ q
+ℤ[1/2]<-courser-than-≤ ((p , a) , _) ((q , b) , _) l = γ 
+ where
+  l' : p * pos (2^ b) < q * pos (2^ a)
+  l' = l
+
+  γ : p * pos (2^ b) ≤ q * pos (2^ a)
+  γ = <-is-≤ _ _ l
+
 \end{code}
+
