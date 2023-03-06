@@ -8,6 +8,7 @@ open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Naturals.Exponentiation
 open import Dyadics.Type
 open import Integers.Type
+open import Integers.Addition renaming (_+_ to _ℤ+_)
 open import Integers.Exponentiation
 open import Integers.Multiplication
 open import Integers.Order
@@ -191,9 +192,14 @@ order. For example, a proof of strict order gives a proof of inclusive order.
   γ : p * pos (2^ b) ≤ q * pos (2^ a)
   γ = <-is-≤ _ _ l
 
-\end{code}
-
-\begin{code}
+ℤ[1/2]≤-split : (p q : ℤ[1/2]) → p ≤ q → (p < q) ∔ (p ＝ q)
+ℤ[1/2]≤-split p q (0 , e) = inr (≈-to-＝ p q e)
+ℤ[1/2]≤-split ((p , a) , α) ((q , b) , β) (succ n , e) = inl (n , γ)
+ where
+  γ : succℤ (p * pos (2^ b)) ℤ+ pos n ＝ q * pos (2^ a)
+  γ = succℤ (p * pos (2^ b)) ℤ+ pos n ＝⟨ ℤ-left-succ (p * pos (2^ b)) (pos n) ⟩
+      p * pos (2^ b) ℤ+ pos (succ n)  ＝⟨ e                                    ⟩
+      q * pos (2^ a)                  ∎
 
 normalise-pos-< : (p q : ℤ × ℕ)
                 → p < q
@@ -290,5 +296,99 @@ normalise-pos-< (p , a) (q , b) l = I (normalise-pos-info' p a)
          positive-result
          IV
 
-\end{code}
+normalise-pos-≤ : (p q : ℤ × ℕ)
+                → p ≤ q
+                → normalise-pos p ≤ normalise-pos q
+normalise-pos-≤ (p , a) (q , b) l = I (normalise-pos-info' p a)
+                                      (normalise-pos-info' q b)
+ where
+  p' = dnum (normalise-pos (p , a))
+  a' = dden (normalise-pos (p , a))
+  q' = dnum (normalise-pos (q , b))
+  b' = dden (normalise-pos (q , b))
+  
+  I : Σ k ꞉ ℕ , (p ＝ p' * pos (2^ k))
+              × (a ＝ a' ℕ+ k)
+    → Σ k' ꞉ ℕ , (q ＝ q' * pos (2^ k'))
+               × (b ＝ b' ℕ+ k')
+    → normalise-pos (p , a) ≤ normalise-pos (q , b)
+  I (k , e₁ , e₂) (k' , e₃ , e₄) = γ
+   where
+    pk  = pos (2^ k)
+    pk' = pos (2^ k')
+    pa  = pos (2^ a)
+    pb  = pos (2^ b)
+    pa' = pos (2^ a')
+    pb' = pos (2^ b')
 
+    positive-result : is-pos-succ (pk * pk')
+    positive-result = is-pos-succ-mult
+                       pk pk'
+                       (exponents-of-two-positive k)
+                       (exponents-of-two-positive k')
+
+    II : p * pb ＝ p' * pb' * (pk * pk')
+    II = p * pb                         ＝⟨ i    ⟩
+         p' * pk * pb                   ＝⟨ ii   ⟩
+         p' * pk * pos (2^ (b' ℕ+ k'))  ＝⟨ iii  ⟩
+         p' * pk * pos (2^ b' ℕ* 2^ k') ＝⟨ iv   ⟩
+         p' * pk * (pb' * pk')          ＝⟨ v    ⟩
+         p' * (pk * (pb' * pk'))        ＝⟨ vi   ⟩
+         p' * (pk * pb' * pk')          ＝⟨ vii  ⟩
+         p' * (pb' * pk * pk')          ＝⟨ viii ⟩
+         p' * (pb' * (pk * pk'))        ＝⟨ ix   ⟩
+         p' * pb' * (pk * pk')          ∎
+     where
+      ivᵢ : pos (2^ b' ℕ* 2^ k') ＝ pb' * pk'
+      ivᵢ = pos-multiplication-equiv-to-ℕ (2^ b') (2^ k') ⁻¹
+      
+      i    = ap (_* pb) e₁
+      ii   = ap (λ - → p' * pk * pos (2^ -)) e₄
+      iii  = ap (λ - → p' * pk * pos -) (prod-of-powers 2 b' k' ⁻¹)
+      iv   = ap (λ - → p' * pk * -) ivᵢ
+      v    = ℤ*-assoc p' pk (pb' * pk')
+      vi   = ap (p' *_) (ℤ*-assoc pk pb' pk') ⁻¹
+      vii  = ap (λ - → p' * (- * pk')) (ℤ*-comm pk pb')
+      viii = ap (p' *_) (ℤ*-assoc pb' pk pk')
+      ix   = ℤ*-assoc p' pb' (pk * pk') ⁻¹
+
+    III : q * pa ＝ q' * pa' * (pk * pk')
+    III = q * pa                         ＝⟨ i    ⟩
+          q' * pk' * pa                  ＝⟨ ii   ⟩
+          q' * pk' * pos (2^ (a' ℕ+ k))  ＝⟨ iii  ⟩
+          q' * pk' * pos (2^ a' ℕ* 2^ k) ＝⟨ iv   ⟩
+          q' * pk' * (pa' * pk)          ＝⟨ v    ⟩
+          q' * (pk' * (pa' * pk))        ＝⟨ vi   ⟩
+          q' * (pk' * pa' * pk)          ＝⟨ vii  ⟩
+          q' * (pa' * pk' * pk)          ＝⟨ viii ⟩
+          q' * (pa' * (pk' * pk))        ＝⟨ ix   ⟩
+          q' * pa' * (pk' * pk)          ＝⟨ x    ⟩           
+          q' * pa' * (pk * pk')          ∎
+     where
+      ivᵢ : pos (2^ a' ℕ* 2^ k) ＝ pos (2^ a') * pos (2^ k)
+      ivᵢ = pos-multiplication-equiv-to-ℕ (2^ a') (2^ k) ⁻¹
+      
+      i    = ap (_* pa) e₃
+      ii   = ap (λ - → q' * pk' * pos (2^ -)) e₂
+      iii  = ap (λ - → q' * pk' * pos -) (prod-of-powers 2 a' k ⁻¹)
+      iv   = ap (λ - → q' * pk' * -) ivᵢ
+      v    = ℤ*-assoc q' pk' (pa' * pk)
+      vi   = ap (q' *_) (ℤ*-assoc pk' pa' pk ⁻¹)
+      vii  = ap (λ - → q' * (- * pk)) (ℤ*-comm pk' pa')
+      viii = ap (q' *_) (ℤ*-assoc pa' pk' pk)
+      ix   = ℤ*-assoc q' pa' (pk' * pk) ⁻¹
+      x    = ap (λ - → q' * pa' * -) (ℤ*-comm pk' pk)
+
+    IV : p' * pb' * (pk * pk')
+       ≤ q' * pa' * (pk * pk')
+    IV = transport₂ _≤_ II III l
+    
+    γ : p' * pb' ≤ q' * pa'
+    γ = ℤ≤-ordering-right-cancellable
+         (p' * pb')
+         (q' * pa')
+         (pk * pk')
+         positive-result
+         IV
+
+\end{code}
