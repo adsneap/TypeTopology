@@ -391,4 +391,7 @@ normalise-pos-≤ (p , a) (q , b) l = I (normalise-pos-info' p a)
          positive-result
          IV
 
+ℤ[1/2]<-not-itself : (p : ℤ[1/2]) → ¬ (p < p)
+ℤ[1/2]<-not-itself ((p , a) , _) = ℤ-equal-not-less-than (p * pos (2^ a))
+
 \end{code}
