@@ -7,13 +7,17 @@ Andrew Sneap, 17 February 2022
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Dyadics.Type
 open import Dyadics.Negation
+open import Dyadics.Order
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Integers.Type
 open import Integers.Addition renaming (_+_ to _ℤ+_)
+open import Integers.Exponentiation
 open import Integers.Multiplication
 open import Integers.Negation renaming (-_ to ℤ-_)
+open import Integers.Order
 open import Naturals.Exponentiation
+open import Notation.Order
 open import UF.Base hiding (_≈_)
 
 module Dyadics.Addition where
@@ -321,5 +325,116 @@ unsimplified rationals.
     x    = ap ((- normalise-pos (p , a)) +_) (minus-normalise-pos q b ⁻¹)
     xi   =  ap (λ z → (- normalise-pos (p , a)) + (- z)) (q' ⁻¹)
     xii  = ap (λ z → (- z) + (- ((q , b) , β))) (p' ⁻¹)
+
+\end{code}
+
+Looking towards showing that dyadic rationals are an approximate ordered field,
+we can prove the field axiom relating addition with order, with some lemmas
+proved first.
+
+\begin{code}
+
+ℤ[1/2]<'-addition-preserves-order : (p q r : ℤ × ℕ)
+                                  → p ℤ[1/2]<' q
+                                  → p +' r < q +' r 
+ℤ[1/2]<'-addition-preserves-order (p , a) (q , b) (r , c) l = γ
+ where
+  pa = pos (2^ a)
+  pb = pos (2^ b)
+  pc = pos (2^ c)
+
+  I : p * pb * pos (2^ (c ℕ+ c))
+    < q * pa * pos (2^ (c ℕ+ c))
+  I = positive-multiplication-preserves-order
+      (p * pb) (q * pa) (pos (2^ (c ℕ+ c))) 
+       (exponents-of-two-positive (c ℕ+ c)) l
+
+  II : p * pb * pos (2^ (c ℕ+ c)) ℤ+ r * pa * pb * pc
+     < q * pa * pos (2^ (c ℕ+ c)) ℤ+ r * pa * pb * pc
+  II = ℤ<-adding'
+        (p * pb * pos (2^ (c ℕ+ c)))
+        (q * pa * pos (2^ (c ℕ+ c)))
+        (r * pa * pb * pc)
+        I
+
+  V : (z : ℤ) (d : ℕ) (e : ℕ)
+    → z * pos (2^ d) * pos (2^ (c ℕ+ c)) ℤ+ r * pos (2^ e) * pos (2^ d) * pc
+    ＝ (z * pc ℤ+ r * (pos (2^ e))) * pos (2^ (d ℕ+ c))
+  V z d e = z * pd * pos (2^ (c ℕ+ c)) ℤ+ r * pe * pd * pc  ＝⟨ i    ⟩
+            z * pd * pos (2^ c ℕ* 2^ c) ℤ+ r * pe * pd * pc ＝⟨ ii   ⟩
+            z * pd * (pc * pc) ℤ+ r * pe * pd * pc          ＝⟨ iii  ⟩
+            z * pd * pc * pc ℤ+ r * pe * pd * pc            ＝⟨ iv   ⟩
+            (z * pd * pc ℤ+ r * pe * pd) * pc               ＝⟨ v    ⟩
+            (z * pc * pd ℤ+ r * pe * pd) * pc               ＝⟨ vi   ⟩        
+            (z * pc ℤ+ r * pe) * pd * pc                    ＝⟨ vii  ⟩
+            (z * pc ℤ+ r * pe) * (pd * pc)                  ＝⟨ viii ⟩
+            (z * pc ℤ+ r * pe) * pos (2^ d ℕ* 2^ c)         ＝⟨ ix   ⟩
+            (z * pc ℤ+ r * pe) * pos (2^ (d ℕ+ c))          ∎
+   where
+    pd = pos (2^ d)
+    pe = pos (2^ e)
+ 
+    iᵢ : 2^ (c ℕ+ c) ＝ 2^ c ℕ* 2^ c
+    iᵢ = prod-of-powers 2 c c ⁻¹
+
+    iiᵢ : pos (2^ c ℕ* 2^ c) ＝ pc * pc
+    iiᵢ = pos-multiplication-equiv-to-ℕ (2^ c) (2^ c) ⁻¹
+
+    viiiᵢ : pd * pc ＝ pos (2^ d ℕ* 2^ c)
+    viiiᵢ = pos-multiplication-equiv-to-ℕ (2^ d) (2^ c)
+    
+    i    = ap (λ - → z * pd * pos - ℤ+ r * pe * pd * pc) iᵢ
+    ii   = ap (λ - → z * pd * - ℤ+ r * pe * pd * pc) iiᵢ
+    iii  = ap (_ℤ+ r * pe * pd * pc) (ℤ*-assoc (z * pd) pc pc ⁻¹)
+    iv   = distributivity-mult-over-ℤ (z * pd * pc) (r * pe * pd) pc ⁻¹
+    v    = ap (λ - → (- ℤ+ r * pe * pd) * pc) (ℤ-mult-rearrangement z pd pc)
+    vi   = ap (_* pc) (distributivity-mult-over-ℤ (z * pc) (r * pe) pd ⁻¹)
+    vii  = ℤ*-assoc (z * pc ℤ+ r * pe) pd pc
+    viii = ap ((z * pc ℤ+ r * pe) *_) viiiᵢ
+    ix   = ap (λ - → (z * pc ℤ+ r * pe) * pos -) (prod-of-powers 2 d c)
+
+  III : p * pb * pos (2^ (c ℕ+ c)) ℤ+ r * pa * pb * pc
+      ＝ (p * pc ℤ+ r * pa) * pos (2^ (b ℕ+ c))
+  III = V p b a
+
+  IV : q * pa * pos (2^ (c ℕ+ c)) ℤ+ r * pa * pb * pc
+    ＝ (q * pc ℤ+ r * pb) * pos (2^ (a ℕ+ c))
+  IV = q * pa * pos (2^ (c ℕ+ c)) ℤ+ r * pa * pb * pc ＝⟨ i       ⟩
+       q * pa * pos (2^ (c ℕ+ c)) ℤ+ r * pb * pa * pc ＝⟨ V q a b ⟩
+       (q * pc ℤ+ r * pb) * pos (2^ (a ℕ+ c))         ∎
+   where
+    iᵢ : r * pa * pb ＝ r * pb * pa
+    iᵢ = ℤ-mult-rearrangement r pa pb
+    i = ap (λ - → q * pa * pos (2^ (c ℕ+ c)) ℤ+ - * pc) iᵢ
+
+  γ : (p * pc ℤ+ r * pa) * pos (2^ (b ℕ+ c))
+    < (q * pc ℤ+ r * pb) * pos (2^ (a ℕ+ c))
+  γ = transport₂ _<_ III IV II
+
+ℤ[1/2]<-addition-preserves-order : (p q r : ℤ[1/2])
+                                 → p < q
+                                 → (p + r) < (q + r)
+ℤ[1/2]<-addition-preserves-order (p , α) (q , β) (r , δ) l = γ
+ where
+  I : p +' r < q +' r
+  I = ℤ[1/2]<'-addition-preserves-order p q r l
+  
+  γ : normalise-pos (p +' r) < normalise-pos (q +' r)
+  γ = normalise-pos-< (p +' r) (q +' r) I
+
+ℤ[1/2]≤-addition-preserves-order : (p q r : ℤ[1/2])
+                                 → p ≤ q
+                                 → (p + r) ≤ (q + r)
+ℤ[1/2]≤-addition-preserves-order p q r l = I (ℤ[1/2]≤-split p q l)
+ where
+  I : p < q ∔ (p ＝ q) → (p + r) ≤ (q + r)
+  I (inr e) = transport (λ - → p + r ≤ - + r) e II
+   where
+    II : p + r ≤ p + r
+    II = ℤ[1/2]≤-refl (p + r) 
+  I (inl l') = ℤ[1/2]<-coarser-than-≤ (p + r) (q + r) II
+   where
+    II : p + r < q + r
+    II = ℤ[1/2]<-addition-preserves-order p q r l'
 
 \end{code}
