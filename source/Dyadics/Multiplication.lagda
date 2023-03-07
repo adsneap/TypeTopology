@@ -6,11 +6,14 @@ Andrew Sneap, 17 February 2022
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Dyadics.Type
+open import Dyadics.Order
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
+open import Integers.Order
 open import Integers.Type
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Exponentiation
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
+open import Notation.Order
 open import UF.Base hiding (_≈_)
 
 module Dyadics.Multiplication where
@@ -238,4 +241,68 @@ we prove one side, and the other follows by commutativity.
 ℤ[1/2]*-mult-right-id : (p : ℤ[1/2]) → p * 1ℤ[1/2] ＝ p
 ℤ[1/2]*-mult-right-id p = ℤ[1/2]*-comm p 1ℤ[1/2] ∙ ℤ[1/2]*-mult-left-id p
 
+
+ℤ[1/2]<'-pos-multiplication-preserves-order : (p q : ℤ × ℕ)
+                                           → (pos 0 , 0) < p
+                                           → (pos 0 , 0) < q
+                                           → (pos 0 , 0) < p *' q
+ℤ[1/2]<'-pos-multiplication-preserves-order (p , a) (q , b) l₁ l₂ = γ
+ where
+  I : pos 0 < p
+  I = transport (_< p) (ℤ-zero-left-base (pos (2^ a))) l₁
+
+  II : pos 0 < q
+  II = transport (_< q) (ℤ-zero-left-base (pos (2^ b))) l₂
+
+  III : pos 0 < p ℤ* q
+  III = ℤ<-pos-multiplication-preserves-order p q I II
+
+  γ : pos 0 ℤ* pos (2^ (a ℕ+ b)) < p ℤ* q
+  γ = transport (_< p ℤ* q) (ℤ-zero-left-base (pos (2^ (a ℕ+ b))) ⁻¹) III
+
+ℤ[1/2]<-pos-multiplication-preserves-order : (p q : ℤ[1/2])
+                                           → 0ℤ[1/2] < p
+                                           → 0ℤ[1/2] < q
+                                           → 0ℤ[1/2] < p * q
+ℤ[1/2]<-pos-multiplication-preserves-order (p , _) (q , _) l₁ l₂ = γ
+ where
+  I : (pos 0 , 0) < p *' q
+  I = ℤ[1/2]<'-pos-multiplication-preserves-order p q l₁ l₂
+  
+  γ : normalise-pos (pos 0 , 0) < normalise-pos (p *' q)
+  γ = normalise-pos-< (pos 0 , 0) (p *' q) I
+
+ℤ[1/2]≤-pos-multiplication-preserves-order : (p q : ℤ[1/2])
+                                           → 0ℤ[1/2] ≤ p
+                                           → 0ℤ[1/2] ≤ q
+                                           → 0ℤ[1/2] ≤ p * q
+ℤ[1/2]≤-pos-multiplication-preserves-order p q l₁ l₂
+ = I (ℤ[1/2]≤-split 0ℤ[1/2] p l₁) (ℤ[1/2]≤-split 0ℤ[1/2] q l₂)
+ where
+  I : 0ℤ[1/2] < p ∔ (0ℤ[1/2] ＝ p)
+    → 0ℤ[1/2] < q ∔ (0ℤ[1/2] ＝ q)
+    → 0ℤ[1/2] ≤ p * q
+  I (inl l₃) (inl l₄) = ℤ[1/2]<-coarser-than-≤ 0ℤ[1/2] (p * q) γ
+   where
+    γ : 0ℤ[1/2] < p * q
+    γ = ℤ[1/2]<-pos-multiplication-preserves-order p q l₃ l₄
+  I (inr e) (inl l₃)  = transport (0ℤ[1/2] ≤_) γ (ℤ[1/2]≤-refl 0ℤ[1/2])
+   where
+    γ : 0ℤ[1/2] ＝ p * q
+    γ = 0ℤ[1/2]      ＝⟨ ℤ[1/2]*-zero-left-base q ⁻¹ ⟩
+        0ℤ[1/2] * q  ＝⟨ ap (_* q) e                 ⟩
+        p * q        ∎
+  I (inl l₃) (inr e)  = transport (0ℤ[1/2] ≤_) γ (ℤ[1/2]≤-refl 0ℤ[1/2])
+   where
+    γ : 0ℤ[1/2] ＝ p * q
+    γ = 0ℤ[1/2]     ＝⟨ ℤ[1/2]*-zero-right-base p ⁻¹ ⟩
+        p * 0ℤ[1/2] ＝⟨ ap (p *_) e                  ⟩
+        p * q       ∎
+  I (inr e₁) (inr e₂) = transport (0ℤ[1/2] ≤_) γ (ℤ[1/2]≤-refl 0ℤ[1/2])
+   where
+    γ : 0ℤ[1/2] ＝ p * q
+    γ = 0ℤ[1/2]     ＝⟨ ℤ[1/2]*-zero-left-base q ⁻¹ ⟩
+        0ℤ[1/2] * q ＝⟨ ap (_* q) e₁                ⟩
+        p * q       ∎
+    
 \end{code}
