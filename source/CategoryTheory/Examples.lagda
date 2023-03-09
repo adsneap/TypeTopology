@@ -16,14 +16,14 @@ module CategoryTheory.Examples where
 
 pc𝟘 : precategory { 𝓤 } { 𝓥 }
 pc𝟘 = record
-        { ob = 𝟘
-        ; hom = λ x y → 𝟘-elim x
+        { ob      = 𝟘
+        ; hom     = λ x y → 𝟘-elim x
         ; hom-set = λ {a} → 𝟘-elim a
-        ; u = λ {a} → 𝟘-elim a
-        ; _∘_ = λ {a} → 𝟘-elim a
-        ; unit-l = λ {a} → 𝟘-elim a
-        ; unit-r = λ {a} → 𝟘-elim a
-        ; assoc = λ {a} → 𝟘-elim a
+        ; u       = λ {a} → 𝟘-elim a
+        ; _∘_     = λ {a} → 𝟘-elim a
+        ; unit-l  = λ {a} → 𝟘-elim a
+        ; unit-r  = λ {a} → 𝟘-elim a
+        ; assoc   = λ {a} → 𝟘-elim a
         }
 
 c𝟘 : category { 𝓤 } { 𝓥 } pc𝟘
@@ -32,22 +32,6 @@ c𝟘 = record { idtoiso-is-equiv = λ {a} → 𝟘-elim a }
 open import MLTT.Unit-Properties
 open import UF.Subsingletons
 
-{-
-＝-hom-set : (p : ⋆ ＝ ⋆) → (q : p ＝ p) → q ＝ refl
-＝-hom-set p refl = refl
-
-pc𝟙 : precategory { 𝓤 } { 𝓥 }
-pc𝟙 = record
-        { ob = 𝟙
-        ; hom = λ a b → {!!}
-        ; hom-set = {!!}
-        ; u = λ {a} → refl
-        ; _∘_ = λ e₁ e₂ → e₂ ∙ e₁
-        ; unit-l = refl-right-neutral
-        ; unit-r = λ f → refl-left-neutral 
-        ; assoc = ∙assoc
-        }
--}
 module Discrete
   (A : 𝓤 ̇)
   (A-is-1-type : (x y : A) → is-set (x ＝ y))
@@ -55,14 +39,14 @@ module Discrete
 
  pcDiscrete : precategory { 𝓤 }
  pcDiscrete = record
-                { ob = A
-                ; hom = λ a b → a ＝ b
+                { ob      = A
+                ; hom     = λ a b → a ＝ b
                 ; hom-set = λ p q → A-is-1-type _ _ p q
-                ; u = refl
-                ; _∘_ = λ e₁ e₂ → e₂ ∙ e₁
-                ; unit-l = λ f → refl-right-neutral f ⁻¹
-                ; unit-r = λ f → refl-left-neutral
-                ; assoc = λ f g h → ∙assoc f g h
+                ; u       = refl
+                ; _∘_     = λ e₁ e₂ → e₂ ∙ e₁
+                ; unit-l  = λ f → refl-right-neutral f ⁻¹
+                ; unit-r  = λ f → refl-left-neutral
+                ; assoc   = λ f g h → ∙assoc f g h
                 }
 
  id-to-iso : {a b : A} → a ＝ b → _≅_ 𝓤 pcDiscrete a b
@@ -107,7 +91,7 @@ module Set where
   (fe : FunExt)
    where
 
-  univalence-says : {A B : hSet 𝓤} → {!!}
+  univalence-says : {A B : hSet 𝓤} → Σ (λ x → is-section (idtoeq (pr₁ A) (pr₁ B)))
   univalence-says {A , A-is-set} {B , B-is-set} = ua A B
  
   {-
@@ -315,6 +299,7 @@ module HP
 
 -- Rel
 
+{-
 module Rel where
 
  open import UF.PropTrunc
@@ -328,14 +313,111 @@ module Rel where
 
   RelPC : precategory { 𝓤 ⁺ }
   RelPC {𝓤} = record
-            { ob = hSet 𝓤 
-            ; hom = λ (A , _) (B , _) → A → B → 𝓤 ̇
+            { ob      = hSet 𝓤 
+            ; hom     = λ (A , _) (B , _) → A → B → 𝓤 ̇
             ; hom-set = λ {(A , A-is-set)} {(B , B-is-set)} p q → {!!}
-            ; u = λ {(A , A-is-set)} → λ a b → a ＝ b
-            ; _∘_ = λ {(A , A-is-set) (B , B-is-set) (C , C-is-set)} f g a c → ∥ (Σ b ꞉ B , f b c × g a b) ∥
-            ; unit-l = λ f → {!!}
-            ; unit-r = λ f → {!!}
-            ; assoc = λ f g h → {!!}
+            ; u       = λ {(A , A-is-set)} → λ a b → a ＝ b
+            ; _∘_     = λ {(A , A-is-set) (B , B-is-set) (C , C-is-set)} f g a c → ∥ (Σ b ꞉ B , f b c × g a b) ∥
+            ; unit-l  = λ f → {!!}
+            ; unit-r  = λ f → {!!}
+            ; assoc   = λ f g h → {!!}
             }
+-}
+
+module Slice
+  (pC : precategory { 𝓤 } { 𝓥 })
+  (C : category pC)
+  (A : precategory.ob pC)
+ where
+  open precategory pC
+  open category C
+
+  Slice-ob : 𝓤 ⊔ 𝓥 ̇
+  Slice-ob = Σ B ꞉ ob , hom A B
+
+  Slice-hom : Slice-ob
+            → Slice-ob
+            → 𝓥 ̇
+  Slice-hom (B , f) (C , g) = Σ h ꞉ hom C B , f ＝ h ∘ g
+
+  Slice-homset : {B C : Slice-ob} → is-set (Slice-hom B C)
+  Slice-homset {B , e} {C , e'} = γ
+   where
+    γ : is-set (Σ h ꞉ hom C B , e ＝ (h ∘ e'))
+    γ = subsets-of-sets-are-sets (hom C B) (λ h → e ＝ (h ∘ e')) hom-set hom-set
+
+  Slice-u : {B : Slice-ob} → Slice-hom B B
+  Slice-u {B , e} = u , unit-l' e
+
+  Slice-_∘_ : {B C D : Slice-ob}
+            → Slice-hom C D
+            → Slice-hom B C
+            → Slice-hom B D
+  Slice-_∘_ {B , f} {C , g} {D , e} (h , p) (h' , p') = (h' ∘ h) , γ
+   where
+    γ : f ＝ ((h' ∘ h) ∘ e)
+    γ = f              ＝⟨ p'           ⟩
+        (h' ∘ g)       ＝⟨ ap (h' ∘_) p ⟩
+        (h' ∘ (h ∘ e)) ＝⟨ assoc e h h' ⟩
+        ((h' ∘ h) ∘ e) ∎
+
+  Slice-unit-l : {a b : Slice-ob}
+               → (h : Slice-hom a b)
+               → Slice-_∘_ Slice-u h ＝ h
+  Slice-unit-l {B , f} {C , g} (h , p) = to-Σ-＝ (unit-r h , hom-set _ _)
+
+  Slice-unit-r : {a b : Slice-ob}
+               → (h : Slice-hom a b)
+               → Slice-_∘_ h Slice-u ＝ h
+  Slice-unit-r {B , f} {C , g} (h , p) = to-Σ-＝ (unit-l h , hom-set _ _)
+
+  Slice-assoc : {(B , f) (C , g) (D , k) (E , l) : Slice-ob}
+              → (h : Slice-hom (B , f) (C , g))
+              → (h' : Slice-hom (C , g) (D , k))
+              → (h'' : Slice-hom (D , k) (E , l))
+              → Slice-_∘_ h'' (Slice-_∘_ h' h) ＝ Slice-_∘_ (Slice-_∘_ h'' h') h
+  Slice-assoc {B , f} {C , g} {D , k} {E , l} (h , p) (h' , p') (h'' , p'')
+   = to-Σ-＝ (γ , hom-set _ _)
+    where
+     γ : (h ∘ h') ∘ h'' ＝ h ∘ (h' ∘ h'')
+     γ = assoc h'' h' h ⁻¹
+
+  SlicePC : precategory { 𝓤 ⊔ 𝓥 }
+  SlicePC = record
+              { ob      = Slice-ob
+              ; hom     = Slice-hom
+              ; hom-set = Slice-homset
+              ; u       = Slice-u
+              ; _∘_     = Slice-_∘_
+              ; unit-l  = Slice-unit-l
+              ; unit-r  = Slice-unit-r
+              ; assoc   = Slice-assoc
+              }
+
+  {-
+  idtoiso-slice : {B C : Slice-ob} → B ＝ C → _≅_ (𝓤 ⊔ 𝓥) SlicePC B C
+  idtoiso-slice {a} {.a} refl = Slice-u , Slice-u , (Slice-unit-l Slice-u) , Slice-unit-l Slice-u
+
+  isotoid-slice : {B C : Slice-ob} →  _≅_ (𝓤 ⊔ 𝓥) SlicePC B C → B ＝ C
+  isotoid-slice {B , p} {C , p'} (f , g , l , r) = {!!}
+
+  slice-comp1 : {a b : Slice-ob} → (eq : _≅_ (𝓤 ⊔ 𝓥) SlicePC a b) → idtoiso-slice (isotoid-slice eq) ＝ eq
+  slice-comp1 {a} {b} eq = {!!}
+
+  slice-comp2 : {a b : Slice-ob} → (e : a ＝ b) → isotoid-slice (idtoiso-slice e) ＝ e
+  slice-comp2 = {!!}
+
+  isotoid-slice-has-section : {a b : Slice-ob} → has-section (idtoiso-slice {a} {b})
+  isotoid-slice-has-section {a} {b} = isotoid-slice , slice-comp1
+
+  isotoid-slice-is-section : {a b : Slice-ob} → is-section (idtoiso-slice {a} {b})
+  isotoid-slice-is-section {a} {b} = isotoid-slice , slice-comp2
+
+  idtoiso-slice-is-equiv : {a b : Slice-ob} → is-equiv (idtoiso-slice { a } { b })
+  idtoiso-slice-is-equiv = isotoid-slice-has-section , isotoid-slice-is-section
+
+  SliceCat : category SlicePC
+  SliceCat = record { idtoiso-is-equiv = idtoiso-slice , idtoiso-slice-is-equiv }
+  -}
 
 \end{code}
