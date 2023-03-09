@@ -1,5 +1,7 @@
 \begin{code}
 
+{-# OPTIONS --allow-unsolved-metas #-}
+
 open import MLTT.Spartan renaming (_∘_ to _∘'_)
 
 open import CategoryTheory.Type
