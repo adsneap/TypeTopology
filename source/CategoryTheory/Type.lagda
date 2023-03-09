@@ -20,5 +20,35 @@ record precategory {𝓤 𝓥 : Universe} : 𝓤 ⁺ ⊔ (𝓥 ⁺) ̇ where
  type-of-object : (𝓤 ⁺) ̇
  type-of-object = type-of ob
 
+ dom : {a b : ob} → hom a b → ob
+ dom {a} {b} f = a
+
+ codom : {a b : ob} → hom a b → ob
+ codom {a} {b} f = b
+
+ unit-l' : {a b : ob} → (f : hom a b) → f ＝ (u ∘ f)
+ unit-l' {a} {b} f = unit-l f ⁻¹
+
+_ᵒᵖ : precategory { 𝓤 } { 𝓥 } → precategory { 𝓤 } { 𝓥 }
+record { ob      = ob ;
+         hom     = hom ;
+         hom-set = hom-set ;
+         u       = u ;
+         _∘_     = _∘_ ;
+         unit-l  = unit-l ;
+         unit-r  = unit-r ;
+         assoc   = assoc    } ᵒᵖ
+
+ = record
+     { ob = ob
+     ; hom = λ a b → hom b a
+     ; hom-set = hom-set
+     ; u = u
+     ; _∘_ = λ a b → b ∘ a
+     ; unit-l = unit-r
+     ; unit-r = unit-l
+     ; assoc = λ a b c → assoc c b a ⁻¹
+     }
+
 \end{code}
 
