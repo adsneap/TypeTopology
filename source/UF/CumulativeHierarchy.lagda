@@ -1,5 +1,5 @@
 Tom de Jong, 28 October 2022 - 7 November 2022.
-In collaboration with Nicolai Kraus, Fredrik Norvall Forsberg and Chuangjie Xu.
+In collaboration with Nicolai Kraus, Fredrik Nordvall Forsberg and Chuangjie Xu.
 
 We define the induction principle (with a non-judgemental computation principle)
 of the cumulative hierarchy 𝕍 (with respect to a type universe 𝓤) as introduced
@@ -75,6 +75,10 @@ _≲_ {𝓤} {𝓥} {𝓣} {A} {B} f g = (a : A) → ∃ b ꞉ B , g b ＝ f a
 -- Note that _≈_ says that f and g have equal images
 _≈_ : {A : 𝓤 ̇ } {B : 𝓥 ̇ } {X : 𝓣 ̇ } → (A → X) → (B → X) → 𝓤 ⊔ 𝓥 ⊔ 𝓣 ̇
 f ≈ g = f ≲ g × g ≲ f
+
+≈-sym : {A : 𝓤 ̇ } {B : 𝓥 ̇ } {X : 𝓣 ̇ } {f : A → X} {g : B → X}
+      → f ≈ g → g ≈ f
+≈-sym (u , v) = (v , u)
 
 \end{code}
 
@@ -351,7 +355,7 @@ subset relation (⊆) and proofs of ∈-extensionality and ∈-induction.
 
   to-∈-of-𝕍-set : {x : 𝕍} {A : 𝓤 ̇ } {f : A → 𝕍}
                   → (∃ a ꞉ A , f a ＝ x) → (x ∈ 𝕍-set f)
-  to-∈-of-𝕍-set {x} {A} {f} = back-Idtofun (∈-for-𝕍-sets x f)
+  to-∈-of-𝕍-set {x} {A} {f} = Idtofun⁻¹ (∈-for-𝕍-sets x f)
 
   _⊆_ : 𝕍 → 𝕍 → 𝓤 ⁺ ̇
   x ⊆ y = (v : 𝕍) → v ∈ x → v ∈ y

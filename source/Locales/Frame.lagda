@@ -23,7 +23,7 @@ module Locales.Frame
        where
 
 open import UF.Subsingletons
-open import UF.Subsingleton-Combinators
+open import UF.Logic
 open import UF.Subsingletons-FunExt
 
 open AllCombinators pt fe
@@ -42,9 +42,9 @@ private
     𝓤′ 𝓥′ 𝓦′ 𝓤′′ 𝓥′′ : Universe
 
 Fam : (𝓤 : Universe) → 𝓥 ̇ → 𝓤 ⁺ ⊔ 𝓥 ̇
-Fam 𝓤 A = Σ I ꞉ (𝓤 ̇) , (I → A)
+Fam 𝓤 A = Σ I ꞉ (𝓤 ̇ ), (I → A)
 
-fmap-syntax : {A : 𝓤 ̇} {B : 𝓥 ̇}
+fmap-syntax : {A : 𝓤 ̇ } {B : 𝓥 ̇ }
             → (A → B) → Fam 𝓦 A → Fam 𝓦 B
 fmap-syntax h (I , f) = I , h ∘ f
 
@@ -52,7 +52,7 @@ infix 2 fmap-syntax
 
 syntax fmap-syntax (λ x → e) U = ⁅ e ∣ x ε U ⁆
 
-compr-syntax : {A : 𝓤 ̇} (I : 𝓦 ̇) → (I → A) → Fam 𝓦 A
+compr-syntax : {A : 𝓤 ̇ } (I : 𝓦 ̇ )→ (I → A) → Fam 𝓦 A
 compr-syntax I f = I , f
 
 infix 2 compr-syntax
@@ -66,10 +66,10 @@ and (2) for the enumeration function.
 
 \begin{code}
 
-index : {A : 𝓤 ̇} → Fam 𝓥 A → 𝓥 ̇
+index : {A : 𝓤 ̇ } → Fam 𝓥 A → 𝓥 ̇
 index (I , _) = I
 
-_[_] : {A : 𝓤 ̇} → (U : Fam 𝓥 A) → index U → A
+_[_] : {A : 𝓤 ̇ } → (U : Fam 𝓥 A) → index U → A
 (_ , f) [ i ] = f i
 
 infix 9 _[_]
@@ -82,14 +82,14 @@ module to be imported by both this module and the `Dcpo` module.
 
 \begin{code}
 
-is-reflexive : {A : 𝓤 ̇} → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
+is-reflexive : {A : 𝓤 ̇ } → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
 is-reflexive {A = A} _≤_ = Ɐ x ∶ A , x ≤ x
 
-is-transitive : {A : 𝓤 ̇} → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
+is-transitive : {A : 𝓤 ̇ } → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
 is-transitive {A = A} _≤_ =
  Ɐ x ∶ A , Ɐ y ∶ A , Ɐ z ∶ A , x ≤ y ⇒ y ≤ z ⇒ x ≤ z
 
-is-preorder : {A : 𝓤 ̇} → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
+is-preorder : {A : 𝓤 ̇ } → (A → A → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
 is-preorder {A = A} _≤_ = is-reflexive _≤_ ∧ is-transitive _≤_
 
 \end{code}
@@ -100,19 +100,19 @@ equipment with an antisymmetric order so they are not sets a priori.
 
 \begin{code}
 
-is-antisymmetric : {A : 𝓤 ̇} → (A → A → Ω 𝓥) → (𝓤 ⊔ 𝓥) ̇
+is-antisymmetric : {A : 𝓤 ̇ } → (A → A → Ω 𝓥) → (𝓤 ⊔ 𝓥) ̇
 is-antisymmetric {A = A} _≤_ = {x y : A} → (x ≤ y) holds → (y ≤ x) holds → x ＝ y
 
-being-antisymmetric-is-prop : {A : 𝓤 ̇} (_≤_ : A → A → Ω 𝓥)
+being-antisymmetric-is-prop : {A : 𝓤 ̇ } (_≤_ : A → A → Ω 𝓥)
                             → is-set A
                             → is-prop (is-antisymmetric _≤_)
 being-antisymmetric-is-prop {𝓤} {A} _≤_ A-is-set =
  Π-is-prop' fe (λ x → Π-is-prop' fe (λ y → Π₂-is-prop fe (λ _ _ → A-is-set {x} {y})))
 
-is-partial-order : (A : 𝓤 ̇) → (A → A → Ω 𝓥) → 𝓤 ⊔ 𝓥 ̇
+is-partial-order : (A : 𝓤 ̇ )→ (A → A → Ω 𝓥) → 𝓤 ⊔ 𝓥 ̇
 is-partial-order A _≤_ = is-preorder _≤_ holds ×  is-antisymmetric _≤_
 
-being-partial-order-is-prop : (A : 𝓤 ̇) (_≤_ : A → A → Ω 𝓥)
+being-partial-order-is-prop : (A : 𝓤 ̇ )(_≤_ : A → A → Ω 𝓥)
                             → is-prop (is-partial-order A _≤_)
 being-partial-order-is-prop A _≤_ = prop-criterion γ
  where
@@ -221,7 +221,7 @@ module PosetReasoning (P : Poset 𝓤 𝓥) where
 
 infix 1 _＝[_]＝_
 
-_＝[_]＝_ : {A : 𝓤 ̇} → A → is-set A → A → Ω 𝓤
+_＝[_]＝_ : {A : 𝓤 ̇ } → A → is-set A → A → Ω 𝓤
 x ＝[ iss ]＝ y = (x ＝ y) , iss
 
 \end{code}
@@ -230,7 +230,7 @@ x ＝[ iss ]＝ y = (x ＝ y) , iss
 
 \begin{code}
 
-module Meets {A : 𝓤 ̇} (_≤_ : A → A → Ω 𝓥) where
+module Meets {A : 𝓤 ̇ } (_≤_ : A → A → Ω 𝓥) where
 
  is-top : A → Ω (𝓤 ⊔ 𝓥)
  is-top t = Ɐ x ∶ A , (x ≤ t)
@@ -252,24 +252,34 @@ module Meets {A : 𝓤 ̇} (_≤_ : A → A → Ω 𝓥) where
 
 \begin{code}
 
-module Joins {A : 𝓤 ̇} (_≤_ : A → A → Ω 𝓥) where
+module Joins {A : 𝓤 ̇ } (_≤_ : A → A → Ω 𝓥) where
 
  _is-an-upper-bound-of_ : A → Fam 𝓦 A → Ω (𝓥 ⊔ 𝓦)
  u is-an-upper-bound-of U = Ɐ i ∶ index U , (U [ i ]) ≤ u
 
+ _is-an-upper-bound-of₂_ : A → A × A → Ω 𝓥
+ u is-an-upper-bound-of₂ (v , w) = (v ≤ u) ∧ (w ≤ u)
+
  upper-bound : Fam 𝓦 A → 𝓤 ⊔ 𝓥 ⊔ 𝓦 ̇
  upper-bound U = Σ u ꞉ A , (u is-an-upper-bound-of U) holds
+
+ upper-bound₂ : A × A → 𝓤 ⊔ 𝓥  ̇
+ upper-bound₂ (x , y) = Σ u ꞉ A , (u is-an-upper-bound-of₂ (x , y)) holds
 
  _is-lub-of_ : A → Fam 𝓦 A → Ω (𝓤 ⊔ 𝓥 ⊔ 𝓦)
  u is-lub-of U = (u is-an-upper-bound-of U)
                ∧ (Ɐ (u′ , _) ∶ upper-bound U , (u ≤ u′))
 
-module JoinNotation {A : 𝓤 ̇} (⋁_ : Fam 𝓦 A → A) where
+ _is-lub-of₂_ : A → A × A → Ω (𝓤 ⊔ 𝓥)
+ u is-lub-of₂ (v , w) = (u is-an-upper-bound-of₂ (v , w))
+                      ∧ (Ɐ (u′ , _) ∶ upper-bound₂ (v , w) , (u ≤ u′))
 
- join-syntax : (I : 𝓦 ̇) → (I → A) → A
+module JoinNotation {A : 𝓤 ̇ } (⋁_ : Fam 𝓦 A → A) where
+
+ join-syntax : (I : 𝓦 ̇ )→ (I → A) → A
  join-syntax I f = ⋁ (I , f)
 
- ⋁⟨⟩-syntax : {I : 𝓦 ̇} → (I → A) → A
+ ⋁⟨⟩-syntax : {I : 𝓦 ̇ } → (I → A) → A
  ⋁⟨⟩-syntax {I = I} f = join-syntax I f
 
  infix 2 join-syntax
@@ -296,7 +306,7 @@ frame-data 𝓥 𝓦 A = (A → A → Ω 𝓥)   -- order
                  × (A → A → A)     -- binary meets
                  × (Fam 𝓦 A → A)   -- arbitrary joins
 
-satisfies-frame-laws : {A : 𝓤 ̇} → frame-data 𝓥 𝓦 A → 𝓤 ⊔ 𝓥 ⊔ 𝓦 ⁺ ̇
+satisfies-frame-laws : {A : 𝓤 ̇ } → frame-data 𝓥 𝓦 A → 𝓤 ⊔ 𝓥 ⊔ 𝓦 ⁺ ̇
 satisfies-frame-laws {𝓤 = 𝓤} {𝓥} {𝓦} {A = A}  (_≤_ , 𝟏 , _⊓_ , ⊔_) =
  Σ p ꞉ is-partial-order A _≤_ , rest p holds
  where
@@ -330,7 +340,7 @@ The type of (𝓤, 𝓥, 𝓦)-frames is then defined as:
 \begin{code}
 
 Frame : (𝓤 𝓥 𝓦 : Universe) → 𝓤 ⁺ ⊔ 𝓥 ⁺ ⊔ 𝓦 ⁺ ̇
-Frame 𝓤 𝓥 𝓦 = Σ A ꞉ (𝓤 ̇) , frame-structure 𝓥 𝓦 A
+Frame 𝓤 𝓥 𝓦 = Σ A ꞉ (𝓤 ̇ ), frame-structure 𝓥 𝓦 A
 
 \end{code}
 
@@ -582,7 +592,7 @@ map.
 
 \begin{code}
 
-∅ : {A : 𝓤  ̇} → (𝓦 : Universe) → Fam 𝓦 A
+∅ : {A : 𝓤  ̇ } → (𝓦 : Universe) → Fam 𝓦 A
 ∅ 𝓦 = 𝟘 {𝓦} , λ ()
 
 𝟎[_] : (F : Frame 𝓤 𝓥 𝓦) → ⟨ F ⟩
@@ -1218,7 +1228,7 @@ binary-distributivity-op F x y z =
 
 \begin{code}
 
-⋁[_]-iterated-join : (F : Frame 𝓤 𝓥 𝓦) (I : 𝓦 ̇) (J : I → 𝓦 ̇)
+⋁[_]-iterated-join : (F : Frame 𝓤 𝓥 𝓦) (I : 𝓦 ̇ )(J : I → 𝓦 ̇)
                 → (f : (i : I) → J i → ⟨ F ⟩)
                 → ⋁[ F ] ((Σ i ꞉ I , J i) , uncurry f)
                 ＝ ⋁[ F ] ⁅ ⋁[ F ] ⁅ f i j ∣ j ∶ J i ⁆ ∣ i ∶ I ⁆
@@ -1257,6 +1267,16 @@ binary-distributivity-op F x y z =
 
   γ : ((x ∧[ F ] x) ≤[ poset-of F ] x) holds
   γ = ∧[ F ]-lower₁ x x
+
+∨[_]-is-idempotent : (F : Frame 𝓤 𝓥 𝓦)
+                   → (x : ⟨ F ⟩) → x ＝ x ∨[ F ] x
+∨[ F ]-is-idempotent x = ≤-is-antisymmetric (poset-of F) † ‡
+ where
+  † : (x ≤[ poset-of F ] (x ∨[ F ] x)) holds
+  † = ∨[ F ]-upper₁ x x
+
+  ‡ : ((x ∨[ F ] x) ≤[ poset-of F ] x) holds
+  ‡ = ∨[ F ]-least (≤-is-reflexive (poset-of F) x) (≤-is-reflexive (poset-of F) x)
 
 \end{code}
 
@@ -1299,7 +1319,7 @@ further subfamily covering any given element of the frame.
 
 is-basis-for : (F : Frame 𝓤 𝓥 𝓦) → Fam 𝓦 ⟨ F ⟩ → (𝓤 ⊔ 𝓥 ⊔ 𝓦 ⁺) ̇
 is-basis-for {𝓦 = 𝓦} F (I , β) =
- (x : ⟨ F ⟩) → Σ J ꞉ (Fam 𝓦 I) , (x is-lub-of ⁅ β j ∣ j ε J ⁆) holds
+ (x : ⟨ F ⟩) → Σ J ꞉ Fam 𝓦 I , (x is-lub-of ⁅ β j ∣ j ε J ⁆) holds
   where
    open Joins (λ x y → x ≤[ poset-of F ] y)
 
@@ -1430,6 +1450,60 @@ directify-is-directed F S@(I , α) = ∣ [] ∣ , υ
          directify F S [ is ++ js ] ■
           where
            † = ∨[ F ]-upper₂ (directify F S [ is ]) (directify F S [ js ])
+
+closed-under-binary-joins : (F : Frame 𝓤 𝓥 𝓦) → Fam 𝓦 ⟨ F ⟩ → Ω (𝓤 ⊔ 𝓥 ⊔ 𝓦)
+closed-under-binary-joins {𝓦 = 𝓦} F S =
+ Ɐ i ∶ index S , Ɐ j ∶ index S ,
+  Ǝ k ∶ index S , ((S [ k ]) is-lub-of (binary-family 𝓦 (S [ i ]) (S [ j ]))) holds
+   where
+    open Joins (λ x y → x ≤[ poset-of F ] y)
+
+contains-bottom : (F : Frame 𝓤 𝓥 𝓦) → Fam 𝓦 ⟨ F ⟩ → Ω (𝓤 ⊔ 𝓥 ⊔ 𝓦)
+contains-bottom F U =  Ǝ i ∶ index U , is-bottom F (U [ i ]) holds
+
+closed-under-finite-joins : (F : Frame 𝓤 𝓥 𝓦) → Fam 𝓦 ⟨ F ⟩ → Ω (𝓤 ⊔ 𝓥 ⊔ 𝓦)
+closed-under-finite-joins F S =
+ contains-bottom F S ∧ closed-under-binary-joins F S
+
+directify-is-closed-under-fin-joins : (F : Frame 𝓤 𝓥 𝓦) (S : Fam 𝓦 ⟨ F ⟩)
+                                    → closed-under-finite-joins F (directify F S) holds
+directify-is-closed-under-fin-joins F S = † , ‡
+ where
+  open PropositionalTruncation pt
+
+  † : contains-bottom F (directify F S) holds
+  † = ∣ [] , 𝟎-is-bottom F ∣
+
+  ‡ : closed-under-binary-joins F (directify F S) holds
+  ‡ is js = ∣ (is ++ js) , ♠ , ♣ ∣
+   where
+    open Joins (λ x y → x ≤[ poset-of F ] y)
+    open PosetReasoning (poset-of F)
+
+    Ͱ = directify-functorial F S is js ⁻¹
+
+    ♠ : ((directify F S [ is ++ js ])
+         is-an-upper-bound-of
+         ⁅ directify F S [ is ] , directify F S [ js ] ⁆) holds
+    ♠ (inl p) = directify F S [ is ]                                ≤⟨ Ⅰ ⟩
+                directify F S [ is ] ∨[ F ] directify F S [ js ]    ＝⟨ Ͱ ⟩ₚ
+                directify F S [ is ++ js ]                          ■
+                 where
+                  Ⅰ = ∨[ F ]-upper₁ (directify F S [ is ]) (directify F S [ js ])
+    ♠ (inr p) = directify F S [ js ]                              ≤⟨ Ⅰ ⟩
+                directify F S [ is ] ∨[ F ] directify F S [ js ]  ＝⟨ Ͱ ⟩ₚ
+                directify F S [ is ++ js ]                        ■
+                 where
+                  Ⅰ = ∨[ F ]-upper₂ (directify F S [ is ]) (directify F S [ js ])
+
+    ♣ : ((u , _) : upper-bound ⁅ directify F S [ is ] , directify F S [ js ] ⁆)
+      → ((directify F S [ is ++ js ]) ≤[ poset-of F ] u) holds
+    ♣ (u , ζ) =
+     directify F S [ is ++ js ]                          ＝⟨ Ͱ ⁻¹ ⟩ₚ
+     directify F S [ is ] ∨[ F ] directify F S [ js ]    ≤⟨ ※ ⟩
+     u                                                   ■
+      where
+       ※ = ∨[ F ]-least (ζ (inl ⋆) ) (ζ (inr ⋆))
 
 \end{code}
 
@@ -1668,5 +1742,145 @@ bicofinal-implies-same-join F R S φ ψ =
   (poset-of F)
   (cofinal-implies-join-covered F R S φ)
   (cofinal-implies-join-covered F S R ψ)
+
+open PropositionalTruncation pt
+
+∨[_]-iterated-join : (F : Frame 𝓤 𝓥 𝓦) (S₁ S₂ : Fam 𝓦 ⟨ F ⟩)
+                   → ∥ index S₁ ∥
+                   → ∥ index S₂ ∥
+                   → (⋁[ F ] S₁) ∨[ F ] (⋁[ F ] S₂)
+                   ＝ ⋁[ F ] ⁅ (S₁ [ i ]) ∨[ F ] (S₂ [ j ]) ∣ (i , j) ∶ (index S₁ × index S₂) ⁆
+∨[_]-iterated-join {𝓦 = 𝓦} F S₁ S₂ i₁ i₂ =
+ ≤-is-antisymmetric (poset-of F) † ‡
+  where
+   open PosetReasoning (poset-of F)
+   open Joins (λ x y → x ≤[ poset-of F ] y)
+
+   fam-lhs : Fam 𝓦 ⟨ F ⟩
+   fam-lhs = binary-family 𝓦 (⋁[ F ] S₁) (⋁[ F ] S₂)
+
+   fam-rhs : Fam 𝓦 ⟨ F ⟩
+   fam-rhs = ⁅ (S₁ [ i ]) ∨[ F ] (S₂ [ j ]) ∣ (i , j) ∶ (index S₁ × index S₂) ⁆
+
+   † : ((⋁[ F ] fam-lhs) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+   † = ∨[ F ]-least †₁ †₂
+    where
+     ♠ : ((⋁[ F ] fam-rhs) is-an-upper-bound-of S₁) holds
+     ♠ i = ∥∥-rec (holds-is-prop (_ ≤[ poset-of F ] _)) ♣ i₂
+      where
+       ♣ : index S₂
+         → ((S₁ [ i ]) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+       ♣ j =
+        S₁ [ i ]                       ≤⟨ Ⅰ ⟩
+        (S₁ [ i ]) ∨[ F ] (S₂ [ j ])   ≤⟨ Ⅱ ⟩
+        ⋁[ F ] fam-rhs                 ■
+         where
+          Ⅰ = ∨[ F ]-upper₁ (S₁ [ i ]) (S₂ [ j ])
+
+          Ⅱ : (((S₁ [ i ]) ∨[ F ] (S₂ [ j ])) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+          Ⅱ = ⋁[ F ]-upper fam-rhs (i , j)
+
+     †₁ : ((⋁[ F ] S₁) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+     †₁ = ⋁[ F ]-least S₁ ((⋁[ F ] fam-rhs) , ♠)
+
+     ♥ : ((⋁[ F ] fam-rhs) is-an-upper-bound-of S₂) holds
+     ♥ j = ∥∥-rec (holds-is-prop (_ ≤[ poset-of F ] _)) ♢ i₁
+      where
+       ♢ : index S₁ → ((S₂ [ j ]) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+       ♢ i =
+        S₂ [ j ]                        ≤⟨ Ⅰ ⟩
+        (S₁ [ i ]) ∨[ F ] (S₂ [ j ])    ≤⟨ Ⅱ ⟩
+        ⋁[ F ] fam-rhs                  ■
+         where
+          Ⅰ : ((S₂ [ j ]) ≤[ poset-of F ] (S₁ [ i ] ∨[ F ] S₂ [ j ])) holds
+          Ⅰ = ∨[ F ]-upper₂ (S₁ [ i ]) (S₂ [ j ])
+
+          Ⅱ : ((S₁ [ i ] ∨[ F ] S₂ [ j ]) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+          Ⅱ = ⋁[ F ]-upper fam-rhs (i , j)
+
+     †₂ : ((⋁[ F ] S₂) ≤[ poset-of F ] (⋁[ F ] fam-rhs)) holds
+     †₂ = ⋁[ F ]-least S₂ ((⋁[ F ] fam-rhs) , ♥)
+
+   ‡ : ((⋁[ F ] fam-rhs) ≤[ poset-of F ] (⋁[ F ] fam-lhs)) holds
+   ‡ = ⋁[ F ]-least fam-rhs ((⋁[ F ] fam-lhs) , ‡₁)
+    where
+     ‡₁ : ((⋁[ F ] fam-lhs) is-an-upper-bound-of fam-rhs) holds
+     ‡₁ (i , j) =
+      (S₁ [ i ])  ∨[ F ] (S₂ [ j ])   ≤⟨ Ⅰ    ⟩
+      (⋁[ F ] S₁) ∨[ F ] (S₂ [ j ])   ≤⟨ Ⅱ    ⟩
+      (⋁[ F ] S₁) ∨[ F ] (⋁[ F ] S₂)  ＝⟨ Ⅲ   ⟩ₚ
+      ⋁[ F ] fam-lhs                  ■
+       where
+        Ⅰ = ∨[ F ]-left-monotone  (⋁[ F ]-upper S₁ i)
+        Ⅱ = ∨[ F ]-right-monotone (⋁[ F ]-upper S₂ j)
+        Ⅲ = refl
+
+\end{code}
+
+If a function preserves (1) binary joins and (2) directed joins then it
+preserves arbitrary joins.
+
+\begin{code}
+
+sc-and-∨-preserving-⇒-⋁-preserving : (F : Frame 𝓤 𝓥 𝓦) (G : Frame 𝓤′ 𝓥′ 𝓦)
+                                   → (h : ⟨ F ⟩ → ⟨ G ⟩)
+                                   → is-scott-continuous F G h holds
+                                   → (h 𝟎[ F ] ＝ 𝟎[ G ])
+                                   → (((x y : ⟨ F ⟩) → h (x ∨[ F ] y) ＝ h x ∨[ G ] h y))
+                                   → is-join-preserving F G h holds
+sc-and-∨-preserving-⇒-⋁-preserving F G h ζ ψ φ S =
+ h (⋁[ F ] S)              ＝⟨ ap h p ⟩
+ h (⋁[ F ] S↑)             ＝⟨ ♠      ⟩
+ ⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆   ＝⟨ ♥      ⟩
+ ⋁[ G ] ⁅ h x ∣ x ε S ⁆    ∎
+  where
+   open PropositionalTruncation pt
+   open PosetReasoning (poset-of G)
+
+   S↑ = directify F S
+
+   δ : is-directed F S↑ holds
+   δ = directify-is-directed F S
+
+   p : ⋁[ F ] S ＝ ⋁[ F ] S↑
+   p = directify-preserves-joins F S
+
+   ♠ = ⋁[ G ]-unique ⁅ h x ∣ x ε S↑ ⁆ (h (⋁[ F ] S↑)) (ζ S↑ δ)
+
+   open Joins (λ x y → x ≤[ poset-of G ] y)
+
+   lemma : ((⋁[ G ] ⁅ h x ∣ x ε S ⁆) is-an-upper-bound-of ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆) holds
+   lemma [] =
+    h 𝟎[ F ]                  ＝⟨ ψ ⟩ₚ
+    𝟎[ G ]                    ≤⟨ 𝟎-is-bottom G (⋁[ G ] ⁅ h x ∣ x ε S ⁆) ⟩
+    ⋁[ G ] ⁅ h x ∣ x ε S ⁆    ■
+   lemma (i ∷ i⃗) =
+    h ((S [ i ]) ∨[ F ] directify F S [ i⃗ ])    ＝⟨ φ _ _ ⟩ₚ
+    h (S [ i ]) ∨[ G ] h (directify F S [ i⃗ ])  ≤⟨ †     ⟩
+    ⋁[ G ] ⁅ h x ∣ x ε S ⁆                      ■
+     where
+      †₀ : (h (S [ i ]) ≤[ poset-of G ] (⋁[ G ] ⁅ h x ∣ x ε S ⁆)) holds
+      †₀ = ⋁[ G ]-upper ⁅ h x ∣ x ε S ⁆ i
+
+      †₁ : (h (directify F S [ i⃗ ]) ≤[ poset-of G ] (⋁[ G ] ⁅ h x ∣ x ε S ⁆)) holds
+      †₁ = lemma i⃗
+
+      †  = ∨[ G ]-least †₀ †₁
+
+   ♥₁ : ((⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆) ≤[ poset-of G ] (⋁[ G ] ⁅ h x ∣ x ε S ⁆)) holds
+   ♥₁ = ⋁[ G ]-least ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆ ((⋁[ G ] ⁅ h x ∣ x ε S ⁆) , lemma)
+
+   ♥₂ : ((⋁[ G ] ⁅ h x ∣ x ε S ⁆) ≤[ poset-of G ] (⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆)) holds
+   ♥₂ = ⋁[ G ]-least ⁅ h x ∣ x ε S ⁆ ((⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆) , †)
+    where
+     † : ((⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆) is-an-upper-bound-of ⁅ h x ∣ x ε S ⁆) holds
+     † i = h (S [ i ])                ＝⟨ ap h (𝟎-left-unit-of-∨ F (S [ i ]) ⁻¹) ⟩ₚ
+           h (S [ i ] ∨[ F ] 𝟎[ F ])  ＝⟨ refl ⟩ₚ
+           h (S↑ [ i ∷ [] ])          ≤⟨ ‡ ⟩
+           ⋁[ G ] ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆    ■
+            where
+             ‡ = ⋁[ G ]-upper ⁅ h x⃗ ∣ x⃗ ε S↑ ⁆ (i ∷ [])
+
+   ♥ = ≤-is-antisymmetric (poset-of G) ♥₁ ♥₂
 
 \end{code}

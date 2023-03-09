@@ -24,13 +24,12 @@ module DomainTheory.Lifting.LiftingDcpo
         (pe : propext 𝓥)
        where
 
+open PropositionalTruncation pt
+
 open import UF.Equiv
-open import UF.ImageAndSurjection
+open import UF.ImageAndSurjection pt
 open import UF.Miscelanea
 open import UF.Subsingletons-FunExt
-
-open ImageAndSurjection pt
-open PropositionalTruncation pt
 
 open import Lifting.Lifting 𝓥 hiding (⊥)
 open import Lifting.IdentityViaSIP 𝓥
@@ -239,7 +238,7 @@ dcpo.
   f̃-is-continuous' : is-continuous 𝓛-DCPO (𝓔 ⁻) f̃
   f̃-is-continuous' = continuity-criterion 𝓛-DCPO (𝓔 ⁻) f̃ f̃-is-monotone γ
    where
-    γ : (I : 𝓥 ̇) (α : I → ⟨ 𝓛-DCPO ⟩) (δ : is-Directed 𝓛-DCPO α)
+    γ : (I : 𝓥 ̇ )(α : I → ⟨ 𝓛-DCPO ⟩) (δ : is-Directed 𝓛-DCPO α)
       → f̃ (∐ 𝓛-DCPO {I} {α} δ) ⊑⟪ 𝓔 ⟫
         ∐ (𝓔 ⁻) (image-is-directed 𝓛-DCPO (𝓔 ⁻) f̃-is-monotone {I} {α} δ)
     γ I α δ = ∐ˢˢ-is-lowerbound-of-upperbounds 𝓔 (f ∘ value s)
@@ -348,7 +347,7 @@ dcpo.
    where
     g-mon : is-monotone 𝓛-DCPOₛ (𝓔 ⁻) g
     g-mon = 𝓛-monotone-lemma g (monotone-if-continuous 𝓛-DCPO (𝓔 ⁻) (g , g-cont))
-    lemma : (I : 𝓥 ̇) (α : I → 𝓛D) (δ : is-Directed 𝓛-DCPOₛ α)
+    lemma : (I : 𝓥 ̇ )(α : I → 𝓛D) (δ : is-Directed 𝓛-DCPOₛ α)
           → is-lowerbound-of-upperbounds (underlying-order (𝓔 ⁻))
                                          (g (∐ 𝓛-DCPOₛ δ)) (g ∘ α)
     lemma I α δ = transport T claim

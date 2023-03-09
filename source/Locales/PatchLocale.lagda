@@ -4,7 +4,7 @@ Based on `ayberkt/formal-topology-in-UF`.
 
 \begin{code}[hide]
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline --experimental-lossy-unification #-}
+{-# OPTIONS --without-K --exact-split --safe --auto-inline --lossy-unification #-}
 
 open import MLTT.Spartan
 open import UF.Base
@@ -26,7 +26,7 @@ module Locales.PatchLocale
        where
 
 open import UF.Subsingletons
-open import UF.Subsingleton-Combinators
+open import UF.Logic
 open import UF.Equiv using (_≃_; logically-equivalent-props-give-is-equiv)
 open import Locales.Frame pt fe hiding (is-directed)
 

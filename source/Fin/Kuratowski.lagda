@@ -24,7 +24,6 @@ open import UF.Equiv-FunExt
 open import UF.EquivalenceExamples
 open import UF.ExcludedMiddle
 open import UF.FunExt
-open import UF.ImageAndSurjection
 open import UF.Miscelanea
 open import UF.Subsingletons renaming (⊤Ω to ⊤)
 open import UF.Subsingletons-FunExt
@@ -34,7 +33,7 @@ open import UF.UniverseEmbedding
 
 open PropositionalTruncation pt
 open finiteness pt
-open ImageAndSurjection pt
+open import UF.ImageAndSurjection pt
 open CompactTypesPT pt
 
 is-Kuratowski-finite : 𝓤 ̇ → 𝓤 ̇
@@ -147,7 +146,7 @@ dkf-lemma {𝓤} fe {X} δ (n , 𝕗) = γ X δ n 𝕗
       VIII = pr₂ IH
 
       IX = X           ≃⟨ remove-and-add-isolated-point fe (f 𝟎) (δ (f 𝟎)) ⟩
-          (X' + 𝟙)     ≃⟨ +cong VIII (≃-refl 𝟙) ⟩
+          (X' + 𝟙)     ≃⟨ +-cong VIII (≃-refl 𝟙) ⟩
           (Fin n' + 𝟙) ■
 
 Kuratowski-finite-discrete-types-are-finite : funext 𝓤 𝓤₀
