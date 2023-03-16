@@ -24,10 +24,11 @@ record Functor (A : precategory {𝓤} {𝓥})
   Fid  : {a : ob A} → _⇒ { a } (u A) ＝ u B
   _∘F_ : {a b c : ob A} {f : hom A a b} {g : hom A b c} → _⇒ (g ∘A f) ＝ _⇒ g ∘B _⇒ f
 
--- idtoiso-preserved : {a b : ob A} → F a ＝ F b → _≅_ 𝓦 B (F a) (F b)
--- idtoiso-preserved e = {!!} , {!!}
-
-record NaturalTransformation {A : precategory {𝓤} {𝓥}} {B : precategory {𝓦} {𝓣}} (F G : Functor A B) : 𝓤 ⊔ 𝓥 ⊔ 𝓦 ⊔ 𝓣 ̇ where
+record NaturalTransformation
+  {A : precategory {𝓤} {𝓥}}
+  {B : precategory {𝓦} {𝓣}}
+  (F G : Functor A B) : 𝓤 ⊔ 𝓥 ⊔ 𝓦 ⊔ 𝓣 ̇
+ where
  open Functor
  open precategory
  private
@@ -100,10 +101,37 @@ module FunctorPrecategory
          
 \end{code}
 
+Fibration
 
-{- λ {F} → record { γ = λ a → Functor._⇒ F (u A)
-                                     ; naturality-axiom = λ f → (Functor._⇒ F f ∘B Functor._⇒ F (u A)) ＝⟨ Functor._∘F_ F ⁻¹ ⟩
-                                                          Functor._⇒ F (f ∘A (u A)) ＝⟨ ap (Functor._⇒ F) (unit-r A f) ⟩
-                                                          Functor._⇒ F f                        ＝⟨ ap (Functor._⇒ F) (unit-l A f ⁻¹) ⟩
-                                                          Functor._⇒ F (u A ∘A f)   ＝⟨ Functor._∘F_ F ⟩
-                                                          (Functor._⇒ F (u A) ∘B Functor._⇒ F f) ∎ } -}
+\begin{code}
+
+
+
+module Fibration
+  (𝓐 : precategory { 𝓤 } { 𝓥 })
+  (𝓑 : precategory { 𝓦 } { 𝓣 })
+  (F : Functor 𝓐 𝓑)
+ where
+
+ open precategory
+ open Functor
+ open NaturalTransformation
+ private
+  _⟶F = _⟶ F
+  _⇒F = _⇒ F
+  hom𝓐 = hom 𝓐
+  ob𝓐 = ob 𝓐
+  hom𝓑 = hom 𝓑
+  _∘𝓐_ = _∘_ 𝓐
+  id𝓐 = u 𝓐
+  id𝓑 = u 𝓑
+
+ g-cartesian : (D E : ob𝓐) → hom𝓐 D E → 𝓤 ⊔ 𝓥 ⊔ 𝓣 ̇
+ g-cartesian D E f =
+  (D' : ob𝓐) → (f' : hom𝓐 D' E) → ∃! g ꞉ hom𝓐 D' D , (g ⇒F ＝ {!id𝓑 !})
+                                                     × (f' ＝ f ∘𝓐 g)
+
+ fibration : (B : ob 𝓑) → 𝓤 ⊔ 𝓦 ̇
+ fibration B = Σ A ꞉ ob 𝓐 , B ＝ A ⟶F
+
+\end{code}
