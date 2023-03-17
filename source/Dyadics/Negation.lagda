@@ -6,11 +6,14 @@ Andrew Sneap, 17 February 2022
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Dyadics.Type
+open import Dyadics.Order
 open import Integers.Type
 open import Integers.Multiplication
 open import Integers.Negation renaming (-_ to ℤ-_)
+open import Integers.Order
 open import Integers.Parity
 open import Naturals.Exponentiation
+open import Notation.Order
 open import UF.Base hiding (_≈_)
 open import UF.Subsingletons
 
@@ -63,5 +66,45 @@ minus-normalise-pos p a = γ
     i   = ≈-to-＝ ((z , n) , α) (normalise-pos (z , n)) I
     ii  = ap (λ - → normalise-pos (- , n)) (minus-minus-is-plus z ⁻¹)
     iii = minus-normalise-pos (ℤ- z) n ⁻¹
+
+ℤ[1/2]≤-swap : (p q : ℤ[1/2]) → p ≤ q → - q ≤ - p
+ℤ[1/2]≤-swap ((p , a) , α) ((q , b) , β) l = γ
+ where
+  I : ℤ- (q * pos (2^ a)) ≤ ℤ- (p * pos (2^ b))
+  I = ℤ≤-swap (p * pos (2^ b)) (q * pos (2^ a)) l
+
+  II : ℤ- q * pos (2^ a) ＝ (ℤ- q) * pos (2^ a)
+  II = negation-dist-over-mult' q (pos (2^ a)) ⁻¹
+
+  III : ℤ- p * pos (2^ b) ＝ (ℤ- p) * pos (2^ b)
+  III = negation-dist-over-mult' p (pos (2^ b)) ⁻¹
+
+  IV : (ℤ- q) * pos (2^ a) ≤ (ℤ- p) * pos (2^ b)
+  IV = transport₂ _≤_ II III I
+
+  γ : normalise-pos (ℤ- q , b) ≤ normalise-pos (ℤ- p , a)
+  γ = normalise-pos-≤ (ℤ- q , b) (ℤ- p , a) IV
+
+ℤ[1/2]<-swap : (p q : ℤ[1/2]) → p < q → - q < - p
+ℤ[1/2]<-swap p q l = γ (ℤ[1/2]≤-split (- q) (- p) I)
+ where
+  l' : p ≤ q
+  l' = ℤ[1/2]<-coarser-than-≤ p q l
+
+  I : (- q) ≤ (- p)
+  I = ℤ[1/2]≤-swap p q l'
+  
+  γ : (- q) < (- p) ∔ ((- q) ＝ (- p)) → - q < - p
+  γ (inl l) = l
+  γ (inr e) = 𝟘-elim (ℤ[1/2]<-not-itself p III)
+   where
+    II : q ＝ p
+    II = q       ＝⟨ ℤ[1/2]-minus-minus q    ⟩
+         - (- q) ＝⟨ ap -_ e                 ⟩
+         - (- p) ＝⟨ ℤ[1/2]-minus-minus p ⁻¹ ⟩
+         p       ∎
+         
+    III : p < p
+    III = transport (p <_) II l
 
 \end{code}
