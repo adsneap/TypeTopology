@@ -215,7 +215,7 @@ unsimplified rationals.
          vi   = ℤ+-assoc (p * (b' * c')) ((q * c' * a')) (r * b' * a')
          vii  = ap (λ - → p * (b' * c') ℤ+ -) viiₐₚ
          viii = ap (λ - → p * - ℤ+ (q * c' ℤ+ r * b') * a') viiiₐₚ
-         ix = ap (λ - → p * pos - ℤ+ (q * c' ℤ+ r * b') * a') ixₐₚ
+         ix   = ap (λ - → p * pos - ℤ+ (q * c' ℤ+ r * b') * a') ixₐₚ
         
   γ₂ : a ℕ+ b ℕ+ c ＝ a ℕ+ (b ℕ+ c)
   γ₂ = addition-associativity a b c
