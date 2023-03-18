@@ -408,4 +408,10 @@ normalise-pos-≤ (p , a) (q , b) l = I (normalise-pos-info' p a)
   γ (inl l₃) = ℤ[1/2]<-trans p q r l₃ l₂
   γ (inr e)  = transport (_< r) (e ⁻¹) l₂
 
+ℤ[1/2]-0<1/2 : 0ℤ[1/2] < 1/2ℤ[1/2]
+ℤ[1/2]-0<1/2 = 0 , refl
+
+ℤ[1/2]-1/2<1 : 1/2ℤ[1/2] < 1ℤ[1/2]
+ℤ[1/2]-1/2<1 = 0 , refl
+
 \end{code}
