@@ -336,9 +336,12 @@ unsimplified rationals.
   np = normalise-pos (p , a)
 
   I : p * a' ℤ+ (ℤ- p) * a' ＝ pos 0
-  I = p * a' ℤ+ (ℤ- p) * a' ＝⟨ ap (p * a' ℤ+_) (negation-dist-over-mult' p a') ⟩
-      p * a' ℤ- p * a'      ＝⟨ ℤ-sum-of-inverse-is-zero (p * a') ⟩
+  I = p * a' ℤ+ (ℤ- p) * a' ＝⟨ i  ⟩
+      p * a' ℤ- p * a'      ＝⟨ ii ⟩
       pos 0                 ∎
+   where
+    i  = ap (p * a' ℤ+_) (negation-dist-over-mult' p a')
+    ii = ℤ-sum-of-inverse-is-zero (p * a')
 
   II : (p , a) , α ＝ np
   II = ℤ[1/2]-to-normalise-pos ((p , a) , α)
@@ -349,7 +352,7 @@ unsimplified rationals.
       np + normalise-pos (ℤ- p , a)                  ＝⟨ iii  ⟩
       normalise-pos ((p , a) +' (ℤ- p , a))          ＝⟨ refl ⟩
       normalise-pos (p * a' ℤ+ (ℤ- p) * a' , a ℕ+ a) ＝⟨ iv   ⟩
-      normalise-pos (pos 0 , a ℕ+ a)                 ＝⟨ v ⟩
+      normalise-pos (pos 0 , a ℕ+ a)                 ＝⟨ v    ⟩
       0ℤ[1/2]                                        ∎
    where
     i   = ap₂ _-_ II II
