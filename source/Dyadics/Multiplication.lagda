@@ -5,9 +5,13 @@ Andrew Sneap, 17 February 2022
 {-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
+open import Dyadics.Addition
+open import Dyadics.Negation
 open import Dyadics.Type
 open import Dyadics.Order
+open import Integers.Addition renaming (_+_ to _ℤ+_ ; _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
+open import Integers.Negation renaming (-_ to ℤ-_)
 open import Integers.Order
 open import Integers.Type
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
@@ -241,6 +245,154 @@ we prove one side, and the other follows by commutativity.
 ℤ[1/2]*-mult-right-id : (p : ℤ[1/2]) → p * 1ℤ[1/2] ＝ p
 ℤ[1/2]*-mult-right-id p = ℤ[1/2]*-comm p 1ℤ[1/2] ∙ ℤ[1/2]*-mult-left-id p
 
+ℤ[1/2]-distributivity-lemma : (p q r : ℤ × ℕ)
+                            → p *' (q +' r) ≈' p *' q +' p *' r
+ℤ[1/2]-distributivity-lemma (p , a) (q , b) (r , c) = γ
+ where
+  a' = pos (2^ a)
+  b' = pos (2^ b)
+  c' = pos (2^ c)
+
+  ac = pos (2^ (a ℕ+ c))
+  ca = pos (2^ (c ℕ+ a))
+  ab = pos (2^ (a ℕ+ b))
+  ba = pos (2^ (b ℕ+ a))
+  abc = pos (2^ (a ℕ+ (b ℕ+ c)))
+  abac = pos (2^ (a ℕ+ b ℕ+ (a ℕ+ c)))
+
+  lem₁ : (x y : ℕ) → pos (2^ (x ℕ+ y)) ＝ pos (2^ x) ℤ* pos (2^ y)
+  lem₁ x y = 
+   pos (2^ (x ℕ+ y))        ＝⟨ ap pos (prod-of-powers 2 x y ⁻¹)               ⟩
+   pos (2^ x ℕ* 2^ y)       ＝⟨ pos-multiplication-equiv-to-ℕ (2^ x) (2^ y) ⁻¹ ⟩
+   pos (2^ x) ℤ* pos (2^ y) ∎
+
+  lem₂ : (w x : ℤ) (y z : ℕ) → w ℤ* x ℤ* pos (2^ y) ℤ* pos (2^ z)
+       ＝ w ℤ* x ℤ* pos (2^ (y ℕ+ z))
+  lem₂ w x y z =
+   w ℤ* x ℤ* y' ℤ* z'            ＝⟨ i ⟩
+   w ℤ* x ℤ* (y' ℤ* z')         ＝⟨ ii ⟩
+   w ℤ* x ℤ* pos (2^ y ℕ* 2^ z) ＝⟨ iii ⟩
+   w ℤ* x ℤ* pos (2^ (y ℕ+ z))  ∎
+    where
+     y'  = pos (2^ y)
+     z'  = pos (2^ z)
+     i   = ℤ*-assoc (w ℤ* x) y' z'
+     ii  = ap (λ - → w ℤ* x ℤ* -) (pos-multiplication-equiv-to-ℕ (2^ y) (2^ z))
+     iii = ap (λ - → w ℤ* x ℤ* pos -) (prod-of-powers 2 y z)
+ 
+  I : (p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b') ℤ* a' ＝ p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* ab
+  I = (p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b') ℤ* a'     ＝⟨ i   ⟩
+      p ℤ* q ℤ* c' ℤ* a' ℤ+ p ℤ* r ℤ* b' ℤ* a' ＝⟨ ii  ⟩
+      p ℤ* q ℤ* c' ℤ* a' ℤ+ p ℤ* r ℤ* ba       ＝⟨ iii ⟩
+      p ℤ* q ℤ* ca ℤ+ p ℤ* r ℤ* ba             ＝⟨ iv  ⟩
+      p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* ba             ＝⟨ v ⟩
+      p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* ab             ∎
+   where
+    ivₐₚ : c ℕ+ a ＝ a ℕ+ c
+    ivₐₚ = addition-commutativity c a
+    vₐₚ : b ℕ+ a ＝ a ℕ+ b
+    vₐₚ = addition-commutativity b a
+    
+    i   = distributivity-mult-over-ℤ (p ℤ* q ℤ* c') (p ℤ* r ℤ* b') a'
+    ii  = ap (p ℤ* q ℤ* c' ℤ* a' ℤ+_) (lem₂ p r b a)
+    iii = ap (_ℤ+ p ℤ* r ℤ* ba) (lem₂ p q c a)
+    iv  = ap (λ - → p ℤ* q ℤ* pos (2^ -) ℤ+ p ℤ* r ℤ* ba) ivₐₚ
+    v   = ap (λ - → p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* pos (2^ -)) vₐₚ
+
+  IIᵢ : b ℕ+ (a ℕ+ c) ＝ a ℕ+ (b ℕ+ c)
+  IIᵢ = b ℕ+ (a ℕ+ c) ＝⟨ addition-associativity b a c ⁻¹         ⟩
+        b ℕ+ a ℕ+ c   ＝⟨ ap (_ℕ+ c) (addition-commutativity b a) ⟩
+        a ℕ+ b ℕ+ c   ＝⟨ addition-associativity a b c            ⟩
+        a ℕ+ (b ℕ+ c) ∎
+
+  II : abac ＝ a' ℤ* abc
+  II = pos (2^ (a ℕ+ b ℕ+ (a ℕ+ c)))          ＝⟨ i   ⟩
+       pos (2^ (a ℕ+ (b ℕ+ (a ℕ+ c))))        ＝⟨ ii  ⟩
+       pos (2^ a) ℤ* pos (2^ (b ℕ+ (a ℕ+ c))) ＝⟨ iii ⟩
+       pos (2^ a) ℤ* pos (2^ (a ℕ+ (b ℕ+ c))) ∎
+   where
+    i   = ap (pos ∘ 2^) (addition-associativity a b (a ℕ+ c))
+    ii  = lem₁ a (b ℕ+ (a ℕ+ c))
+    iii = ap (λ z → pos (2^ a) ℤ* pos (2^ z)) IIᵢ
+
+  III : p ℤ* (q ℤ* c' ℤ+ r ℤ* b') ＝ p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b'
+  III = p ℤ* (q ℤ* c' ℤ+ r ℤ* b')        ＝⟨ i   ⟩
+        p ℤ* (q ℤ* c') ℤ+ p ℤ* (r ℤ* b') ＝⟨ ii  ⟩
+        p ℤ* q ℤ* c' ℤ+ p ℤ* (r ℤ* b')   ＝⟨ iii ⟩
+        p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b'     ∎
+   where
+    i   = distributivity-mult-over-ℤ' (q ℤ* c') (r ℤ* b') p
+    ii  = ap (_ℤ+ p ℤ* (r ℤ* b')) (ℤ*-assoc p q c') ⁻¹
+    iii = ap (p ℤ* q ℤ* c' ℤ+_) (ℤ*-assoc p r b' ⁻¹)
+
+  γ : p ℤ* (q ℤ* c' ℤ+ r ℤ* b') ℤ* abac
+    ＝ (p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* ab) ℤ* abc
+  γ = p ℤ* (q ℤ* c' ℤ+ r ℤ* b') ℤ* abac             ＝⟨ i   ⟩
+      p ℤ* (q ℤ* c' ℤ+ r ℤ* b') ℤ* (a' ℤ* abc)      ＝⟨ ii  ⟩
+      (p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b') ℤ* (a' ℤ* abc) ＝⟨ iii ⟩
+      (p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b') ℤ* a' ℤ* abc   ＝⟨ iv  ⟩
+      (p ℤ* q ℤ* ac ℤ+ p ℤ* r ℤ* ab) ℤ* abc         ∎
+   where
+    i   = ap (p ℤ* (q ℤ* c' ℤ+ r ℤ* b') ℤ*_) II
+    ii  = ap (_ℤ* (a' ℤ* abc)) III
+    iii = ℤ*-assoc (p ℤ* q ℤ* c' ℤ+ p ℤ* r ℤ* b') a' (abc) ⁻¹
+    iv  = ap (_ℤ* abc) I
+
+ℤ[1/2]-distributivity : (p q r : ℤ[1/2]) → p * (q + r) ＝ p * q + p * r
+ℤ[1/2]-distributivity (p , α) (q , β) (r , δ) = γ
+ where
+  I : p , α ＝ normalise-pos p
+  I = ℤ[1/2]-to-normalise-pos (p , α)
+  
+  γ : (p , α) * ((q , β) + (r , δ)) ＝ (p , α) * (q , β) + (p , α) * (r , δ)
+  γ = (p , α) * ((q , β) + (r , δ))                   ＝⟨ refl ⟩
+      (p , α) * normalise-pos (q +' r)                ＝⟨ i    ⟩
+      normalise-pos p * normalise-pos (q +' r)        ＝⟨ ii   ⟩
+      normalise-pos (p *' (q +' r))                   ＝⟨ iii  ⟩
+      normalise-pos (p *' q +' p *' r)                ＝⟨ iv   ⟩
+      normalise-pos (p *' q) + normalise-pos (p *' r) ＝⟨ refl ⟩      
+      (p , α) * (q , β) + (p , α) * (r , δ)           ∎
+   where
+    iiiₐₚ : p *' (q +' r) ≈' p *' q +' p *' r
+    iiiₐₚ = ℤ[1/2]-distributivity-lemma p q r
+    
+    i   = ap (_* normalise-pos (q +' r)) I
+    ii  = ℤ[1/2]*-normalise-pos p (q +' r) ⁻¹
+    iii = ≈'-to-＝ (p *' (q +' r)) (p *' q +' p *' r) iiiₐₚ
+    iv  = ℤ[1/2]+-normalise-pos (p *' q) (p *' r)
+
+ℤ[1/2]-distributivity' : (p q r : ℤ[1/2]) → (p + q) * r ＝ p * r + q * r 
+ℤ[1/2]-distributivity' p q r = γ
+ where
+  γ : (p + q) * r ＝ p * r + q * r
+  γ = (p + q) * r   ＝⟨ ℤ[1/2]*-comm (p + q) r           ⟩
+      r * (p + q)   ＝⟨ ℤ[1/2]-distributivity r p q      ⟩
+      r * p + r * q ＝⟨ ap (_+ r * q) (ℤ[1/2]*-comm r p) ⟩
+      p * r + r * q ＝⟨ ap (p * r +_) (ℤ[1/2]*-comm r q) ⟩ 
+      p * r + q * r ∎
+
+ℤ[1/2]-negation-dist-over-mult : (p q : ℤ[1/2]) → (- p) * q ＝ - (p * q)
+ℤ[1/2]-negation-dist-over-mult ((p , a) , α) ((q , b) , β) = γ
+ where
+  γ : (- ((p , a) , α)) * ((q , b) , β) ＝ - ((p , a) , α) * ((q , b) , β)
+  γ = (- ((p , a) , α)) * ((q , b) , β)                ＝⟨ refl ⟩
+      normalise-pos (ℤ- p , a) * ((q , b) , β)         ＝⟨ i    ⟩
+      normalise-pos (ℤ- p , a) * normalise-pos (q , b) ＝⟨ ii   ⟩
+      normalise-pos ((ℤ- p , a) *' (q , b))            ＝⟨ refl ⟩
+      normalise-pos ((ℤ- p) ℤ* q , (a ℕ+ b))           ＝⟨ refl ⟩
+      normalise-pos ((ℤ- p) ℤ* q , a ℕ+ b)             ＝⟨ iii  ⟩
+      normalise-pos (ℤ- p ℤ* q , a ℕ+ b)               ＝⟨ iv   ⟩
+      - normalise-pos (p ℤ* q , a ℕ+ b)                ＝⟨ refl ⟩      
+      - normalise-pos ((p , a) *' (q , b))             ＝⟨ refl ⟩
+      - ((p , a) , α) * ((q , b) , β)                  ∎
+   where
+    iₐₚ : (q , b) , β ＝ normalise-pos (q , b)
+    iₐₚ = ℤ[1/2]-to-normalise-pos ((q , b) , β)
+    
+    i   = ap (normalise-pos (ℤ- p , a) *_) iₐₚ
+    ii  = ℤ[1/2]*-normalise-pos (ℤ- p , a) (q , b) ⁻¹
+    iii = ap (λ - → normalise-pos (- , a ℕ+ b) ) (negation-dist-over-mult' p q)
+    iv  = minus-normalise-pos (p ℤ* q) (a ℕ+ b) ⁻¹
 
 ℤ[1/2]<'-pos-multiplication-preserves-order : (p q : ℤ × ℕ)
                                            → (pos 0 , 0) < p
@@ -304,5 +456,40 @@ we prove one side, and the other follows by commutativity.
     γ = 0ℤ[1/2]     ＝⟨ ℤ[1/2]*-zero-left-base q ⁻¹ ⟩
         0ℤ[1/2] * q ＝⟨ ap (_* q) e₁                ⟩
         p * q       ∎
+
+ℤ[1/2]<-pos-multiplication-preserves-order' : (p q r : ℤ[1/2])
+                                            → p < q
+                                            → 0ℤ[1/2] < r
+                                            → p * r < q * r
+ℤ[1/2]<-pos-multiplication-preserves-order' p q r l₁ l₂ = γ
+ where
+  I : 0ℤ[1/2] < q - p
+  I = ℤ[1/2]<-diff-positive p q l₁
+
+  II : 0ℤ[1/2] < (q - p) * r
+  II = ℤ[1/2]<-pos-multiplication-preserves-order (q - p) r I l₂
+
+  III : 0ℤ[1/2] + p * r < (q - p) * r + p * r
+  III = ℤ[1/2]<-addition-preserves-order 0ℤ[1/2] ((q - p) * r) (p * r) II
+
+  IV : 0ℤ[1/2] + p * r ＝ p * r
+  IV = ℤ[1/2]-zero-left-neutral (p * r)
+
+  V : (q - p) * r + p * r ＝ q * r
+  V = (q - p) * r + p * r         ＝⟨ i   ⟩
+      q * r + (- p) * r + p * r   ＝⟨ ii  ⟩
+      q * r + ((- p) * r + p * r) ＝⟨ iii ⟩
+      q * r + ((- p * r) + p * r) ＝⟨ iv  ⟩
+      q * r + 0ℤ[1/2]             ＝⟨ v   ⟩
+      q * r ∎
+   where
+    i   = ap (_+ p * r) (ℤ[1/2]-distributivity' q (- p) r)
+    ii  = ℤ[1/2]+-assoc (q * r) ((- p) * r) (p * r)
+    iii = ap (λ - → q * r + (- + p * r)) (ℤ[1/2]-negation-dist-over-mult p r)
+    iv  = ap (q * r +_) (ℤ[1/2]+-inverse-sum-to-zero' (p * r))
+    v   = ℤ[1/2]-zero-right-neutral (q * r)
+
+  γ : p * r < q * r
+  γ = transport₂ _<_ IV V III
     
 \end{code}
