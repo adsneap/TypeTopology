@@ -218,8 +218,8 @@ p ℚₙ> q = q ℚₙ< p
 2/3ℚₙ≤1 : (pos 2 , 2) ℚₙ≤ (pos 1 , 0)
 2/3ℚₙ≤1 = 1 , refl
 
-negative-not-greater-than-zero : (x a : ℕ) → ¬ ((pos 0 , 0) ℚₙ<( negsucc x , a))
-negative-not-greater-than-zero x a (n , l) = negsucc-not-pos I
+ℚₙ-negative-not-greater-than-zero : (x a : ℕ) → ¬ ((pos 0 , 0) ℚₙ<( negsucc x , a))
+ℚₙ-negative-not-greater-than-zero x a (n , l) = negsucc-not-pos I
  where
   I : negsucc x ℤ* pos 1 ＝ pos (succ n)
   I = negsucc x ℤ* pos 1                      ＝⟨ l ⁻¹                                                       ⟩

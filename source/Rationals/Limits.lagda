@@ -153,7 +153,7 @@ open import Rationals.Fractions
 
 ⟨1/sn⟩-converges : 0ℚ limit-of ⟨1/sn⟩
 ⟨1/sn⟩-converges ((pos 0 , a) , ε)        l = 𝟘-elim (ℚ<-not-itself 0ℚ (transport (0ℚ <_) (numerator-zero-is-zero fe ((pos 0 , a) , ε) refl) l))
-⟨1/sn⟩-converges ((negsucc x , a) , ε)    l = 𝟘-elim (negative-not-greater-than-zero x a l)
+⟨1/sn⟩-converges ((negsucc x , a) , ε)    l = 𝟘-elim (ℚₙ-negative-not-greater-than-zero x a l)
 ⟨1/sn⟩-converges ((pos (succ x) , a) , ε) l = q ℕ+ 1 , conclusion
  where
   rough-N : Σ q ꞉ ℕ , Σ r ꞉ ℕ , (succ a ＝ q ℕ* succ x ℕ+ r) × r < succ x
