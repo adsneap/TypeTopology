@@ -422,6 +422,23 @@ proved first.
   γ : normalise-pos (p +' r) < normalise-pos (q +' r)
   γ = normalise-pos-< (p +' r) (q +' r) I
 
+ℤ[1/2]<-addition-preserves-order' : (p q r : ℤ[1/2])
+                                  → p < q
+                                  → (r + p) < (r + q)
+ℤ[1/2]<-addition-preserves-order' p q r l = γ
+ where
+  I : p + r < q + r
+  I = ℤ[1/2]<-addition-preserves-order p q r l
+
+  II : p + r ＝ r + p
+  II = ℤ[1/2]+-comm p r
+
+  III : q + r ＝ r + q
+  III = ℤ[1/2]+-comm q r
+ 
+  γ : r + p < r + q
+  γ = transport₂ _<_ II III I
+
 ℤ[1/2]≤-addition-preserves-order : (p q r : ℤ[1/2])
                                  → p ≤ q
                                  → (p + r) ≤ (q + r)
@@ -436,5 +453,34 @@ proved first.
    where
     II : p + r < q + r
     II = ℤ[1/2]<-addition-preserves-order p q r l'
+
+ℤ[1/2]≤-addition-preserves-order' : (p q r : ℤ[1/2])
+                                  → p ≤ q
+                                  → (r + p) ≤ (r + q)
+ℤ[1/2]≤-addition-preserves-order' p q r l = γ
+ where
+  I : p + r ≤ q + r
+  I = ℤ[1/2]≤-addition-preserves-order p q r l
+
+  II : p + r ＝ r + p
+  II = ℤ[1/2]+-comm p r
+
+  III : q + r ＝ r + q
+  III = ℤ[1/2]+-comm q r
+ 
+  γ : r + p ≤ r + q
+  γ = transport₂ _≤_ II III I
+
+ℤ[1/2]<-+ : (p q : ℤ[1/2]) → 0ℤ[1/2] < q → p < p + q
+ℤ[1/2]<-+ p q l = γ
+ where
+  I : p + 0ℤ[1/2] < p + q
+  I = ℤ[1/2]<-addition-preserves-order' 0ℤ[1/2] q p l
+
+  II : p + 0ℤ[1/2] ＝ p
+  II = ℤ[1/2]-zero-right-neutral p
+
+  γ : p < p + q
+  γ = transport (_< p + q) II I
 
 \end{code}
