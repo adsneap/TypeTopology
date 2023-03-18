@@ -107,4 +107,19 @@ minus-normalise-pos p a = γ
     III : p < p
     III = transport (p <_) II l
 
+ℤ≤-swap' : (p q : ℤ[1/2]) → - p ≤ - q → q ≤ p
+ℤ≤-swap' p q l = γ
+ where
+  I : - (- q) ≤ - (- p)
+  I = ℤ[1/2]≤-swap (- p) (- q) l
+
+  II : - (- q) ＝ q
+  II = ℤ[1/2]-minus-minus q ⁻¹
+
+  III : - (- p) ＝ p
+  III = ℤ[1/2]-minus-minus p ⁻¹
+
+  γ : q ≤ p
+  γ = transport₂ _≤_ II III I
+
 \end{code}
