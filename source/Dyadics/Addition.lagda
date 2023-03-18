@@ -361,6 +361,14 @@ unsimplified rationals.
     iv  = ap (λ b → normalise-pos (b , a ℕ+ a)) I
     v   = ℤ[1/2]-numerator-zero-is-zero' (a ℕ+ a)
 
+ℤ[1/2]+-inverse-sum-to-zero' : (p : ℤ[1/2]) → (- p) + p ＝ 0ℤ[1/2]
+ℤ[1/2]+-inverse-sum-to-zero' p = γ
+ where
+  γ : (- p) + p ＝ 0ℤ[1/2]
+  γ = (- p) + p ＝⟨ ℤ[1/2]+-comm (- p) p          ⟩
+      p - p     ＝⟨ ℤ[1/2]+-inverse-sum-to-zero p ⟩
+      0ℤ[1/2]   ∎
+
 \end{code}
 
 Looking towards showing that dyadic rationals are an approximate ordered field,
