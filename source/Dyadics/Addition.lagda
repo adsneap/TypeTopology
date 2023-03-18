@@ -518,10 +518,16 @@ proved first.
   γ : p < p + q
   γ = transport (_< p + q) II I
 
-ℤ[1/2]<-diff-positive : (p q : ℤ[1/2]) → p < q → 0ℤ[1/2] < p - q
-ℤ[1/2]<-diff-positive p q l = {!!}
+ℤ[1/2]<-diff-positive : (p q : ℤ[1/2]) → p < q → 0ℤ[1/2] < q - p
+ℤ[1/2]<-diff-positive p q l = γ
  where
   I : p - p < q - p
   I = ℤ[1/2]<-addition-preserves-order p q (- p) l
+
+  II : p - p ＝ 0ℤ[1/2]
+  II = ℤ[1/2]+-inverse-sum-to-zero p
+
+  γ : 0ℤ[1/2] < q - p
+  γ = transport (_< q - p) II I
 
 \end{code}
