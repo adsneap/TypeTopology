@@ -394,4 +394,18 @@ normalise-pos-≤ (p , a) (q , b) l = I (normalise-pos-info' p a)
 ℤ[1/2]<-not-itself : (p : ℤ[1/2]) → ¬ (p < p)
 ℤ[1/2]<-not-itself ((p , a) , _) = ℤ-equal-not-less-than (p * pos (2^ a))
 
+ℤ[1/2]<-≤ : (p q r : ℤ[1/2]) → p < q → q ≤ r → p < r
+ℤ[1/2]<-≤ p q r l₁ l₂ = γ (ℤ[1/2]≤-split q r l₂) 
+ where
+  γ : q < r ∔ (q ＝ r) → p < r
+  γ (inl l₃) = ℤ[1/2]<-trans p q r l₁ l₃
+  γ (inr e)  = transport (p <_) e l₁
+
+ℤ[1/2]≤-< : (p q r : ℤ[1/2]) → p ≤ q → q < r → p < r
+ℤ[1/2]≤-< p q r l₁ l₂ = γ (ℤ[1/2]≤-split p q l₁)
+ where
+  γ : p < q ∔ (p ＝ q) → p < r
+  γ (inl l₃) = ℤ[1/2]<-trans p q r l₃ l₂
+  γ (inr e)  = transport (_< r) (e ⁻¹) l₂
+
 \end{code}
