@@ -394,4 +394,10 @@ normalise-pos-≤ (p , a) (q , b) l = I (normalise-pos-info' p a)
 ℤ[1/2]<-not-itself : (p : ℤ[1/2]) → ¬ (p < p)
 ℤ[1/2]<-not-itself ((p , a) , _) = ℤ-equal-not-less-than (p * pos (2^ a))
 
+ℤ[1/2]<-is-≤ : (p q : ℤ[1/2]) → p < q → p ≤ q
+ℤ[1/2]<-is-≤ ((p , a) , α) ((q , b) , β) l = γ
+ where
+  γ : p * pos (2^ b) ≤ q * pos (2^ a)
+  γ = <-is-≤ (p * pos (2^ b)) (q * pos (2^ a)) l
+
 \end{code}
