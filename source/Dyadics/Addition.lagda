@@ -11,7 +11,7 @@ open import Dyadics.Order
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Integers.Type
-open import Integers.Addition renaming (_+_ to _ℤ+_)
+open import Integers.Addition renaming (_+_ to _ℤ+_ ; _-_ to _ℤ-_)
 open import Integers.Exponentiation
 open import Integers.Multiplication
 open import Integers.Negation renaming (-_ to ℤ-_)
@@ -37,8 +37,11 @@ _+'_ : ℤ × ℕ → ℤ × ℕ → ℤ × ℕ
 _+_ : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
 (p , _) + (q , _) = normalise-pos (p +' q)
 
+_-_ : ℤ[1/2] → ℤ[1/2] → ℤ[1/2]
+p - q = p + (- q)
+
 infixl 32 _+'_
-infixl 32 _+_
+infixl 32 _+_ _-_
 
 \end{code}
 
@@ -326,6 +329,35 @@ unsimplified rationals.
     xi   =  ap (λ z → (- normalise-pos (p , a)) + (- z)) (q' ⁻¹)
     xii  = ap (λ z → (- z) + (- ((q , b) , β))) (p' ⁻¹)
 
+ℤ[1/2]+-inverse-sum-to-zero : (p : ℤ[1/2]) → p - p ＝ 0ℤ[1/2]
+ℤ[1/2]+-inverse-sum-to-zero ((p , a) , α) = γ
+ where
+  a' = pos (2^ a)
+  np = normalise-pos (p , a)
+
+  I : p * a' ℤ+ (ℤ- p) * a' ＝ pos 0
+  I = p * a' ℤ+ (ℤ- p) * a' ＝⟨ ap (p * a' ℤ+_) (negation-dist-over-mult' p a') ⟩
+      p * a' ℤ- p * a'      ＝⟨ ℤ-sum-of-inverse-is-zero (p * a') ⟩
+      pos 0                 ∎
+
+  II : (p , a) , α ＝ np
+  II = ℤ[1/2]-to-normalise-pos ((p , a) , α)
+
+  γ : ((p , a) , α) - ((p , a) , α) ＝ 0ℤ[1/2]
+  γ = ((p , a) , α) - ((p , a) , α)                  ＝⟨ i    ⟩
+      np - np                                        ＝⟨ ii   ⟩
+      np + normalise-pos (ℤ- p , a)                  ＝⟨ iii  ⟩
+      normalise-pos ((p , a) +' (ℤ- p , a))          ＝⟨ refl ⟩
+      normalise-pos (p * a' ℤ+ (ℤ- p) * a' , a ℕ+ a) ＝⟨ iv   ⟩
+      normalise-pos (pos 0 , a ℕ+ a)                 ＝⟨ v ⟩
+      0ℤ[1/2]                                        ∎
+   where
+    i   = ap₂ _-_ II II
+    ii  = ap (np +_) (minus-normalise-pos p a)
+    iii = ℤ[1/2]+-normalise-pos (p , a) (ℤ- p , a) ⁻¹
+    iv  = ap (λ b → normalise-pos (b , a ℕ+ a)) I
+    v   = ℤ[1/2]-numerator-zero-is-zero' (a ℕ+ a)
+
 \end{code}
 
 Looking towards showing that dyadic rationals are an approximate ordered field,
@@ -482,5 +514,11 @@ proved first.
 
   γ : p < p + q
   γ = transport (_< p + q) II I
+
+ℤ[1/2]<-diff-positive : (p q : ℤ[1/2]) → p < q → 0ℤ[1/2] < p - q
+ℤ[1/2]<-diff-positive p q l = {!!}
+ where
+  I : p - p < q - p
+  I = ℤ[1/2]<-addition-preserves-order p q (- p) l
 
 \end{code}
