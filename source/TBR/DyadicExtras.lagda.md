@@ -217,20 +217,6 @@ open import UF.Base
   γ = p ℤ* q ℤ- r ℤ* q      ＝⟨ ap (p ℤ* q ℤ+_) I                        ⟩ 
       p ℤ* q ℤ+ (ℤ- r) ℤ* q ＝⟨ distributivity-mult-over-ℤ p (ℤ- r) q ⁻¹ ⟩
       (p ℤ- r) ℤ* q         ∎
-      
-postulate
- normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
-                  → normalise (k , p) ≤ normalise ((k ℤ+ pos n) , p)
- normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
- from-normalise-≤-same-denom :
-  (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
- normalise-succ' :
-  (z n : ℤ) → normalise (z , n) ＝ normalise (z ℤ+ z , succℤ n)
- normalise-pred' :
-  (z n : ℤ) → normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
- ℤ[1/2]-find-lower :
-  (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
- ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
 
 2ℤ[1/2] : ℤ[1/2]
 2ℤ[1/2] = (pos 2 , 0) , inl refl
@@ -429,5 +415,71 @@ normalise-negation' z (negsucc n) = γ
     ii  = minus-normalise-pos (pos (2^ (succ n)) ℤ* z) 0
     iii = ap (λ - → normalise-pos (- , 0)) I
     iv  = normalise-neg-to-pos (ℤ- z , n) ⁻¹
+
+normalise-pos-succ : (z : ℤ) (n : ℕ) → normalise-pos (z , n) ＝ normalise-pos (z ℤ+ z , succ n)
+normalise-pos-succ z n = ≈'-to-＝ (z , n) (z ℤ+ z , succ n) γ
+ where
+  I : pos (2 ℕ* 2^ n) ＝ pos 2 ℤ* pos (2^ n)
+  I = pos-multiplication-equiv-to-ℕ 2 (2^ n) ⁻¹
+  
+  γ : (z , n) ≈' (z ℤ+ z , succ n)
+  γ = z ℤ* pos (2^ (succ n))     ＝⟨ refl                               ⟩
+      z ℤ* pos (2 ℕ* 2^ n)       ＝⟨ ap (z ℤ*_) I                       ⟩
+      z ℤ* (pos 2 ℤ* pos (2^ n)) ＝⟨ ℤ*-assoc z (pos 2) (pos (2^ n)) ⁻¹ ⟩
+      z ℤ* pos 2 ℤ* pos (2^ n)   ＝⟨ refl                               ⟩
+      (z ℤ+ z) ℤ* pos (2^ n)     ∎
+
+normalise-succ' : (z n : ℤ) → normalise (z , n) ＝ normalise (z ℤ+ z , succℤ n)
+normalise-succ' z (pos n)     = normalise-pos-succ z n
+normalise-succ' z (negsucc 0) = γ
+ where
+  I : pos 2 ℤ* z ＝ z ℤ* pos 2
+  I = ℤ*-comm (pos 2) z
+  
+  γ : normalise (z , negsucc 0) ＝ normalise (z ℤ+ z , pos 0)
+  γ = normalise (z , negsucc 0)      ＝⟨ refl                               ⟩
+      normalise-neg (z , 0)          ＝⟨ normalise-neg-to-pos (z , 0)       ⟩
+      normalise-pos (pos 2 ℤ* z , 0) ＝⟨ ap (λ - → normalise-pos (- , 0)) I ⟩
+      normalise-pos (z ℤ+ z , 0)     ＝⟨ refl                               ⟩
+      normalise (z ℤ+ z , pos 0)     ∎
+normalise-succ' z (negsucc (succ x)) = γ
+ where
+  I : pos (2^ (succ (succ x))) ℤ* z ＝ pos (2^ (succ x)) ℤ* (z ℤ+ z)
+  I = pos (2^ (succ (succ x))) ℤ* z     ＝⟨ refl ⟩
+      pos (2 ℕ* 2^ (succ x)) ℤ* z       ＝⟨ i    ⟩
+      pos 2 ℤ* pos (2^ (succ x)) ℤ* z   ＝⟨ ii   ⟩
+      pos (2^ (succ x)) ℤ* pos 2 ℤ* z   ＝⟨ iii  ⟩
+      pos (2^ (succ x)) ℤ* (pos 2 ℤ* z) ＝⟨ iv   ⟩
+      pos (2^ (succ x)) ℤ* (z ℤ+ z)     ∎
+   where
+    i   = ap (_ℤ* z) (pos-multiplication-equiv-to-ℕ 2 (2^ (succ x)) ⁻¹)
+    ii  = ap (_ℤ* z) (ℤ*-comm (pos 2) (pos (2^ (succ x))))
+    iii = ℤ*-assoc (pos (2^ (succ x))) (pos 2) z
+    iv  = ap (pos (2^ (succ x)) ℤ*_) (ℤ*-comm (pos 2) z)
+  
+  γ : normalise (z , negsucc (succ x))
+    ＝ normalise (z ℤ+ z , succℤ (negsucc (succ x)))
+  γ = normalise (z , negsucc (succ x))                  ＝⟨ refl ⟩
+      normalise-neg (z , succ x)                        ＝⟨ i    ⟩
+      normalise-pos (pos (2^ (succ (succ x))) ℤ* z , 0) ＝⟨ ii   ⟩
+      normalise-pos (pos (2^ (succ x)) ℤ* (z ℤ+ z) , 0) ＝⟨ iii  ⟩
+      normalise-neg (z ℤ+ z , x)                        ＝⟨ refl ⟩      
+      normalise (z ℤ+ z , succℤ (negsucc (succ x)))     ∎
+   where
+    i   = normalise-neg-to-pos (z , succ x)
+    ii  = ap (λ - → normalise-pos (- , 0)) I
+    iii = normalise-neg-to-pos (z ℤ+ z , x) ⁻¹
+
+postulate
+ normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
+                  → normalise (k , p) ≤ normalise (k ℤ+ pos n , p)
+ normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
+ from-normalise-≤-same-denom :
+  (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
+ normalise-pred' :
+  (z n : ℤ) → normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
+ ℤ[1/2]-find-lower :
+  (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
+ ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
 
 ```
