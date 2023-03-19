@@ -16,7 +16,6 @@ open import UF.Quotient
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
-open import TBR.DyadicRationals
 open import TBR.Prelude
 
 module TBR.3-TernaryBoehmRealsSearch
@@ -24,14 +23,13 @@ module TBR.3-TernaryBoehmRealsSearch
   (fe : FunExt)
   (pe : PropExt)
   (sq : set-quotients-exist)
-  (dy : Dyadics)
   where
 
 open import TBR.1-TernaryBoehmReals pt fe pe sq
-open import TBR.2-FunctionEncodings pt fe pe sq dy hiding (r)
+open import TBR.2-FunctionEncodings pt fe pe sq hiding (r)
 
 open set-quotients-exist sq
-open Dyadics dy                                   
+
 ```
 
 # Part I - Searchable types

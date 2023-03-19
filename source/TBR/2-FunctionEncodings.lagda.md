@@ -2,7 +2,12 @@
 {-# OPTIONS --allow-unsolved-metas --exact-split --auto-inline --without-K
             --lossy-unification #-}
 
-open import Integers.Addition renaming (_+_ to _ℤ+_;  _-_ to _ℤ-_)
+open import Dyadics.Type renaming (normalise to quotient)
+open import Dyadics.Order
+open import Dyadics.Addition
+open import Dyadics.Negation
+open import Dyadics.Multiplication
+open import Integers.Addition renaming (_+_ to _ℤ+_ ;  _-_ to _ℤ-_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Negation renaming (-_ to ℤ-_ )
 open import Integers.Order
@@ -19,11 +24,11 @@ open import UF.Quotient
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
+open import TBR.DyadicExtras
+
 open import TBR.BelowAndAbove
   using (downLeft-upRight ; downRight-upRight ; dL-transform
        ; downRight＝downLeft)
-open import TBR.DyadicRationals
-  renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
 open import TBR.Prelude 
 open import TBR.upValue
 
@@ -32,17 +37,13 @@ module TBR.2-FunctionEncodings
   (fe : FunExt)
   (pe : PropExt)
   (sq : set-quotients-exist)
-  (dy : Dyadics)
  where
 
-open import TBR.DyadicReals pe pt fe dy renaming (located to located')
+open import TBR.DyadicReals pe pt fe renaming (located to located')
 open import TBR.1-TernaryBoehmReals pt fe pe sq hiding (ι)
 
 open PropositionalTruncation pt
-open Dyadics dy
-  renaming ( _ℤ[1/2]+_ to _+_ ; ℤ[1/2]-_ to -_ ; _ℤ[1/2]-_ to _-_
-           ; _ℤ[1/2]*_ to _*_)
-                                    
+                                   
 open import Naturals.Order
   renaming (max to ℕmax) hiding (≤-refl ; ≤-trans ; ≤-split)
 ```
@@ -66,12 +67,12 @@ _covers_ : ℤ[1/2] × ℤ[1/2] → ℤ[1/2] × ℤ[1/2] → 𝓤₀ ̇
 a covers b = (ld a ≤ ld b) × (rd b ≤ rd a)
 
 covers-refl : (ab : ℤ[1/2] × ℤ[1/2]) → ab covers ab
-covers-refl (a , b) = ≤-refl a , ≤-refl b
+covers-refl (a , b) = ℤ[1/2]≤-refl a , ℤ[1/2]≤-refl b
 
 covers-trans : (a b c : ℤ[1/2] × ℤ[1/2]) → a covers b → b covers c → a covers c
 covers-trans a b c (l≤₁ , r≤₁) (l≤₂ , r≤₂)
- = trans' (ld a) (ld b) (ld c) l≤₁ l≤₂
- , trans' (rd c ) (rd b) (rd a) r≤₂ r≤₁
+ = ℤ[1/2]≤-trans (ld a) (ld b) (ld c) l≤₁ l≤₂
+ , ℤ[1/2]≤-trans (rd c ) (rd b) (rd a) r≤₂ r≤₁
 ```
 
 We define three key properties for sequences of dyadic intervals
@@ -81,7 +82,7 @@ We define three key properties for sequences of dyadic intervals
 intervalled nested located : (ℤ → ℤ[1/2] × ℤ[1/2]) → 𝓤₀ ̇
 intervalled ζ = (n : ℤ) → pr₁ (ζ n) ≤ pr₂ (ζ n)
 nested      ζ = (n : ℤ) → (ζ n) covers (ζ (succℤ n))
-located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ
+located     ζ = (ϵ : ℤ[1/2]) → ℤ[1/2]-is-positive ϵ
               → Σ n ꞉ ℤ , (pr₂ (ζ n) - pr₁ (ζ n)) ≤ ϵ
 
 fully-nested' : (ℤ → ℤ[1/2] × ℤ[1/2]) → ℕ → 𝓤₀ ̇
@@ -120,38 +121,38 @@ real number.
  , is-disjoint , is-located
  where
   L R : 𝓟 ℤ[1/2]
-  L p = (∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) , ∃-is-prop
-  R q = (∃ n ꞉ ℤ , (rd (ζ n) <ℤ[1/2] q)) , ∃-is-prop
+  L p = (∃ n ꞉ ℤ , (p < ld (ζ n))) , ∃-is-prop
+  R q = (∃ n ꞉ ℤ , (rd (ζ n) < q)) , ∃-is-prop
   
   inhabited-l : inhabited-left L
   inhabited-l = ∣ ld (ζ (pos 0)) - 1ℤ[1/2]
-              , ∣ (pos 0) , (ℤ[1/2]<-neg (ld (ζ (pos 0))) 1ℤ[1/2] 0<1ℤ[1/2]) ∣ ∣
+              , ∣ (pos 0) , (ℤ[1/2]<-neg (ld (ζ (pos 0))) 1ℤ[1/2] ℤ[1/2]-0<1) ∣ ∣
   
   inhabited-r : inhabited-right R
   inhabited-r = ∣ (rd (ζ (pos 0)) + 1ℤ[1/2])
-              , ∣ pos 0  , ℤ[1/2]<-+ (rd (ζ (pos 0))) 1ℤ[1/2] 0<1ℤ[1/2] ∣ ∣
+              , ∣ pos 0  , ℤ[1/2]<-+ (rd (ζ (pos 0))) 1ℤ[1/2] ℤ[1/2]-0<1 ∣ ∣
   
   rounded-l : rounded-left L
   rounded-l p = ltr , rtl
    where
-    ltr : ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
-        → ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n')))
+    ltr : ∃ n ꞉ ℤ , (p < ld (ζ n))
+        → ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' < ld (ζ n')))
     ltr = ∥∥-functor I
      where
-      I : Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
-        → Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n')))
-      I (n , p<ζn) = let (p' , p<p' , p'<ζn) = dense p (ld (ζ n)) p<ζn
+      I : Σ n ꞉ ℤ , (p < ld (ζ n))
+        → Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n' ꞉ ℤ , (p' < ld (ζ n')))
+      I (n , p<ζn) = let (p' , p<p' , p'<ζn) = ℤ[1/2]-dense p (ld (ζ n)) p<ζn
                      in p' , (p<p' , ∣ n , p'<ζn ∣)
-    rtl : ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)))
-        → ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
+    rtl : ∃ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' < ld (ζ n)))
+        → ∃ n ꞉ ℤ , (p < ld (ζ n))
     rtl = ∥∥-rec ∃-is-prop I
      where
-      I : Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)))
-        → ∃ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
+      I : Σ p' ꞉ ℤ[1/2] , p < p' × (∃ n ꞉ ℤ , (p' < ld (ζ n)))
+        → ∃ n ꞉ ℤ , (p < ld (ζ n))
       I (p' , p<p' , te) = ∥∥-functor II te
        where
-        II : Σ n ꞉ ℤ , (p' <ℤ[1/2] ld (ζ n)) → Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))
-        II (n  , p'<ζn) = n , (trans p p' (ld (ζ n)) p<p' p'<ζn)
+        II : Σ n ꞉ ℤ , (p' < ld (ζ n)) → Σ n ꞉ ℤ , (p < ld (ζ n))
+        II (n  , p'<ζn) = n , (ℤ[1/2]<-trans p p' (ld (ζ n)) p<p' p'<ζn)
       
   rounded-r : rounded-right R
   rounded-r q = ltr , rtl
@@ -160,7 +161,7 @@ real number.
     ltr = ∥∥-functor I
      where
       I : Σ n ꞉ ℤ , rd (ζ n) < q → Σ q' ꞉ ℤ[1/2] , q' < q × q' ∈ R
-      I (n , ζn<q) = let (q' , ζn<q' , q'<q) = dense (rd (ζ n)) q ζn<q
+      I (n , ζn<q) = let (q' , ζn<q' , q'<q) = ℤ[1/2]-dense (rd (ζ n)) q ζn<q
                      in q' , (q'<q , ∣ n , ζn<q' ∣)
     rtl : ∃ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
     rtl = ∥∥-rec ∃-is-prop I
@@ -168,43 +169,44 @@ real number.
       I : Σ q' ꞉ ℤ[1/2] , q' < q × (R q' holds) → R q holds
       I (q' , q'<q , te) = ∥∥-functor II te
        where
-        II : Σ n ꞉ ℤ , (rd (ζ n) < q') → Σ n ꞉ ℤ , (rd (ζ n) <ℤ[1/2] q)
-        II (n , ζ<q') = n , (trans (rd (ζ n)) q' q ζ<q' q'<q)
+        II : Σ n ꞉ ℤ , (rd (ζ n) < q') → Σ n ꞉ ℤ , (rd (ζ n) < q)
+        II (n , ζ<q') = n , (ℤ[1/2]<-trans (rd (ζ n)) q' q ζ<q' q'<q)
   
   is-disjoint : disjoint L R
   is-disjoint p q (tp<x , tx<q)
-   = ∥∥-rec (<ℤ[1/2]-is-prop p q) I (binary-choice tp<x tx<q)
+   = ∥∥-rec (ℤ[1/2]<-is-prop p q) I (binary-choice tp<x tx<q)
    where
-    I : (Σ n ꞉ ℤ , (p <ℤ[1/2] ld (ζ n))) × (Σ n' ꞉ ℤ , (rd (ζ n') <ℤ[1/2] q))
-      → p <ℤ[1/2] q
+    I : (Σ n ꞉ ℤ , (p < ld (ζ n))) × (Σ n' ꞉ ℤ , (rd (ζ n') < q))
+      → p < q
     I ((n , p<l) , (n' , r<q)) with ℤ-dichotomous n n'
     ... | inl n≤n'
            = let p<l' = ℤ[1/2]<-≤ p (ld (ζ n)) (ld (ζ n')) p<l
                           (pr₁ (nested-implies-fully-nested ζ ζnes n n' n≤n'))
                  l<q' = ℤ[1/2]≤-< (ld (ζ n')) (rd (ζ n')) q (ζinv n') r<q 
-           in trans p (ld (ζ n')) q p<l' l<q'
+           in ℤ[1/2]<-trans p (ld (ζ n')) q p<l' l<q'
     ... | inr n'≤n
            = let p<r' = ℤ[1/2]<-≤ p (ld (ζ n)) (rd (ζ n)) p<l (ζinv n)
                  r<q' = ℤ[1/2]≤-< (rd (ζ n)) (rd (ζ n')) q
                           (pr₂ (nested-implies-fully-nested ζ ζnes n' n n'≤n))
                              r<q
-           in trans p (rd (ζ n)) q p<r' r<q'
+           in ℤ[1/2]<-trans p (rd (ζ n)) q p<r' r<q'
  
   is-located : located' L R
   is-located p q p<q
-   = I (ζloc (1/2 * (q - p))
-       (ℤ[1/2]<-positive-mult 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)))
+   = I (ζloc (1/2ℤ[1/2] * (q - p))
+       (ℤ[1/2]<-pos-multiplication-preserves-order 1/2ℤ[1/2] (q - p) ℤ[1/2]-0<1/2 (ℤ[1/2]<-diff-positive p q p<q)))
    where
-    0<ε : 0ℤ[1/2] < (1/2 * (q - p))
-    0<ε = <-pos-mult' 1/2 (q - p) 0<1/2ℤ[1/2] (diff-positive p q p<q)
-    I : (Σ n ꞉ ℤ , ((rd (ζ n) - ld (ζ n)) ≤ℤ[1/2] (1/2 * (q - p))))
+    0<ε : 0ℤ[1/2] < (1/2ℤ[1/2] * (q - p))
+    0<ε = ℤ[1/2]<-pos-multiplication-preserves-order
+           1/2ℤ[1/2] (q - p) ℤ[1/2]-0<1/2 (ℤ[1/2]<-diff-positive p q p<q)
+    I : (Σ n ꞉ ℤ , ((rd (ζ n) - ld (ζ n)) ≤ (1/2ℤ[1/2] * (q - p))))
       → (L p holds) ∨ (R q holds)
     I (n , l₁) = II (ℤ[1/2]-ordering-property (rd (ζ n)) (ld (ζ n)) q p l₂)
      where
       l₂ :(rd (ζ n) - ld (ζ n)) < (q - p)
-      l₂ = ℤ[1/2]≤-< (rd (ζ n) - ld (ζ n)) (1/2 * (q - p)) (q - p) l₁
-             (ℤ[1/2]-1/2-< (q - p) (diff-positive p q p<q))
-      II : rd (ζ n) < q ∔ p < ld (ζ n) → (L p holds) ∨ (R q holds)
+      l₂ = ℤ[1/2]≤-< (rd (ζ n) - ld (ζ n)) (1/2ℤ[1/2] * (q - p)) (q - p) l₁
+             (ℤ[1/2]<-1/2' (q - p) (ℤ[1/2]<-diff-positive p q p<q))
+      II : (rd (ζ n) < q) ∔ (p < ld (ζ n)) → (L p holds) ∨ (R q holds)
       II (inl ζ<q) = ∣ inr ∣ n , ζ<q ∣ ∣
       II (inr p<ζ) = ∣ inl ∣ n , p<ζ ∣ ∣
 ```
@@ -276,7 +278,7 @@ We show that the properties are equivalent to each other where necessary.
 vw-intervalled vw-nested vw-located : (ℤ → 𝕀v) → 𝓤₀ ̇
 vw-intervalled ζ = (n : ℤ) → v-left (ζ n) ≤ v-right (ζ n)
 vw-nested        = nested ∘ seq-of-vw-intervals
-vw-located     ζ = (ϵ : ℤ[1/2]) → is-positive ϵ
+vw-located     ζ = (ϵ : ℤ[1/2]) → ℤ[1/2]-is-positive ϵ
                  → Σ n ꞉ ℤ , l (pos (v-dist (ζ n)) , v-prec (ζ n)) ≤ ϵ
 
 vw-fully-nested : (ℤ → 𝕀v) → 𝓤₀ ̇
@@ -332,7 +334,7 @@ Then, we do the same for specific-width encodings.
 sw-intervalled sw-nested sw-located : (ℤ → 𝕀s) → 𝓤₀ ̇ 
 sw-intervalled = vw-intervalled ∘ seq-sw-to-vw
 sw-nested      = vw-nested      ∘ seq-sw-to-vw
-sw-located ζ = (ϵ : ℤ[1/2]) → is-positive ϵ
+sw-located ζ = (ϵ : ℤ[1/2]) → ℤ[1/2]-is-positive ϵ
              → Σ n ꞉ ℤ , l (pos 2 , pr₂ (ζ n)) ≤ ϵ
 
 sw-fully-nested : (ℤ → 𝕀s) → 𝓤₀ ̇
@@ -354,7 +356,7 @@ sw-nested-preserves ζ = id
 
 covers-is-prop : ∀ a b → is-prop (a covers b)
 covers-is-prop a b
- = ×-is-prop (≤ℤ[1/2]-is-prop (ld a) (ld b)) (≤ℤ[1/2]-is-prop (rd b) (rd a))
+ = ×-is-prop (ℤ[1/2]≤-is-prop (ld a) (ld b)) (ℤ[1/2]≤-is-prop (rd b) (rd a))
 
 sw-nested-is-prop : ∀ ζ → is-prop (sw-nested ζ)
 sw-nested-is-prop ζ = Π-is-prop (fe 𝓤₀ 𝓤₀) λ _ → covers-is-prop _ _
@@ -468,8 +470,8 @@ Normalisation preserves locatedness and nestedness.
 ```agda
 normalised-is-located : (ζ : ℤ → 𝕀s) → (ρ : is-normalised ζ) → sw-located ζ
 normalised-is-located ζ ρ ϵ ϵ-is-positive with ℤ[1/2]-find-lower ϵ ϵ-is-positive
-... | (k , l) = k , (<-is-≤ℤ[1/2] (quotient (pos 2 , pr₂ (ζ k))) ϵ
-                      (transport (λ - → quotient (pos 2 , -) <ℤ[1/2] ϵ)
+... | (k , l) = k , (ℤ[1/2]<-coarser-than-≤ (quotient (pos 2 , pr₂ (ζ k))) ϵ
+                      (transport (λ - → quotient (pos 2 , -) < ϵ)
                         (ρ k ⁻¹) l))
 
 go-up-preserves-fully-nested
@@ -726,11 +728,11 @@ FunctionMachine.A-nested Negation
  = transport₂ _≤_
      (normalise-negation' (v-right iv ) (v-prec iv ))
      (normalise-negation' (v-right iv') (v-prec iv'))
-     (≤-swap _ _ r≤)
+     (ℤ[1/2]≤-swap _ _ r≤)
  , transport₂ _≤_
      (normalise-negation' (v-left iv') (v-prec iv'))
      (normalise-negation' (v-left iv ) (v-prec iv ))
-     (≤-swap _ _ l≤)
+     (ℤ[1/2]≤-swap _ _ l≤)
 FunctionMachine.κ Negation _ ϵ = [ ϵ ]
 FunctionMachine.κ-is-coracle Negation [ χ ] ϵ = 0 , refl
 FunctionMachine.κ-increasing Negation [ χ ] ϵ₁ ϵ₂ ϵ≤ = ϵ≤ , ⋆

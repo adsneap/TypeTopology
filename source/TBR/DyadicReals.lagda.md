@@ -10,18 +10,18 @@ open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Powerset
 open import UF.Subsingletons
-
-open import TBR.DyadicRationals
+open import Dyadics.Type
+open import Dyadics.Addition renaming (_+_ to _ℤ[1/2]+_)
+open import Dyadics.Negation renaming (-_ to ℤ[1/2]-_)
+open import Dyadics.Order
 
 module TBR.DyadicReals
   (pe : PropExt)
   (pt : propositional-truncations-exist)
   (fe : FunExt)
-  (dy : Dyadics)
  where
 
  open PropositionalTruncation pt
- open Dyadics dy
 ```
 
 This file defines Dedekind reals using Dyadic Rationals.
@@ -139,6 +139,7 @@ inhabiting a cut. This is useful for readability purposes.
 We now define negation and addition from the operations on dyadic rationals.
 
 ```agda
+
  ℝd- : ℝ-d → ℝ-d
  ℝd- x = (L , R) , {!!}
   where
@@ -157,4 +158,5 @@ We now define negation and addition from the operations on dyadic rationals.
    R q = (∃ (r , s) ꞉ ℤ[1/2] × ℤ[1/2]
                     , r ∈ upper-cut-of x × s ∈ upper-cut-of y
                     × (q ＝ r ℤ[1/2]+ s)) , ∃-is-prop
+ 
 ```
