@@ -10,7 +10,7 @@ open import Naturals.Order
 open import Naturals.Properties
 open import Notation.Order
 
-module Todd.upValue where
+module TBR.upValue where
 
 ceilog2-type : 𝓤₀ ̇
 ceilog2-type

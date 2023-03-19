@@ -18,9 +18,9 @@ open import UF.Miscelanea
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
-open import Todd.Prelude
+open import TBR.Prelude
 
-module Todd.DyadicRationals where
+module TBR.DyadicRationals where
 ```
 
 This file defines dyadic rationals as a record, along with many widely

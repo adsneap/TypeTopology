@@ -14,7 +14,7 @@ open import Naturals.Order
 open import Notation.Order
 open import UF.Subsingletons
 
-module Todd.Prelude where
+module TBR.Prelude where
 ```
 
 ℤ-elimination

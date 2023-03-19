@@ -9,9 +9,9 @@ open import MLTT.Spartan
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Order
 
-open import Todd.Prelude
+open import TBR.Prelude
 
-module Todd.BelowAndAbove where
+module TBR.BelowAndAbove where
 ```
 
 downLeft, downMid and downRight

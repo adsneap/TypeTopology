@@ -13,9 +13,9 @@ open import UF.PropTrunc
 open import UF.Quotient
 open import UF.Subsingletons
 
-open import Todd.Prelude
+open import TBR.Prelude
 
-module Todd.1-TernaryBoehmReals
+module TBR.1-TernaryBoehmReals
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -107,7 +107,7 @@ tedious. It, along with other proofs about `below` and `above` and their
 relationship to each other, are outsourced to the following file.
 
 ```agda
-open import Todd.BelowAndAbove
+open import TBR.BelowAndAbove
   hiding (downLeft ; downMid ; downRight ; upLeft ; upRight ; _below_ ; _above_)
 ```
 

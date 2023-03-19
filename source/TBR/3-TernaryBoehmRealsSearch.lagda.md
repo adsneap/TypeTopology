@@ -16,10 +16,10 @@ open import UF.Quotient
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
-open import Todd.DyadicRationals
-open import Todd.Prelude
+open import TBR.DyadicRationals
+open import TBR.Prelude
 
-module Todd.3-TernaryBoehmRealsSearch
+module TBR.3-TernaryBoehmRealsSearch
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -27,8 +27,8 @@ module Todd.3-TernaryBoehmRealsSearch
   (dy : Dyadics)
   where
 
-open import Todd.1-TernaryBoehmReals pt fe pe sq
-open import Todd.2-FunctionEncodings pt fe pe sq dy hiding (r)
+open import TBR.1-TernaryBoehmReals pt fe pe sq
+open import TBR.2-FunctionEncodings pt fe pe sq dy hiding (r)
 
 open set-quotients-exist sq
 open Dyadics dy                                   

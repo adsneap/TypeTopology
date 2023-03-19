@@ -5,15 +5,15 @@
 open import MLTT.Spartan
 open import Notation.CanonicalMap
 open import Notation.Order
-open import Todd.Prelude
+open import TBR.Prelude
 open import UF.FunExt
 open import UF.PropTrunc
 open import UF.Powerset
 open import UF.Subsingletons
 
-open import Todd.DyadicRationals
+open import TBR.DyadicRationals
 
-module Todd.DyadicReals
+module TBR.DyadicReals
   (pe : PropExt)
   (pt : propositional-truncations-exist)
   (fe : FunExt)

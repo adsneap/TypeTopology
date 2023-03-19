@@ -19,15 +19,15 @@ open import UF.Quotient
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
 
-open import Todd.BelowAndAbove
+open import TBR.BelowAndAbove
   using (downLeft-upRight ; downRight-upRight ; dL-transform
        ; downRight＝downLeft)
-open import Todd.DyadicRationals
+open import TBR.DyadicRationals
   renaming (1/2ℤ[1/2] to 1/2; normalise to quotient)
-open import Todd.Prelude 
-open import Todd.upValue
+open import TBR.Prelude 
+open import TBR.upValue
 
-module Todd.2-FunctionEncodings
+module TBR.2-FunctionEncodings
   (pt : propositional-truncations-exist)
   (fe : FunExt)
   (pe : PropExt)
@@ -35,8 +35,8 @@ module Todd.2-FunctionEncodings
   (dy : Dyadics)
  where
 
-open import Todd.DyadicReals pe pt fe dy renaming (located to located')
-open import Todd.1-TernaryBoehmReals pt fe pe sq hiding (ι)
+open import TBR.DyadicReals pe pt fe dy renaming (located to located')
+open import TBR.1-TernaryBoehmReals pt fe pe sq hiding (ι)
 
 open PropositionalTruncation pt
 open Dyadics dy
