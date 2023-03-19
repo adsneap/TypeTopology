@@ -1,4 +1,3 @@
-
 ```agda
 
 module Todd.index where
