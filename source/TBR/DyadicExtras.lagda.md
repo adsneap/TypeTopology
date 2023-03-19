@@ -624,9 +624,31 @@ from-normalise-≤-same-denom p q (negsucc n) l₁ = Cases (ℤ-trichotomous p q
       γ₄ : 𝟘
       γ₄ = ℤ[1/2]<-not-itself (normalise-pos (pos (2^ (succ n)) ℤ* q , 0)) VIII
 
+ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
+ℤ[1/2]<-1/2' p l = γ
+ where
+  1/2 = 1/2ℤ[1/2]
+  
+  I : 0ℤ[1/2] < 1/2 * p
+  I = ℤ[1/2]<-pos-multiplication-preserves-order 1/2 p ℤ[1/2]-0<1/2 l
+
+  II : 0ℤ[1/2] + 1/2 * p < 1/2 * p + 1/2 * p
+  II = ℤ[1/2]<-addition-preserves-order 0ℤ[1/2] (1/2 * p) (1/2 * p) I
+
+  III : 0ℤ[1/2] + 1/2 * p ＝ 1/2 * p
+  III = ℤ[1/2]-zero-left-neutral (1/2 * p)
+
+  IV : 1/2 * p + 1/2 * p ＝ p
+  IV = 1/2 * p + 1/2 * p ＝⟨ ℤ[1/2]-distributivity' 1/2 1/2 p ⁻¹ ⟩
+       (1/2 + 1/2) * p   ＝⟨ ap (_* p) ℤ[1/2]-1/2+1/2            ⟩
+       1ℤ[1/2] * p       ＝⟨ ℤ[1/2]*-mult-left-id p              ⟩
+       p                 ∎
+
+  γ : 1/2 * p < p
+  γ = transport₂ _<_ III IV II
+
 postulate
  ℤ[1/2]-find-lower :
   (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
- ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
 
 ```
