@@ -9,5 +9,6 @@ import TBR.BelowAndAbove
 import TBR.DyadicReals
 import TBR.Prelude
 import TBR.upValue
+import TBR.DyadicExtras
 
 ```
