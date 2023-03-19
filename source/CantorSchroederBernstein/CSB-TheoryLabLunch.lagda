@@ -164,22 +164,19 @@ The Pradic-Brown argument rendered in HoTT/UF
 
 module CantorSchroederBernstein.CSB-TheoryLabLunch where
 
-open import UF.Subsingletons
-open import UF.Retracts
-open import UF.Equiv
-open import UF.Embeddings
-open import UF.FunExt
-open import UF.Subsingletons-FunExt
-open import UF.ExcludedMiddle
-
-open import MLTT.Spartan
-open import MLTT.Plus-Properties
-
-open import NotionsOfDecidability.DecidableAndDetachable
 open import CoNaturals.GenericConvergentSequence
-
+open import MLTT.Plus-Properties
+open import MLTT.Spartan
+open import NotionsOfDecidability.Decidable
 open import TypeTopology.CompactTypes
 open import TypeTopology.GenericConvergentSequenceCompactness
+open import UF.Embeddings
+open import UF.Equiv
+open import UF.ExcludedMiddle
+open import UF.FunExt
+open import UF.Retracts
+open import UF.Subsingletons
+open import UF.Subsingletons-FunExt
 
 \end{code}
 
@@ -677,7 +674,7 @@ doesn't refer to the notion of f-point.
 
     iv : is-prop (Σ (x , p) ꞉ fiber f y , ¬ is-g-point x)
     iv = have f-is-emb y ∶ is-prop (fiber f y)
-         so-apply subtype-of-prop-is-prop pr₁ (pr₁-lc (λ {σ} → negations-are-props fe))
+         so-apply subtypes-of-props-are-props' pr₁ (pr₁-lc (λ {σ} → negations-are-props fe))
 
     v : Σ (x , p) ꞉ fiber f y , ¬ is-g-point x
     v = double-negation-elim excluded-middle _ iv iii

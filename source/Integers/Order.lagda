@@ -415,6 +415,44 @@ negative-multiplication-changes-order' a b (negsucc x) g l = I (ℤ≤-split a b
   I (inl a<b) = <-is-≤ (b * negsucc x) (a * negsucc x) (negative-multiplication-changes-order a b (negsucc x) ⋆ a<b)
   I (inr a＝b) = transport (b * negsucc x ≤ℤ_) (ap (_* negsucc x) (a＝b ⁻¹)) (ℤ≤-refl (b * negsucc x))
 
+negative-not-greater-than-zero : (a : ℕ) → ¬ (pos 0 < negsucc a)
+negative-not-greater-than-zero a (k , e) = pos-not-negsucc I
+ where
+  I : pos (succ k) ＝ negsucc a
+  I = pos (succ k)          ＝⟨ ℤ-zero-left-neutral (pos (succ k)) ⁻¹ ⟩
+      pos 0 + pos (succ k)  ＝⟨ refl                                  ⟩
+      succℤ (pos 0 + pos k) ＝⟨ ℤ-left-succ (pos 0) (pos k) ⁻¹        ⟩
+      succℤ (pos 0) + pos k ＝⟨ e                                     ⟩
+      negsucc a             ∎
+
+ℤ<-pos-multiplication-preserves-order-lemma : (a : ℤ) → (b : ℕ)
+                                            → pos 0 < a
+                                            → pos 0 < pos (succ b)
+                                            → pos 0 < a * pos (succ b)
+ℤ<-pos-multiplication-preserves-order-lemma a 0        l₁ l₂ = l₁
+ℤ<-pos-multiplication-preserves-order-lemma a (succ b) l₁ l₂ = γ
+ where
+  I : pos 0 < pos (succ b)
+  I = ℤ-zero-less-than-pos b
+  
+  IH : pos 0 < a * pos (succ b)
+  IH = ℤ<-pos-multiplication-preserves-order-lemma a b l₁ I
+
+  γ : pos 0 < a * pos (succ (succ b))
+  γ = ℤ<-adding (pos 0) a (pos 0) (a * pos (succ b)) l₁ IH
+
+ℤ<-pos-multiplication-preserves-order : (a b : ℤ)
+                                      → pos 0 < a
+                                      → pos 0 < b
+                                      → pos 0 < a * b
+ℤ<-pos-multiplication-preserves-order a (negsucc x) l₁ l₂ = 𝟘-elim γ
+ where
+  γ : 𝟘
+  γ = negative-not-greater-than-zero x l₂
+ℤ<-pos-multiplication-preserves-order a (pos 0) l₁ l₂ = l₂
+ℤ<-pos-multiplication-preserves-order a (pos (succ b))
+ = ℤ<-pos-multiplication-preserves-order-lemma a b
+  
 ℤ-mult-right-cancellable : (x y z : ℤ) → not-zero z → x * z ＝ y * z → x ＝ y
 ℤ-mult-right-cancellable x y (pos 0)        nz e = 𝟘-elim (nz ⋆)
 ℤ-mult-right-cancellable x y (pos (succ z)) nz e = tri-split (ℤ-trichotomous x y)

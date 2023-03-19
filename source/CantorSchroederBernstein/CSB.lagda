@@ -48,9 +48,17 @@ assumption beyond MLTT is explicit in each claim).
 
 module CantorSchroederBernstein.CSB where
 
+open import CoNaturals.GenericConvergentSequence
+open import MLTT.Plus-Properties
+open import MLTT.Spartan
+open import Naturals.Properties
+open import NotionsOfDecidability.Decidable
+open import TypeTopology.CompactTypes
+open import TypeTopology.DiscreteAndSeparated
+open import TypeTopology.GenericConvergentSequenceCompactness
 open import UF.Base
-open import UF.Equiv
 open import UF.Embeddings
+open import UF.Equiv
 open import UF.ExcludedMiddle
 open import UF.FunExt
 open import UF.Lower-FunExt
@@ -59,17 +67,6 @@ open import UF.PropTrunc
 open import UF.Retracts
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
-
-open import MLTT.Spartan
-open import MLTT.Plus-Properties
-
-open import Naturals.Properties
-open import NotionsOfDecidability.DecidableAndDetachable
-open import CoNaturals.GenericConvergentSequence
-
-open import TypeTopology.CompactTypes
-open import TypeTopology.GenericConvergentSequenceCompactness
-open import TypeTopology.DiscreteAndSeparated
 
 \end{code}
 
@@ -555,7 +552,7 @@ doesn't refer to the notion of f-point.
 
     iv : is-prop (Σ (x , p) ꞉ fiber f y , ¬ is-g-point x)
     iv = have f-is-emb y ∶ is-prop (fiber f y)
-         so-apply subtype-of-prop-is-prop pr₁ (pr₁-lc (λ {σ} → negations-are-props fe))
+         so-apply subtypes-of-props-are-props' pr₁ (pr₁-lc (λ {σ} → negations-are-props fe))
 
     v : Σ (x , p) ꞉ fiber f y , ¬ is-g-point x
     v = double-negation-elim excluded-middle _ iv iii
@@ -654,8 +651,7 @@ module CSB-for-connected-types-without-EM (pt : propositional-truncations-exist)
 
  open PropositionalTruncation pt public
  open import UF.Connected pt
- open import UF.ImageAndSurjection
- open ImageAndSurjection pt
+ open import UF.ImageAndSurjection pt
 
 \end{code}
 
@@ -811,7 +807,7 @@ EM-gives-Cantor-Schröder-Bernstein' {𝓤} {𝓥} fe excluded-middle {X} {Y} ((
    iii = double-contrapositive ii i
 
    iv : is-prop (Σ (x , p) ꞉ fiber f y , ¬ is-g-point x)
-   iv = subtype-of-prop-is-prop pr₁ (pr₁-lc (λ {σ} → negations-are-props fe)) (f-is-emb y)
+   iv = subtypes-of-props-are-props' pr₁ (pr₁-lc (λ {σ} → negations-are-props fe)) (f-is-emb y)
 
    v : Σ (x , p) ꞉ fiber f y , ¬ is-g-point x
    v = double-negation-elim excluded-middle _ iv iii

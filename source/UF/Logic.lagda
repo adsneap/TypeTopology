@@ -7,7 +7,7 @@ Based in part by the `Cubical.Functions.Logic` module UF.of
 
 {-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
 
-module UF.Subsingleton-Combinators where
+module UF.Logic where
 
 open import MLTT.Spartan
 open import UF.Subsingletons
@@ -38,14 +38,14 @@ module Conjunction where
 
 module Universal (fe : Fun-Ext) where
 
- ∀[∶]-syntax : (I : 𝓤 ̇) → (I → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
+ ∀[∶]-syntax : (I : 𝓤 ̇ )→ (I → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
  ∀[∶]-syntax I P = ((i : I) → P i holds) , γ
   where
    γ : is-prop ((i : I) → P i holds)
    γ = Π-is-prop fe (holds-is-prop ∘ P)
 
 
- ∀[]-syntax : {I : 𝓤 ̇} → (I → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
+ ∀[]-syntax : {I : 𝓤 ̇ } → (I → Ω 𝓥) → Ω (𝓤 ⊔ 𝓥)
  ∀[]-syntax {I = I} P = ∀[∶]-syntax I P
 
  infixr -1 ∀[∶]-syntax
@@ -105,6 +105,7 @@ module Truncation (pt : propositional-truncations-exist) where
 
   ∥_∥Ω : 𝓤 ̇  → Ω 𝓤
   ∥ A ∥Ω = ∥ A ∥ , ∥∥-is-prop
+
 \end{code}
 
 \section{Existential quantification}
@@ -115,10 +116,10 @@ module Existential (pt : propositional-truncations-exist) where
 
  open Truncation pt
 
- ∃[∶]-syntax : (I : 𝓤 ̇) → (I → 𝓥 ̇) → Ω (𝓤 ⊔ 𝓥)
+ ∃[∶]-syntax : (I : 𝓤 ̇ )→ (I → 𝓥 ̇ )→ Ω (𝓤 ⊔ 𝓥)
  ∃[∶]-syntax I A = ∥ Σ i ꞉ I , A i ∥Ω
 
- ∃[]-syntax : {I : 𝓤 ̇} → (I → 𝓥 ̇) → Ω (𝓤 ⊔ 𝓥)
+ ∃[]-syntax : {I : 𝓤 ̇ } → (I → 𝓥 ̇ )→ Ω (𝓤 ⊔ 𝓥)
  ∃[]-syntax {I = I} P = ∃[∶]-syntax I P
 
  infixr -1 ∃[∶]-syntax
@@ -126,6 +127,17 @@ module Existential (pt : propositional-truncations-exist) where
 
  syntax ∃[∶]-syntax I (λ i → e) = Ǝ i ∶ I , e
  syntax ∃[]-syntax    (λ i → e) = Ǝ i , e
+
+\end{code}
+
+\section{Negation of equality}
+
+\begin{code}
+
+module Negation-of-equality (fe : Fun-Ext) where
+
+ _≢_ : {X : 𝓤 ̇ } → X → X → Ω 𝓤
+ x ≢ y = (x ≠ y) , Π-is-prop fe (λ _ → 𝟘-is-prop)
 
 \end{code}
 
@@ -138,11 +150,12 @@ module AllCombinators
         (fe : Fun-Ext)
        where
 
- open Conjunction    public
- open Universal   fe public
- open Implication fe public
- open Disjunction pt public
- open Existential pt public
- open Truncation  pt public
+ open Conjunction             public
+ open Universal            fe public
+ open Implication          fe public
+ open Disjunction          pt public
+ open Existential          pt public
+ open Truncation           pt public
+ open Negation-of-equality fe public
 
 \end{code}

@@ -2,7 +2,7 @@ Martin Escardo, 18 January 2021.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline --experimental-lossy-unification #-}
+{-# OPTIONS --without-K --exact-split --safe --auto-inline --lossy-unification #-}
 
 open import UF.Univalence
 
@@ -11,14 +11,14 @@ module Ordinals.Arithmetic-Properties
        where
 
 open import UF.Base
+open import UF.Embeddings hiding (⌊_⌋)
+open import UF.Equiv
+open import UF.EquivalenceExamples
+open import UF.ExcludedMiddle
+open import UF.FunExt
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
-open import UF.Equiv
 open import UF.UA-FunExt
-open import UF.FunExt
-open import UF.EquivalenceExamples
-open import UF.Embeddings
-open import UF.ExcludedMiddle
 
 private
  fe : FunExt
@@ -30,16 +30,20 @@ private
  pe : PropExt
  pe = Univalence-gives-PropExt ua
 
-open import MLTT.Spartan
 open import MLTT.Plus-Properties
-
-open import Ordinals.Type
+open import MLTT.Spartan
+open import Notation.CanonicalMap
+open import Ordinals.Arithmetic fe
+open import Ordinals.ConvergentSequence ua
+open import Ordinals.Equivalence
+open import Ordinals.Maps
 open import Ordinals.Notions
 open import Ordinals.OrdinalOfOrdinals ua
-open import Ordinals.Arithmetic fe
+open import Ordinals.Type
+open import Ordinals.Underlying
 
 𝟘ₒ-left-neutral : (α : Ordinal 𝓤) → 𝟘ₒ +ₒ α ＝ α
-𝟘ₒ-left-neutral α = eqtoidₒ (𝟘ₒ +ₒ α) α h
+𝟘ₒ-left-neutral {𝓤} α = eqtoidₒ (ua 𝓤) fe' (𝟘ₒ +ₒ α) α h
  where
   f : 𝟘 + ⟨ α ⟩ → ⟨ α ⟩
   f = ⌜ 𝟘-lneutral ⌝
@@ -56,7 +60,7 @@ open import Ordinals.Arithmetic fe
            (⌜⌝-is-equiv 𝟘-lneutral) f-preserves-order f-reflects-order
 
 𝟘ₒ-right-neutral : (α : Ordinal 𝓤) → α  +ₒ 𝟘ₒ ＝ α
-𝟘ₒ-right-neutral α = eqtoidₒ (α +ₒ 𝟘ₒ) α h
+𝟘ₒ-right-neutral α = eqtoidₒ (ua _) fe' (α +ₒ 𝟘ₒ) α h
  where
   f : ⟨ α ⟩ + 𝟘 → ⟨ α ⟩
   f = ⌜ 𝟘-rneutral' ⌝
@@ -73,7 +77,7 @@ open import Ordinals.Arithmetic fe
            (⌜⌝-is-equiv 𝟘-rneutral') f-preserves-order f-reflects-order
 
 +ₒ-assoc : (α β γ : Ordinal 𝓤) → (α  +ₒ β) +ₒ γ ＝ α  +ₒ (β +ₒ γ)
-+ₒ-assoc α β γ = eqtoidₒ ((α  +ₒ β) +ₒ γ) (α  +ₒ (β +ₒ γ)) h
++ₒ-assoc α β γ = eqtoidₒ (ua _) fe' ((α  +ₒ β) +ₒ γ) (α  +ₒ (β +ₒ γ)) h
  where
   f : ⟨ (α +ₒ β) +ₒ γ ⟩ → ⟨ α +ₒ (β +ₒ γ) ⟩
   f = ⌜ +assoc ⌝
@@ -133,7 +137,8 @@ open import Ordinals.Arithmetic fe
   g-is-order-preserving (inl x , _) (inl x' , _) l = l
 
   h : γ ＝ δ
-  h = eqtoidₒ γ δ (f , f-is-order-preserving , f-is-equiv , g-is-order-preserving)
+  h = eqtoidₒ (ua 𝓤) fe' γ δ
+       (f , f-is-order-preserving , f-is-equiv , g-is-order-preserving)
 
 
 +ₒ-↓-right : {α β : Ordinal 𝓤} (b : ⟨ β ⟩)
@@ -173,7 +178,8 @@ open import Ordinals.Arithmetic fe
   g-is-order-preserving (inr _ , _) (inr _ , _) l = l
 
   h : γ ＝ δ
-  h = eqtoidₒ γ δ (f , f-is-order-preserving , f-is-equiv , g-is-order-preserving)
+  h = eqtoidₒ (ua 𝓤) fe' γ δ
+       (f , f-is-order-preserving , f-is-equiv , g-is-order-preserving)
 
 \end{code}
 
@@ -188,23 +194,29 @@ neutral, but we give a direct proof instead.
 \begin{code}
 
 +ₒ-𝟙ₒ-↓-right : (α : Ordinal 𝓤) → (α +ₒ 𝟙ₒ) ↓ inr ⋆ ＝ α
-+ₒ-𝟙ₒ-↓-right α = eqtoidₒ ((α +ₒ 𝟙ₒ) ↓ inr ⋆) α h
++ₒ-𝟙ₒ-↓-right α = eqtoidₒ (ua _) fe' ((α +ₒ 𝟙ₒ) ↓ inr ⋆) α h
  where
   f : ⟨ (α +ₒ 𝟙ₒ) ↓ inr ⋆ ⟩ → ⟨ α ⟩
   f (inl x , l) = x
+
   g : ⟨ α ⟩ → ⟨ (α +ₒ 𝟙ₒ) ↓ inr ⋆ ⟩
   g x = (inl x , ⋆)
+
   f-order-preserving : is-order-preserving ((α +ₒ 𝟙ₒ) ↓ inr ⋆) α f
   f-order-preserving (inl x , _) (inl y , _) l = l
+
   f-is-equiv : is-equiv f
   f-is-equiv = qinvs-are-equivs f (g , η , ε)
    where
     η : g ∘ f ∼ id
     η (inl _ , _) = refl
+
     ε : f ∘ g ∼ id
     ε _ = refl
+
   g-order-preserving : is-order-preserving α ((α +ₒ 𝟙ₒ) ↓ inr ⋆) g
   g-order-preserving x y l = l
+
   h : ((α +ₒ 𝟙ₒ) ↓ inr ⋆) ≃ₒ α
   h = f , f-order-preserving , f-is-equiv , g-order-preserving
 
@@ -371,8 +383,7 @@ lemma₃ b (inr c) p = c , refl
 left-+ₒ-is-embedding : (α : Ordinal 𝓤) → is-embedding (α +ₒ_)
 left-+ₒ-is-embedding α = lc-maps-into-sets-are-embeddings (α +ₒ_)
                            (λ {β} {γ} → +ₒ-left-cancellable α β γ)
-                           the-type-of-ordinals-is-a-set
-
+                           (the-type-of-ordinals-is-a-set (ua _) fe')
 \end{code}
 
 This implies that the function α +ₒ_ reflects the _⊲_ ordering:
@@ -426,9 +437,10 @@ partial ordering:
 
 \end{code}
 
-Classically, if α ≼ β then there is (a necessarily unique) γ with α +ₒ
-γ ＝ β. But this not necessarily the case constructively. For that
-purpose, we first characterize the order of subsingleton ordinals.
+Classically, if α ≼ β then there is (a necessarily unique) γ with
+α +ₒ γ ＝ β. But this not necessarily the case constructively. For
+that purpose, we first characterize the order of subsingleton
+ordinals.
 
 \begin{code}
 
@@ -494,12 +506,13 @@ The existence of ordinal subtraction implies excluded middle.
 \begin{code}
 
 existence-of-subtraction : (𝓤 : Universe) → 𝓤 ⁺ ̇
-existence-of-subtraction 𝓤 = (α β : Ordinal 𝓤) → α ≼ β → Σ γ ꞉ Ordinal 𝓤 , α +ₒ γ ＝ β
+existence-of-subtraction 𝓤 = (α β : Ordinal 𝓤)
+                           → α ≼ β
+                           → Σ γ ꞉ Ordinal 𝓤 , α +ₒ γ ＝ β
 
 existence-of-subtraction-is-prop : is-prop (existence-of-subtraction 𝓤)
 existence-of-subtraction-is-prop = Π₃-is-prop fe'
-                                     (λ α β l → left-+ₒ-is-embedding α β)
-
+                                    (λ α β l → left-+ₒ-is-embedding α β)
 
 ordinal-subtraction-gives-excluded-middle : existence-of-subtraction 𝓤 → EM 𝓤
 ordinal-subtraction-gives-excluded-middle {𝓤} ϕ P P-is-prop = g
@@ -703,8 +716,8 @@ However, the successor function does not preserve _⊴_ in general:
 \begin{code}
 
 succ-not-necessarily-monotone : ((α β : Ordinal 𝓤)
-                              → α ⊴ β
-                              → (α +ₒ 𝟙ₒ) ⊴ (β +ₒ 𝟙ₒ))
+                                      → α ⊴ β
+                                      → (α +ₒ 𝟙ₒ) ⊴ (β +ₒ 𝟙ₒ))
                               → WEM 𝓤
 succ-not-necessarily-monotone {𝓤} ϕ P isp = II I
  where
@@ -987,7 +1000,7 @@ also is not a successor ordinal unless LPO holds:
            gop (k , l) (k' , l') ℓ = k , refl , <-gives-⊏ _ _ ℓ
 
          IX : ℕ∞ₒ ↓ ι n ＝ ω ↓ n
-         IX = eqtoidₒ _ _ V
+         IX = eqtoidₒ (ua 𝓤₀) fe' _ _ V
 
          X : (ℕ∞ₒ ↓ (ι n)) ⊲ ω
          X = n , IX
@@ -999,7 +1012,7 @@ also is not a successor ordinal unless LPO holds:
    b = transport (_⊴ ⌊ ℕ∞ₒ ⌋) (⌊⌋-of-successor' ω) I
     where
      I : ⌊ ω +ₒ 𝟙ₒ ⌋ ⊴ ⌊ ℕ∞ₒ ⌋
-     I = ⌊⌋-monotone (ω +ₒ 𝟙ₒ) ℕ∞ₒ ℕ∞-in-Ord.fact
+     I = ⌊⌋-monotone (ω +ₒ 𝟙ₒ) ℕ∞ₒ ω+𝟙-is-⊴-ℕ∞
 
    c : ⌊ ℕ∞ₒ ⌋ ＝ ω
    c = ⊴-antisym _ _ a b
@@ -1047,7 +1060,7 @@ also is not a successor ordinal unless LPO holds:
    III = transport (ℕ∞ₒ ⊴_) II (⊴-refl ℕ∞ₒ)
 
    IV : LPO
-   IV = ℕ∞-in-Ord.converse-fails-constructively III
+   IV = ℕ∞-⊴-ω+𝟙-gives-LPO III
 
  open PropositionalTruncation pt
 
@@ -1055,7 +1068,7 @@ also is not a successor ordinal unless LPO holds:
  ℕ∞-successor-gives-LPO' = ∥∥-rec LPO-is-prop ℕ∞-successor-gives-LPO
 
  LPO-gives-ℕ∞-successor : LPO → (Σ α ꞉ Ordinal 𝓤₀ , (ℕ∞ₒ ＝ (α +ₒ 𝟙ₒ)))
- LPO-gives-ℕ∞-successor lpo = ω , ℕ∞-in-Ord.corollary₃ lpo
+ LPO-gives-ℕ∞-successor lpo = ω , ℕ∞-is-successor₃ lpo
 
 \end{code}
 
@@ -1075,11 +1088,11 @@ alternative-plusₒ τ₀ τ₁ = e
  where
   υ = cases (λ ⋆ → τ₀) (λ ⋆ → τ₁)
 
-  f : ⟪ ∑ 𝟚ᵒ υ ⟫ → ⟨ [ τ₀ ] +ₒ [ τ₁ ] ⟩
+  f : ⟨ ∑ 𝟚ᵒ υ ⟩ → ⟨ [ τ₀ ] +ₒ [ τ₁ ] ⟩
   f (inl ⋆ , x) = inl x
   f (inr ⋆ , y) = inr y
 
-  g : ⟨ [ τ₀ ] +ₒ [ τ₁ ] ⟩ → ⟪ ∑ 𝟚ᵒ υ ⟫
+  g : ⟨ [ τ₀ ] +ₒ [ τ₁ ] ⟩ → ⟨ ∑ 𝟚ᵒ υ ⟩
   g (inl x) = (inl ⋆ , x)
   g (inr y) = (inr ⋆ , y)
 
@@ -1111,6 +1124,6 @@ alternative-plusₒ τ₀ τ₁ = e
 
 alternative-plus : (τ₀ τ₁ : Ordinalᵀ 𝓤)
                  → [ τ₀ +ᵒ τ₁ ] ＝ ([ τ₀ ] +ₒ [ τ₁ ])
-alternative-plus τ₀ τ₁ = eqtoidₒ _ _ (alternative-plusₒ τ₀ τ₁)
+alternative-plus τ₀ τ₁ = eqtoidₒ (ua _) fe' _ _ (alternative-plusₒ τ₀ τ₁)
 
 \end{code}

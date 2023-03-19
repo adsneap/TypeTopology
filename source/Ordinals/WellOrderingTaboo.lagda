@@ -137,7 +137,7 @@ module swan
    S' : 𝓤 ⁺ ̇
    S' = Σ Q ꞉ Ω 𝓤 , ¬¬ (Q holds ＝ P)
    S'-is-set : is-set S'
-   S'-is-set = subtypes-of-sets-are-sets pr₁ (pr₁-lc (negations-are-props fe))
+   S'-is-set = subtypes-of-sets-are-sets' pr₁ (pr₁-lc (negations-are-props fe))
                 (Ω-is-set fe pe)
 
  all-elements-are-¬¬-equal : (x y : S) → ¬¬ (x ＝ y)
@@ -223,7 +223,7 @@ module InductiveWellOrder
 
  inductive-well-order-on-every-set : (𝓤 𝓣 : Universe) → (𝓤 ⊔ 𝓣) ⁺ ̇
  inductive-well-order-on-every-set 𝓤 𝓣 =
-  (X : 𝓤 ̇ ) → is-set X → ∃ _≺_ ꞉ (X → X → 𝓣 ̇) , (is-well-order _≺_)
+  (X : 𝓤 ̇ ) → is-set X → ∃ _≺_ ꞉ (X → X → 𝓣 ̇ ), (is-well-order _≺_)
 
 \end{code}
 
@@ -242,10 +242,10 @@ above.
     γ P P-is-prop P-is-not-false = ∥∥-rec P-is-prop h t
      where
       open swan P P-is-prop P-is-not-false
-      t : ∃ _≺_ ꞉ (S → S → 𝓣 ̇) , ((x : S) → ¬ (x ≺ x))
+      t : ∃ _≺_ ꞉ (S → S → 𝓣 ̇ ), ((x : S) → ¬ (x ≺ x))
                                 × (extensionality-for-minimal-elements _≺_)
       t = IMEO S S-is-set
-      h : (Σ _≺_ ꞉ (S → S → 𝓣 ̇) , ((x : S) → ¬ (x ≺ x))
+      h : (Σ _≺_ ꞉ (S → S → 𝓣 ̇ ), ((x : S) → ¬ (x ≺ x))
                                  × (extensionality-for-minimal-elements _≺_))
         → P
       h (_≺_ , ≺-irr , ≺-min-ext) = P-must-hold _≺_ ≺-irr ≺-min-ext
@@ -260,8 +260,8 @@ above.
     γ : irreflexive-minimally-extensional-order-on-every-set (𝓤 ⁺) 𝓣
     γ X X-is-set = ∥∥-functor f (IEO X X-is-set)
      where
-      f : (Σ _≺_ ꞉ (X → X → 𝓣 ̇) , ((x : X) → ¬ (x ≺ x)) × (is-extensional _≺_))
-        → (Σ _≺_ ꞉ (X → X → 𝓣 ̇) , ((x : X) → ¬ (x ≺ x))
+      f : (Σ _≺_ ꞉ (X → X → 𝓣 ̇ ), ((x : X) → ¬ (x ≺ x)) × (is-extensional _≺_))
+        → (Σ _≺_ ꞉ (X → X → 𝓣 ̇ ), ((x : X) → ¬ (x ≺ x))
                                  × (extensionality-for-minimal-elements _≺_))
       f (_≺_ , ≺-irr , ≺-ext) = _≺_ , ≺-irr , ≺-min-ext
        where
@@ -277,8 +277,8 @@ above.
     γ : irreflexive-extensional-order-on-every-set (𝓤 ⁺) 𝓣
     γ X X-is-set = ∥∥-functor f (IWO X X-is-set)
      where
-      f : (Σ _≺_ ꞉ (X → X → 𝓣 ̇) , (is-well-order _≺_))
-        → (Σ _≺_ ꞉ (X → X → 𝓣 ̇) , ((x : X) → ¬ (x ≺ x)) × (is-extensional _≺_))
+      f : (Σ _≺_ ꞉ (X → X → 𝓣 ̇ ), (is-well-order _≺_))
+        → (Σ _≺_ ꞉ (X → X → 𝓣 ̇ ), ((x : X) → ¬ (x ≺ x)) × (is-extensional _≺_))
       f (_≺_ , iwo) = (_≺_ , ≺-irr , extensionality _≺_ iwo)
        where
         ≺-irr : (x : X) → ¬ (x ≺ x)
@@ -299,14 +299,12 @@ module swan'
         (P-is-not-false : ¬¬ P)
        where
 
+ open PropositionalTruncation pt
+
  open import MLTT.Two-Properties
 
  open import UF.Large-Quotient pt fe pe
-
- open import UF.ImageAndSurjection
- open ImageAndSurjection pt
-
- open PropositionalTruncation pt
+ open import UF.ImageAndSurjection pt
 
  _≈_ : 𝟚 → 𝟚 → 𝓤 ̇
  x ≈ y = (x ＝ y) ∨ P
@@ -613,7 +611,7 @@ with a fairly direct proof.
 
  classical-well-order-on-every-set : (𝓤 𝓣 : Universe) → (𝓤 ⊔ 𝓣) ⁺ ̇
  classical-well-order-on-every-set 𝓤 𝓣 =
-  (X : 𝓤 ̇ ) → is-set X → ∃ _≺_ ꞉ (X → X → 𝓣 ̇) , (is-classical-well-order _≺_)
+  (X : 𝓤 ̇ ) → is-set X → ∃ _≺_ ꞉ (X → X → 𝓣 ̇ ), (is-classical-well-order _≺_)
 
  classical-well-order-on-every-set-gives-excluded-middle :
   {𝓤 𝓣 : Universe} → classical-well-order-on-every-set 𝓤 𝓣
@@ -716,10 +714,10 @@ OrdinalsWellOrderTransport.lagda.)
    ι = lift 𝓥
    X'-is-set : is-set X'
    X'-is-set = equiv-to-set (Lift-≃ 𝓥 X) X-is-set
-   iwo : ∃ _≺'_ ꞉ (X' → X' → 𝓣 ̇) , (is-well-order _≺'_)
+   iwo : ∃ _≺'_ ꞉ (X' → X' → 𝓣 ̇ ), (is-well-order _≺'_)
    iwo = IWO X' X'-is-set
-   γ : (Σ _≺'_ ꞉ (X' → X' → 𝓣 ̇) , (is-well-order _≺'_))
-     → (Σ _≺_ ꞉ (X → X → 𝓣 ̇) , (is-well-order _≺_))
+   γ : (Σ _≺'_ ꞉ (X' → X' → 𝓣 ̇ ), (is-well-order _≺'_))
+     → (Σ _≺_ ꞉ (X → X → 𝓣 ̇ ), (is-well-order _≺_))
    γ (_≺'_ , pv' , wf' , ext' , trans') = (_≺_ , pv , wf , ext , trans)
     where
      _≺_ : X → X → 𝓣 ̇
@@ -771,7 +769,7 @@ module _
  open import UF.Retracts
  open import UF.Choice
 
- open UnivalentChoice (λ _ _ → fe) pt
+ open Univalent-Choice (λ _ _ → fe) pt
 
  open PropositionalTruncation pt
 
@@ -779,9 +777,9 @@ module _
  open InductiveWellOrder pt
 
  classical-well-ordering-implies-ac : classical-well-order-on-every-set (𝓤 ⊔ 𝓣) 𝓣
-                                    → AC (𝓤 ⊔ 𝓣)
+                                    → AC {𝓤 ⊔ 𝓣} {𝓤 ⊔ 𝓣}
  classical-well-ordering-implies-ac {𝓤} {𝓣} CWO =
-  AC'AC (𝓤 ⊔ 𝓣) (AC''AC' (𝓤 ⊔ 𝓣) γ)
+  AC₁-gives-AC (AC₂-gives-AC₁ γ)
    where
     γ : (X : 𝓤 ⊔ 𝓣 ̇ ) (Y : X → 𝓤 ⊔ 𝓣 ̇ )
       → is-set X
@@ -806,20 +804,20 @@ module _
          y' = pr₂ (pr₁ m)
 
  classical-well-ordering-implies-ac-corollary :
-   classical-well-order-on-every-set 𝓤 𝓤 → AC 𝓤
+   classical-well-order-on-every-set 𝓤 𝓤 → AC {𝓤} {𝓤}
  classical-well-ordering-implies-ac-corollary {𝓤} =
    classical-well-ordering-implies-ac {𝓤} {𝓤}
 
  inductive-well-ordering-implies-ac :
   inductive-well-order-on-every-set ((𝓤 ⁺) ⊔ (𝓣 ⁺)) 𝓣
-  → AC (𝓤 ⊔ 𝓣)
+  → AC {𝓤 ⊔ 𝓣} {𝓤 ⊔ 𝓣}
  inductive-well-ordering-implies-ac {𝓤} {𝓣} =
      classical-well-ordering-implies-ac {𝓤} {𝓣}
    ∘ inductive-well-ordering-implies-classical-well-ordering
 
  inductive-well-ordering-implies-ac-corollary :
    inductive-well-order-on-every-set (𝓤 ⁺) 𝓤
-   → AC 𝓤
+   → AC {𝓤} {𝓤}
  inductive-well-ordering-implies-ac-corollary {𝓤} =
    inductive-well-ordering-implies-ac {𝓤} {𝓤}
 

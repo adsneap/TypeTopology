@@ -23,7 +23,7 @@ module DomainTheory.Basics.Dcpo
         (𝓥 : Universe) -- where the index types for directed completeness live
        where
 
-open PropositionalTruncation pt hiding (is-inhabited; being-inhabited-is-prop)
+open PropositionalTruncation pt
 
 open import UF.Subsingletons
 open import UF.Subsingletons-FunExt
@@ -240,12 +240,12 @@ Next, we introduce ∐-notation for the supremum of a directed family in a dcpo.
  is-Directed : (𝓓 : DCPO) {I : 𝓦 ̇ } (α : I → ⟨ 𝓓 ⟩) → 𝓦 ⊔ 𝓣 ̇
  is-Directed 𝓓 α = is-directed (underlying-order 𝓓) α
 
- inhabited-if-Directed : (𝓓 : DCPO) {I : 𝓦 ̇} (α : I → ⟨ 𝓓 ⟩)
+ inhabited-if-Directed : (𝓓 : DCPO) {I : 𝓦 ̇ } (α : I → ⟨ 𝓓 ⟩)
                        → is-Directed 𝓓 α
                        → ∥ I ∥
  inhabited-if-Directed 𝓓 α = pr₁
 
- semidirected-if-Directed : (𝓓 : DCPO) {I : 𝓦 ̇} (α : I → ⟨ 𝓓 ⟩)
+ semidirected-if-Directed : (𝓓 : DCPO) {I : 𝓦 ̇ } (α : I → ⟨ 𝓓 ⟩)
                           → is-Directed 𝓓 α
                           → is-Semidirected 𝓓 α
  semidirected-if-Directed 𝓓 α = pr₂
