@@ -552,5 +552,4 @@ we prove one side, and the other follows by commutativity.
   γ₂ : k < q
   γ₂ = ℤ[1/2]-dense-down p q l
 
-
 \end{code}
