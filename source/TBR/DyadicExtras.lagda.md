@@ -219,8 +219,6 @@ open import UF.Base
       (p ℤ- r) ℤ* q         ∎
       
 postulate
- normalise-negation' :
-  (a b : ℤ) → - normalise (a , b) ＝ normalise (ℤ- a , b)
  normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
                   → normalise (k , p) ≤ normalise ((k ℤ+ pos n) , p)
  normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
@@ -409,5 +407,26 @@ normalise-negation p q (negsucc n) = γ
     iii = normalise-pos-negation (n' ℤ* p) (n' ℤ* q) 0
     iv  = ap (λ z → normalise-pos (z , 0)) (ℤ-distributivity-neg n' p q)
     v   = normalise-neg-to-pos (p ℤ- q , n) ⁻¹
+
+normalise-negation' : (z n : ℤ) → - normalise (z , n) ＝ normalise (ℤ- z , n)
+normalise-negation' z (pos n)     = minus-normalise-pos z n
+normalise-negation' z (negsucc n) = γ
+ where
+  I : ℤ- pos (2^ (succ n)) ℤ* z ＝ pos (2^ (succ n)) ℤ* (ℤ- z)
+  I = negation-dist-over-mult (pos (2^ (succ n))) z ⁻¹
+  
+  γ : - normalise (z , negsucc n) ＝ normalise (ℤ- z , negsucc n)
+  γ = - normalise (z , negsucc n)                     ＝⟨ refl ⟩
+      - normalise-neg (z , n)                         ＝⟨ i    ⟩
+      - normalise-pos (pos (2^ (succ n)) ℤ* z , 0)    ＝⟨ ii   ⟩
+      normalise-pos (ℤ- pos (2^ (succ n)) ℤ* z , 0)   ＝⟨ iii  ⟩
+      normalise-pos (pos (2^ (succ n)) ℤ* (ℤ- z) , 0) ＝⟨ iv   ⟩      
+      normalise-neg (ℤ- z , n) ＝⟨ refl ⟩
+      normalise (ℤ- z , negsucc n) ∎
+   where
+    i   = ap -_ (normalise-neg-to-pos (z , n))
+    ii  = minus-normalise-pos (pos (2^ (succ n)) ℤ* z) 0
+    iii = ap (λ - → normalise-pos (- , 0)) I
+    iv  = normalise-neg-to-pos (ℤ- z , n) ⁻¹
 
 ```
