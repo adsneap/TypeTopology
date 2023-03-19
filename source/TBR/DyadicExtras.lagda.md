@@ -195,12 +195,13 @@ open import UF.Base
     γ = ℤ[1/2]<-swap' b d VI
 
 postulate
- normalise-≤ : (n : ℕ) → ((k , p) : ℤ × ℤ)
-             → normalise (k , p) ≤ normalise ((k ℤ+ pos n) , p)
  normalise-negation :
   (a b c : ℤ) → normalise (a , c) - normalise (b , c) ＝ normalise (a ℤ- b , c)
  normalise-negation' :
   (a b : ℤ) → - normalise (a , b) ＝ normalise (ℤ- a , b)
+ normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
+                  → normalise (k , p) ≤ normalise ((k ℤ+ pos n) , p)
+ normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
  from-normalise-≤-same-denom :
   (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
  normalise-succ' :
@@ -210,8 +211,5 @@ postulate
  ℤ[1/2]-find-lower :
   (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
  ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
-
-normalise-≤2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
-normalise-≤2 l r p (j , refl) = normalise-≤ j (l , p)
 
 ```

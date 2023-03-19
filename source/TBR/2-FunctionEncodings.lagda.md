@@ -290,7 +290,7 @@ vw-is-intervalled = v-l≤r ∘_
 vw-intervalled-preserves
   : seq-of-vw-intervals preserves vw-intervalled as intervalled
 vw-intervalled-preserves ζ vwi n
-  = normalise-≤2 (v-left (ζ n)) (v-right (ζ n)) (v-prec (ζ n)) (v-l≤r (ζ n))
+  = normalise-≤-prop2 (v-left (ζ n)) (v-right (ζ n)) (v-prec (ζ n)) (v-l≤r (ζ n))
 
 v-dist-lemma
  : (ζ : ℤ → 𝕀v) → (n : ℤ) → l (pos (v-dist (ζ n)) , v-prec (ζ n))
@@ -403,7 +403,7 @@ upRight-covers (c , i) = leftproof c i , rightproof c i
    leftproof c n = transport (_≤ quotient (c , n)) II I
     where
       I : quotient (pos 2 ℤ* upRight c , n) ≤ quotient (c , n)
-      I = normalise-≤2 (pos 2 ℤ* upRight c) c n (transport (_≤ c)
+      I = normalise-≤-prop2 (pos 2 ℤ* upRight c) c n (transport (_≤ c)
             (ℤ*-comm (upRight c) (pos 2)) (downLeft-upRight c))
 
       II : quotient (pos 2 ℤ* upRight c , n) ＝ quotient (upRight c , predℤ n)
@@ -436,7 +436,7 @@ upRight-covers (c , i) = leftproof c i , rightproof c i
  
       I : quotient (c ℤ+ pos 2 , n)
         ≤ quotient (pos 2 ℤ* (upRight c ℤ+ pos 2) , n)
-      I = normalise-≤2 (c ℤ+ pos 2) (pos 2 ℤ* (upRight c ℤ+ pos 2)) n III
+      I = normalise-≤-prop2 (c ℤ+ pos 2) (pos 2 ℤ* (upRight c ℤ+ pos 2)) n III
 ```
 
 Next, we use `upRight-𝕀s` to define `go-up`, a functional that takes a schema
@@ -575,7 +575,7 @@ belowness-yields-nested-seq (χ , b) n = left  (χ n) (χ (succℤ n)) n (pr₁ 
   left : ∀ x y i → downLeft x ≤ y → l (x , i) ≤ l (y , succℤ i)
   left x y i (j , dLx+j≡y)
    = transport₂ _≤_ (normalise-succ' x i ⁻¹) (ap (l ∘ (_, succℤ i)) dLx+j≡y)
-       (normalise-≤ j (downLeft x , succℤ i))
+       (normalise-≤-prop j (downLeft x , succℤ i))
 
   right : ∀ x y i → y ≤ downRight x → r (y , succℤ i) ≤ r (x , i)
   right x y i (j , y+j≡dRx)
@@ -588,7 +588,7 @@ belowness-yields-nested-seq (χ , b) n = left  (χ n) (χ (succℤ n)) n (pr₁ 
            (ap (succℤ ^ 2) (downRight＝downLeft x)
            ∙ downRight＝downLeft (succℤ x))
        ∙ normalise-succ' (x +pos 2) i ⁻¹)
-       (normalise-≤ j (y +pos 2 , succℤ i))
+       (normalise-≤-prop j (y +pos 2 , succℤ i))
 
 normalised-seq-to-TBR : (χ : ℤ → 𝕀s) → is-normalised χ → sw-nested χ → 𝕋
 normalised-seq-to-TBR χ η₁ η₂
