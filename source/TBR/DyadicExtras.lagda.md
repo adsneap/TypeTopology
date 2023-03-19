@@ -349,7 +349,8 @@ normalise-neg-to-pos : ((z , n) : ℤ × ℕ)
 normalise-neg-to-pos (z , n) = normalise-neg-to-pos' z n
 
 normalise-pos-negation : (p q : ℤ) → (n : ℕ)
-                       → normalise-pos (p , n) - normalise-pos (q , n) ＝ normalise-pos (p ℤ- q , n)
+                       → normalise-pos (p , n) - normalise-pos (q , n)
+                       ＝ normalise-pos (p ℤ- q , n)
 normalise-pos-negation p q n = γ
  where
   n' = pos (2^ n)
