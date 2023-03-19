@@ -1,6 +1,6 @@
 ```agda
 {-# OPTIONS --exact-split --without-K --auto-inline
-            --experimental-lossy-unification #-}
+            --lossy-unification #-}
             
 open import Integers.Order
 open import Integers.Type

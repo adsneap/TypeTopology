@@ -1,6 +1,6 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline
-            --experimental-lossy-unification #-}
+            --lossy-unification #-}
 
 open import MLTT.Spartan
 open import Notation.CanonicalMap

@@ -1,6 +1,6 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas --exact-split --without-K --auto-inline
-            --experimental-lossy-unification #-}
+            --lossy-unification #-}
 
 open import Integers.Addition renaming (_+_ to _ℤ+_)
 open import Integers.Order
