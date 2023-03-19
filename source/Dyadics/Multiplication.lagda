@@ -491,5 +491,66 @@ we prove one side, and the other follows by commutativity.
 
   γ : p * r < q * r
   γ = transport₂ _<_ IV V III
-    
+
+ℤ[1/2]-dense-up : (p q : ℤ[1/2]) → p < q → p < p + 1/2ℤ[1/2] * (q - p)
+ℤ[1/2]-dense-up p q l = γ
+ where
+  I : 0ℤ[1/2] < q - p
+  I = ℤ[1/2]<-diff-positive p q l
+  
+  II : 0ℤ[1/2] < 1/2ℤ[1/2] * (q - p)
+  II = ℤ[1/2]<-pos-multiplication-preserves-order
+        1/2ℤ[1/2] (q - p) ℤ[1/2]-0<1/2 I
+
+  γ : p < p + 1/2ℤ[1/2] * (q - p)
+  γ = ℤ[1/2]<-+ p (1/2ℤ[1/2] * (q - p)) II
+
+ℤ[1/2]-dense-down : (p q : ℤ[1/2]) → p < q → p + 1/2ℤ[1/2] * (q - p) < q
+ℤ[1/2]-dense-down p q l = γ
+ where
+  I : 0ℤ[1/2] < q - p
+  I = ℤ[1/2]<-diff-positive p q l
+  
+  II : 0ℤ[1/2] < 1/2ℤ[1/2] * (q - p)
+  II = ℤ[1/2]<-pos-multiplication-preserves-order
+        1/2ℤ[1/2] (q - p) ℤ[1/2]-0<1/2 I
+
+  III : p + 1/2ℤ[1/2] * (q - p) < p + 1/2ℤ[1/2] * (q - p) + 1/2ℤ[1/2] * (q - p)
+  III = ℤ[1/2]<-+ (p + 1/2ℤ[1/2] * (q - p)) (1/2ℤ[1/2] * (q - p)) II
+
+  IV : p + 1/2ℤ[1/2] * (q - p) + 1/2ℤ[1/2] * (q - p) ＝ q
+  IV = p + 1/2ℤ[1/2] * (q - p) + 1/2ℤ[1/2] * (q - p)   ＝⟨ i    ⟩
+       p + (1/2ℤ[1/2] * (q - p) + 1/2ℤ[1/2] * (q - p)) ＝⟨ ii   ⟩
+       p + (1/2ℤ[1/2] + 1/2ℤ[1/2]) * (q - p)           ＝⟨ refl ⟩
+       p + 1ℤ[1/2] * (q - p)                           ＝⟨ iii  ⟩
+       p + (q - p)                                     ＝⟨ iv   ⟩
+       p + ((- p) + q)                                 ＝⟨ v    ⟩
+       p - p + q                                       ＝⟨ vi   ⟩
+       0ℤ[1/2] + q                                     ＝⟨ vii  ⟩
+       q ∎
+   where
+    i   = ℤ[1/2]+-assoc p (1/2ℤ[1/2] * (q - p)) (1/2ℤ[1/2] * (q - p))
+    ii  = ap (p +_) (ℤ[1/2]-distributivity' 1/2ℤ[1/2] 1/2ℤ[1/2] (q - p) ⁻¹)
+    iii = ap (p +_) (ℤ[1/2]*-mult-left-id (q - p))
+    iv  = ap (p +_) (ℤ[1/2]+-comm q (- p))
+    v   = ℤ[1/2]+-assoc p (- p) q ⁻¹
+    vi  = ap (_+ q) (ℤ[1/2]+-inverse-sum-to-zero p)
+    vii = ℤ[1/2]-zero-left-neutral q
+
+  γ : p + 1/2ℤ[1/2] * (q - p) < q
+  γ = transport (p + 1/2ℤ[1/2] * (q - p) <_) IV III
+
+ℤ[1/2]-dense : (p q : ℤ[1/2]) → p < q → Σ k ꞉ ℤ[1/2] , (p < k < q)
+ℤ[1/2]-dense p q l = k , γ₁ , γ₂
+ where
+  k : ℤ[1/2]
+  k = p + 1/2ℤ[1/2] * (q - p)
+  
+  γ₁ : p < k
+  γ₁ = ℤ[1/2]-dense-up p q l
+
+  γ₂ : k < q
+  γ₂ = ℤ[1/2]-dense-down p q l
+
+
 \end{code}
