@@ -5,7 +5,7 @@
 open import Integers.Order
 open import Integers.Type
 open import MLTT.Spartan
-open import Naturals.Exponents
+open import Naturals.Exponentiation
 open import Naturals.Order
 open import Naturals.Properties
 open import Notation.Order
