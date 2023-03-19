@@ -12,6 +12,7 @@ open import MLTT.Spartan renaming (_+_ to _∔_)
 open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Exponentiation
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
+open import Naturals.Properties
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Order
 open import Integers.Type
@@ -470,14 +471,29 @@ normalise-succ' z (negsucc (succ x)) = γ
     ii  = ap (λ - → normalise-pos (- , 0)) I
     iii = normalise-neg-to-pos (z ℤ+ z , x) ⁻¹
 
+normalise-pred' : (z n : ℤ)
+                → normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
+normalise-pred' z n = γ
+ where
+  I : normalise (z , predℤ n) ＝ normalise (z ℤ+ z , succℤ (predℤ n))
+  I = normalise-succ' z (predℤ n)
+  
+  γ : normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
+  γ = normalise (z , predℤ n)              ＝⟨ i   ⟩
+      normalise (z ℤ+ z , succℤ (predℤ n)) ＝⟨ ii  ⟩
+      normalise (z ℤ+ z , n)               ＝⟨ iii ⟩
+      normalise (pos 2 ℤ* z , n)           ∎
+   where
+    i   = normalise-succ' z (predℤ n)
+    ii  = ap (λ - → normalise (z ℤ+ z , -)) (succpredℤ n)
+    iii = ap (λ - → normalise (- , n)) (ℤ*-comm z (pos 2))
+
 postulate
  normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
                   → normalise (k , p) ≤ normalise (k ℤ+ pos n , p)
  normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
  from-normalise-≤-same-denom :
   (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
- normalise-pred' :
-  (z n : ℤ) → normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
  ℤ[1/2]-find-lower :
   (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
  ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
