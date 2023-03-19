@@ -534,11 +534,97 @@ normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
                  → normalise (k , p) ≤ normalise (k ℤ+ pos n , p)
 normalise-≤-prop n (k , p) = normalise-≤-prop2 k (k ℤ+ pos n) p (n , refl)
 
+from-normalise-≤-same-denom :
+ (p q n : ℤ) → normalise (p , n) ≤ normalise (q , n) → p ≤ q
+from-normalise-≤-same-denom p q (pos n) l₁ = Cases (ℤ-trichotomous p q) γ₁ γ
+ where
+  γ₁ : p < q → p ≤ q
+  γ₁ = <-is-≤ p q
 
+  γ : (p ＝ q) ∔ q < p → p ≤ q
+  γ e = Cases e γ₂ γ₃
+   where
+    γ₂ : p ＝ q → p ≤ q
+    γ₂ e = transport (p ≤_) e (ℤ≤-refl p)
+
+    γ₃ : q < p → p ≤ q
+    γ₃ l₂ = 𝟘-elim γ₄
+     where
+      I : is-pos-succ (pos (2^ n))
+      I = exponents-of-two-positive n
+      
+      II : q ℤ* pos (2^ n) < p ℤ* pos (2^ n)
+      II = positive-multiplication-preserves-order q p (pos (2^ n)) I l₂
+      
+      III : normalise-pos (q , n) < normalise-pos (p , n)
+      III = normalise-pos-< (q , n) (p , n) II
+
+      IV : normalise-pos (q , n) < normalise-pos (q , n)
+      IV = ℤ[1/2]<-≤ (normalise-pos (q , n))
+                     (normalise-pos (p , n))
+                     (normalise-pos (q , n))
+                     III l₁
+
+      γ₄ : 𝟘
+      γ₄ = ℤ[1/2]<-not-itself (normalise-pos (q , n)) IV
+from-normalise-≤-same-denom p q (negsucc n) l₁ = Cases (ℤ-trichotomous p q) γ₁ γ
+ where
+  γ₁ : p < q → p ≤ q
+  γ₁ = <-is-≤ p q
+
+  γ : (p ＝ q) ∔ q < p → p ≤ q
+  γ e = Cases e γ₂ γ₃
+   where
+    γ₂ : p ＝ q → p ≤ q
+    γ₂ e = transport (p ≤_) e (ℤ≤-refl p)
+
+    γ₃ : q < p → p ≤ q
+    γ₃ l₂ = 𝟘-elim γ₄
+     where
+      I : normalise-neg (p , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
+      I = normalise-neg-to-pos (p , n)
+
+      II : normalise-neg (q , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+      II = normalise-neg-to-pos (q , n) 
+
+      III : normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
+          ≤ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+      III = transport₂ _≤_ I II l₁
+
+      IV : is-pos-succ (pos (2^ (succ n)))
+      IV = exponents-of-two-positive (succ n)
+
+      V : q ℤ* pos (2^ (succ n)) < p ℤ* pos (2^ (succ n))
+      V = positive-multiplication-preserves-order q p (pos (2^ (succ n))) IV l₂
+
+      VI : pos (2^ (succ n)) ℤ* q < pos (2^ (succ n)) ℤ* p
+      VI = transport₂ _<_ i ii V
+       where
+        i : q ℤ* pos (2^ (succ n)) ＝ pos (2^ (succ n)) ℤ* q
+        i = ℤ*-comm q (pos (2^ (succ n)))
+
+        ii : p ℤ* pos (2^ (succ n)) ＝ pos (2^ (succ n)) ℤ* p
+        ii = ℤ*-comm p (pos (2^ (succ n)))
+
+      VII : normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+          < normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
+      VII = normalise-pos-<
+             (pos (2^ (succ n)) ℤ* q , 0)
+             (pos (2^ (succ n)) ℤ* p , 0)
+             VI
+
+      VIII : normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+           < normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+      VIII = ℤ[1/2]<-≤
+              (normalise-pos (pos (2^ (succ n)) ℤ* q , 0))
+              (normalise-pos (pos (2^ (succ n)) ℤ* p , 0))
+              (normalise-pos (pos (2^ (succ n)) ℤ* q , 0))
+              VII III
+
+      γ₄ : 𝟘
+      γ₄ = ℤ[1/2]<-not-itself (normalise-pos (pos (2^ (succ n)) ℤ* q , 0)) VIII
 
 postulate
- from-normalise-≤-same-denom :
-  (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
  ℤ[1/2]-find-lower :
   (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
  ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
