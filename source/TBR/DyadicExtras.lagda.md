@@ -9,7 +9,9 @@ the development, the proofs should be disseminated into the relevant files.
 module TBR.DyadicExtras where
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
+open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Exponentiation
+open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Order
 open import Integers.Type
@@ -194,9 +196,29 @@ open import UF.Base
     γ : d < b
     γ = ℤ[1/2]<-swap' b d VI
 
+ℤ-distributivity-neg : (p q r : ℤ) → p ℤ* q ℤ- p ℤ* r ＝ p ℤ* (q ℤ- r)
+ℤ-distributivity-neg p q r = γ
+ where
+  I : ℤ- p ℤ* r ＝ p ℤ* (ℤ- r)
+  I = negation-dist-over-mult p r ⁻¹
+  
+  γ : p ℤ* q ℤ- p ℤ* r ＝ p ℤ* (q ℤ- r)
+  γ = p ℤ* q ℤ- p ℤ* r      ＝⟨ ap (p ℤ* q ℤ+_) I ⟩
+      p ℤ* q ℤ+ p ℤ* (ℤ- r) ＝⟨ distributivity-mult-over-ℤ' q (ℤ- r) p ⁻¹ ⟩
+      p ℤ* (q ℤ- r)         ∎
+
+ℤ-distributivity-neg' : (p q r : ℤ) → p ℤ* q ℤ- r ℤ* q ＝ (p ℤ- r) ℤ* q
+ℤ-distributivity-neg' p q r = γ
+ where
+  I : ℤ- r ℤ* q ＝ (ℤ- r) ℤ* q
+  I = negation-dist-over-mult' r q ⁻¹
+  
+  γ : p ℤ* q ℤ- r ℤ* q ＝ (p ℤ- r) ℤ* q
+  γ = p ℤ* q ℤ- r ℤ* q      ＝⟨ ap (p ℤ* q ℤ+_) I                        ⟩ 
+      p ℤ* q ℤ+ (ℤ- r) ℤ* q ＝⟨ distributivity-mult-over-ℤ p (ℤ- r) q ⁻¹ ⟩
+      (p ℤ- r) ℤ* q         ∎
+      
 postulate
- normalise-negation :
-  (a b c : ℤ) → normalise (a , c) - normalise (b , c) ＝ normalise (a ℤ- b , c)
  normalise-negation' :
   (a b : ℤ) → - normalise (a , b) ＝ normalise (ℤ- a , b)
  normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
@@ -211,5 +233,181 @@ postulate
  ℤ[1/2]-find-lower :
   (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
  ℤ[1/2]<-1/2' : (p : ℤ[1/2]) → 0ℤ[1/2] < p → 1/2ℤ[1/2] * p < p
+
+2ℤ[1/2] : ℤ[1/2]
+2ℤ[1/2] = (pos 2 , 0) , inl refl
+
+normalise-neg-step' : (z : ℤ)  (n : ℕ)
+ → normalise-neg (z , succ n) ＝ 2ℤ[1/2] * normalise-neg (z , n)
+normalise-neg-step' z 0 = γ
+ where
+  I : normalise-pos (z ℤ* pos 2 , 0) ＝ (z ℤ* pos 2 , 0) , inl refl
+  I = ℤ[1/2]-to-normalise-pos ((z ℤ* pos 2 , 0) , inl refl) ⁻¹
+
+  II : z ℤ* pos 2 ℤ* pos 2 ＝ pos 2 ℤ* (z ℤ* pos 2)
+  II = ℤ*-comm (z ℤ* pos 2) (pos 2)
+  
+  γ : normalise-neg (z , 1) ＝ 2ℤ[1/2] * normalise-neg (z , zero)
+  γ = normalise-neg (z , 1)                           ＝⟨ refl ⟩
+      normalise-neg-lemma z 1                         ＝⟨ refl ⟩
+      normalise-neg-lemma (z ℤ* pos 2) 0              ＝⟨ refl ⟩
+      (z ℤ* pos 2 ℤ* pos 2 , 0) , inl refl            ＝⟨ i    ⟩
+      normalise-pos (z ℤ* pos 2 ℤ* pos 2 , 0)         ＝⟨ ii   ⟩
+      normalise-pos ((pos 2 ℤ* (z ℤ* pos 2)) , 0)     ＝⟨ refl ⟩
+      normalise-pos ((pos 2 , 0) *' (z ℤ* pos 2 , 0)) ＝⟨ iii  ⟩
+      2ℤ[1/2] * normalise-pos (z ℤ* pos 2 , 0)        ＝⟨ iv   ⟩
+      2ℤ[1/2] * ((z ℤ* pos 2 , 0) , inl refl)         ＝⟨ refl ⟩
+      2ℤ[1/2] * normalise-neg-lemma z 0               ＝⟨ refl ⟩
+      2ℤ[1/2] * normalise-neg (z , 0)                 ∎
+   where
+    i   = ℤ[1/2]-to-normalise-pos ((z ℤ* pos 2 ℤ* pos 2 , 0) , inl refl)
+    ii  = ap (λ - → normalise-pos (- , 0)) II
+    iii = ℤ[1/2]*-normalise-pos (pos 2 , 0) (z ℤ* pos 2 , 0)
+    iv  = ap (2ℤ[1/2] *_) I
+
+normalise-neg-step' z (succ n) = γ
+ where
+  IH : normalise-neg (z ℤ* pos 2 , succ n)
+     ＝ 2ℤ[1/2] * normalise-neg (z ℤ* pos 2 , n)
+  IH = normalise-neg-step' (z ℤ* pos 2) n
+
+  I : normalise-neg (z ℤ* pos 2 , succ n)
+    ＝ 2ℤ[1/2] * normalise-neg (z ℤ* pos 2 , n)
+  I = normalise-neg-step' (z ℤ* pos 2) n
+  
+  γ : normalise-neg (z , succ (succ n)) ＝ 2ℤ[1/2] * normalise-neg (z , succ n)
+  γ = normalise-neg (z , succ (succ n))            ＝⟨ refl ⟩
+      normalise-neg-lemma z (succ (succ n))        ＝⟨ refl ⟩
+      normalise-neg-lemma (z ℤ* pos 2) (succ n)    ＝⟨ refl ⟩
+      normalise-neg-lemma (z ℤ* pos 2 ℤ* pos 2) n  ＝⟨ I    ⟩
+      2ℤ[1/2] * normalise-neg-lemma (z ℤ* pos 2) n ＝⟨ refl ⟩
+      2ℤ[1/2] * normalise-neg-lemma z (succ n)     ＝⟨ refl ⟩      
+      2ℤ[1/2] * normalise-neg (z , succ n)         ∎
+
+normalise-neg-step : ((z , n) : ℤ × ℕ)
+ → normalise-neg (z , succ n) ＝ 2ℤ[1/2] * normalise-neg (z , n)
+normalise-neg-step (z , n) = normalise-neg-step' z n
+
+normalise-pos-step' : (z : ℤ) (n : ℕ)
+ → normalise-pos (pos 2 ℤ* z , n) ＝ 2ℤ[1/2] * normalise-pos (z , n)
+normalise-pos-step' z n = γ
+ where
+  γ : normalise-pos (pos 2 ℤ* z , n) ＝ 2ℤ[1/2] * normalise-pos (z , n)
+  γ = normalise-pos (pos 2 ℤ* z , n)         ＝⟨ i    ⟩
+      normalise-pos (pos 2 ℤ* z , 0 ℕ+ n)    ＝⟨ refl ⟩
+      normalise-pos ((pos 2 , 0) *' (z , n)) ＝⟨ ii   ⟩
+      2ℤ[1/2] * normalise-pos (z , n)        ∎
+   where
+    i  = ap (λ - → normalise-pos (pos 2 ℤ* z , -)) (zero-left-neutral n ⁻¹)
+    ii = ℤ[1/2]*-normalise-pos (pos 2 , 0) (z , n)
+
+normalise-pos-step : ((z , n) : ℤ × ℕ)
+ → normalise-pos (pos 2 ℤ* z , n) ＝ 2ℤ[1/2] * normalise-pos (z , n)
+normalise-pos-step (z , n) = normalise-pos-step' z n
+
+normalise-neg-to-pos' : (z : ℤ) (n : ℕ)
+                     → normalise-neg (z , n)
+                     ＝ normalise-pos (pos (2^ (succ n)) ℤ* z , 0)
+normalise-neg-to-pos' z 0      = γ
+ where
+  γ : normalise-neg (z , 0) ＝ normalise-pos (pos (2^ 1) ℤ* z , 0)
+  γ = normalise-neg (z , 0)               ＝⟨ refl ⟩
+      (z ℤ+ z , 0) , inl refl             ＝⟨ refl ⟩
+      normalise-pos (z ℤ+ z , 0)          ＝⟨ refl ⟩
+      normalise-pos (z ℤ* pos 2 , 0)      ＝⟨ i    ⟩
+      normalise-pos (pos 2 ℤ* z , 0)      ＝⟨ refl ⟩
+      normalise-pos (pos (2^ 1) ℤ* z , 0) ∎
+   where
+    i = ap (λ - → normalise-pos (- , 0)) (ℤ*-comm z (pos 2))
+normalise-neg-to-pos' z (succ n) = γ
+ where
+  IH : normalise-neg (z , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* z , 0)
+  IH = normalise-neg-to-pos' z n
+
+  n' = pos (2^ (succ n))
+
+  γ : normalise-neg (z , succ n)
+    ＝ normalise-pos (pos (2^ (succ (succ n))) ℤ* z , 0)
+  γ = normalise-neg (z , succ n)                        ＝⟨ i    ⟩
+      2ℤ[1/2] * normalise-neg (z , n)                   ＝⟨ ii   ⟩
+      2ℤ[1/2] * normalise-pos (n' ℤ* z , 0)             ＝⟨ iii  ⟩
+      normalise-pos (pos 2 ℤ* (n' ℤ* z) , 0)            ＝⟨ iv   ⟩
+      normalise-pos (pos 2 ℤ* n' ℤ* z , 0)              ＝⟨ v    ⟩
+      normalise-pos (pos (2 ℕ* 2^ (succ n)) ℤ* z , 0)   ＝⟨ refl ⟩
+      normalise-pos (pos (2^ (succ (succ n))) ℤ* z , 0) ∎
+   where
+    vₐₚ : pos 2 ℤ* pos (2^ (succ n)) ＝ pos (2 ℕ* 2^ (succ n))
+    vₐₚ = pos-multiplication-equiv-to-ℕ 2 (2^ (succ n))
+    
+    i   = normalise-neg-step (z , n)
+    ii  = ap (2ℤ[1/2] *_) IH
+    iii = normalise-pos-step (n' ℤ* z , 0) ⁻¹
+    iv  = ap (λ - → normalise-pos (- , 0)) (ℤ*-assoc (pos 2) n' z ⁻¹)
+    v   = ap (λ - → normalise-pos (- ℤ* z , 0)) vₐₚ
+
+normalise-neg-to-pos : ((z , n) : ℤ × ℕ)
+                     → normalise-neg (z , n)
+                     ＝ normalise-pos (pos (2^ (succ n)) ℤ* z , 0)
+normalise-neg-to-pos (z , n) = normalise-neg-to-pos' z n
+
+normalise-pos-negation : (p q : ℤ) → (n : ℕ)
+                       → normalise-pos (p , n) - normalise-pos (q , n) ＝ normalise-pos (p ℤ- q , n)
+normalise-pos-negation p q n = γ
+ where
+  n' = pos (2^ n)
+
+  I : (ℤ- q) ℤ* n' ＝ ℤ- q ℤ* n'
+  I = negation-dist-over-mult' q n'
+
+  II : p ℤ* n' ℤ- q ℤ* n' ＝ (p ℤ- q) ℤ* n'
+  II = ℤ-distributivity-neg' p n' q
+
+  III : n' ℤ* n' ＝ pos (2^ (n ℕ+ n))
+  III = n' ℤ* n'            ＝⟨ pos-multiplication-equiv-to-ℕ (2^ n) (2^ n) ⟩
+        pos (2^ n ℕ* 2^ n)  ＝⟨ ap pos (prod-of-powers 2 n n)               ⟩
+        pos (2^ (n ℕ+ n))   ∎
+  
+  IV : ((p , n) +' (ℤ- q , n)) ≈' (p ℤ- q , n)
+  IV = (p ℤ* n' ℤ+ (ℤ- q) ℤ* n') ℤ* n' ＝⟨ ap (λ z → (p ℤ* n' ℤ+ z) ℤ* n') I ⟩
+       (p ℤ* n' ℤ- q ℤ* n') ℤ* n'      ＝⟨ ap (_ℤ* n') II                    ⟩
+       (p ℤ- q) ℤ* n' ℤ* n'            ＝⟨ ℤ*-assoc (p ℤ- q) n' n'           ⟩
+       (p ℤ- q) ℤ* (n' ℤ* n')          ＝⟨ ap ((p ℤ- q) ℤ*_) III             ⟩
+       (p ℤ- q) ℤ* pos (2^ (n ℕ+ n))   ∎
+
+  γ : normalise-pos (p , n) - normalise-pos (q , n) ＝ normalise-pos (p ℤ- q , n)
+  γ = normalise-pos (p , n) - normalise-pos (q , n)     ＝⟨ refl ⟩
+      normalise-pos (p , n) + (- normalise-pos (q , n)) ＝⟨ i    ⟩
+      normalise-pos (p , n) + normalise-pos (ℤ- q , n)  ＝⟨ ii   ⟩
+      normalise-pos ((p , n) +' (ℤ- q , n))             ＝⟨ iii  ⟩
+      normalise-pos (p ℤ- q , n)                        ∎
+   where
+    i   = ap (normalise-pos (p , n) +_) (minus-normalise-pos q n)
+    ii  = ℤ[1/2]+-normalise-pos (p , n) (ℤ- q , n) ⁻¹
+    iii = ≈'-to-＝ ((p , n) +' (ℤ- q , n)) (p ℤ- q , n) IV
+
+normalise-negation :
+ (p q n : ℤ) → normalise (p , n) - normalise (q , n) ＝ normalise (p ℤ- q , n)
+normalise-negation p q (pos n) = normalise-pos-negation p q n
+normalise-negation p q (negsucc n) = γ
+ where
+  n' = pos (2^ (succ n))
+  
+  γ : normalise (p , negsucc n) - normalise (q , negsucc n)
+    ＝ normalise (p ℤ- q , negsucc n)
+  γ = normalise (p , negsucc n) - normalise (q , negsucc n)     ＝⟨ i   ⟩
+      normalise-pos (n' ℤ* p , 0) - normalise (q , negsucc n)   ＝⟨ ii  ⟩
+      normalise-pos (n' ℤ* p , 0) - normalise-pos (n' ℤ* q , 0) ＝⟨ iii ⟩
+      normalise-pos (n' ℤ* p ℤ- n' ℤ* q , 0)                    ＝⟨ iv  ⟩
+      normalise-pos (n' ℤ* (p ℤ- q) , 0)                        ＝⟨ v   ⟩
+      normalise (p ℤ- q , negsucc n)                            ∎
+   where
+    iiₐₚ : normalise-neg (q , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+    iiₐₚ = normalise-neg-to-pos (q , n)
+    
+    i   = ap (_- normalise (q , negsucc n)) (normalise-neg-to-pos (p , n))
+    ii  = ap (λ z → normalise-pos (n' ℤ* p , 0) - z) iiₐₚ
+    iii = normalise-pos-negation (n' ℤ* p) (n' ℤ* q) 0
+    iv  = ap (λ z → normalise-pos (z , 0)) (ℤ-distributivity-neg n' p q)
+    v   = normalise-neg-to-pos (p ℤ- q , n) ⁻¹
 
 ```
