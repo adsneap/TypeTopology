@@ -13,6 +13,7 @@ open import Naturals.Addition renaming (_+_ to _ℕ+_)
 open import Naturals.Exponentiation
 open import Naturals.Multiplication renaming (_*_ to _ℕ*_)
 open import Naturals.Properties
+open import Integers.Exponentiation
 open import Integers.Multiplication renaming (_*_ to _ℤ*_)
 open import Integers.Order
 open import Integers.Type
@@ -488,10 +489,54 @@ normalise-pred' z n = γ
     ii  = ap (λ - → normalise (z ℤ+ z , -)) (succpredℤ n)
     iii = ap (λ - → normalise (- , n)) (ℤ*-comm z (pos 2))
 
+normalise-≤-prop2 : (p q n : ℤ) → p ≤ q → normalise (p , n) ≤ normalise (q , n)
+normalise-≤-prop2 p q (pos n) l = normalise-pos-≤ (p , n) (q , n) γ
+ where
+  I : is-pos-succ (pos (2^ n))
+  I = exponents-of-two-positive n
+ 
+  γ : p ℤ* pos (2^ n) ≤ q ℤ* pos (2^ n)
+  γ = positive-multiplication-preserves-order' p q (pos (2^ n)) I l
+normalise-≤-prop2 p q (negsucc n) l = γ 
+ where
+  I : normalise-pos (pos (2^ (succ n)) ℤ* p , 0) ＝ normalise-neg (p , n)
+  I = normalise-neg-to-pos (p , n) ⁻¹
+  
+  II : normalise-pos (pos (2^ (succ n)) ℤ* q , 0) ＝ normalise-neg (q , n)
+  II = normalise-neg-to-pos (q , n) ⁻¹
+
+  III : is-pos-succ (pos (2^ (succ n)))
+  III = exponents-of-two-positive (succ n)
+
+  IV : p ℤ* pos (2^ (succ n)) ≤ q ℤ* pos (2^ (succ n))
+  IV = positive-multiplication-preserves-order' p q (pos (2^ (succ n))) III l
+
+  V : pos (2^ (succ n)) ℤ* p ≤ pos (2^ (succ n)) ℤ* q
+  V = transport₂ _≤_ i ii IV
+   where
+    i : p ℤ* pos (2^ (succ n)) ＝ pos (2^ (succ n)) ℤ* p
+    i = ℤ*-comm p (pos (2^ (succ n)))
+
+    ii : q ℤ* pos (2^ (succ n)) ＝ pos (2^ (succ n)) ℤ* q
+    ii = ℤ*-comm q (pos (2^ (succ n)))
+  
+  γ' : normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
+      ≤ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
+  γ' = normalise-pos-≤
+        (pos (2^ (succ n)) ℤ* p , 0)
+        (pos (2^ (succ n)) ℤ* q , 0)
+        V
+
+  γ : normalise-neg (p , n) ≤ normalise-neg (q , n)
+  γ = transport₂ _≤_ I II γ'
+
+normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
+                 → normalise (k , p) ≤ normalise (k ℤ+ pos n , p)
+normalise-≤-prop n (k , p) = normalise-≤-prop2 k (k ℤ+ pos n) p (n , refl)
+
+
+
 postulate
- normalise-≤-prop : (n : ℕ) → ((k , p) : ℤ × ℤ)
-                  → normalise (k , p) ≤ normalise (k ℤ+ pos n , p)
- normalise-≤-prop2 : (l r p : ℤ) → l ≤ r → normalise (l , p) ≤ normalise (r , p)
  from-normalise-≤-same-denom :
   (a b c : ℤ) → normalise (a , c) ≤ normalise (b , c) → a ≤ b
  ℤ[1/2]-find-lower :
