@@ -647,8 +647,200 @@ from-normalise-≤-same-denom p q (negsucc n) l₁ = Cases (ℤ-trichotomous p q
   γ : 1/2 * p < p
   γ = transport₂ _<_ III IV II
 
-postulate
- ℤ[1/2]-find-lower :
-  (ε : ℤ[1/2]) → ℤ[1/2]-is-positive ε → Σ n ꞉ ℤ , normalise (pos 2 , n) < ε
+normalise-pos-<-to-< : ((p , a) (q , b) : ℤ × ℕ)
+                     → normalise-pos (p , a) < normalise-pos (q , b)
+                     → (p , a) < (q , b)
+normalise-pos-<-to-< (p , a) (q , b) l₁ = I t
+ where
+  t : trich-locate (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
+  t = ℤ-trichotomous (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
+  
+  I : (p ℤ* pos (2^ b) < q ℤ* pos (2^ a))
+    ∔ (p ℤ* pos (2^ b) ＝ q ℤ* pos (2^ a))
+    ∔ (q ℤ* pos (2^ a) < p ℤ* pos (2^ b))
+    → p ℤ* pos (2^ b) < q ℤ* pos (2^ a)
+  I (inl l₂) = l₂
+  I (inr (inl e)) = 𝟘-elim γ
+   where
+    II : normalise-pos (p , a) ＝ normalise-pos (q , b)
+    II = ≈'-to-＝ (p , a) (q , b) e
+
+    III : normalise-pos (p , a) < normalise-pos (p , a)
+    III = transport (normalise-pos (p , a) <_) (II ⁻¹) l₁
+
+    γ : 𝟘
+    γ = ℤ[1/2]<-not-itself (normalise-pos (p , a)) III
+  I (inr (inr l₂)) = 𝟘-elim γ
+   where
+    II : normalise-pos (q , b) < normalise-pos (p , a)
+    II = normalise-pos-< (q , b) (p , a) l₂
+
+    III : normalise-pos (p , a) < normalise-pos (p , a)
+    III = ℤ[1/2]<-trans
+           (normalise-pos (p , a))
+           (normalise-pos (q , b))
+           (normalise-pos (p , a))
+            l₁ II
+
+    γ : 𝟘
+    γ = ℤ[1/2]<-not-itself (normalise-pos (p , a)) III
+
+ℤ<-+ : (p : ℤ) (n : ℕ) → p < p ℤ+ pos (succ n)
+ℤ<-+ p 0        = zero , refl
+ℤ<-+ p (succ n) = γ (ℤ<-+ p n)
+ where
+  γ : p < p ℤ+ pos (succ n) → p < p ℤ+ pos (succ (succ n))
+  γ (k , e) = (succ k) , ap succℤ e
+
+ℤ<-pos-mult : (p : ℤ) (q : ℕ) → pos 0 < p → p < p ℤ* (pos 2 ℤ* pos (succ q))
+ℤ<-pos-mult p 0 (k , e) = k , γ
+ where
+  γ : succℤ p ℤ+ pos k ＝ p ℤ+ p
+  γ = succℤ p ℤ+ pos k      ＝⟨ ℤ-left-succ p (pos k)                ⟩
+      succℤ (p ℤ+ pos k)    ＝⟨ ℤ-right-succ p (pos k) ⁻¹            ⟩
+      p ℤ+ succℤ (pos k)    ＝⟨ ap (p ℤ+_) (ℤ+-comm (pos k) (pos 1)) ⟩
+      p ℤ+ (pos 1 ℤ+ pos k) ＝⟨ ap (p ℤ+_) e                         ⟩
+      p ℤ+ p                ∎
+ℤ<-pos-mult p (succ q) l = γ
+ where
+  IH : p < p ℤ* (pos 2 ℤ* pos (succ q))
+  IH = ℤ<-pos-mult p q l
+
+  I : pos 0 < p ℤ* pos 2
+  I = ℤ<-pos-multiplication-preserves-order p (pos 2) l (1 , refl)
+
+  II : p < p ℤ* (pos 2 ℤ* pos (succ q)) ℤ+ p ℤ* pos 2
+  II = ℤ<-adding p (p ℤ* (pos 2 ℤ* pos (succ q))) (pos 0) (p ℤ* pos 2) IH I
+
+  III : p ℤ* (pos 2 ℤ* pos (succ q)) ℤ+ p ℤ* pos 2
+      ＝ p ℤ* (pos 2 ℤ* pos (succ (succ q)))
+  III = p ℤ* (pos 2 ℤ* pos (succ q)) ℤ+ p ℤ* pos 2     ＝⟨ i    ⟩
+        p ℤ* (pos 2 ℤ* pos (succ q) ℤ+ pos 2)          ＝⟨ refl ⟩
+        p ℤ* (pos 2 ℤ* pos (succ q) ℤ+ pos 2 ℤ* pos 1) ＝⟨ ii   ⟩
+        p ℤ* (pos 2 ℤ* pos (succ (succ q))) ∎
+   where
+    iiₐₚ : pos 2 ℤ* pos (succ q) ℤ+ pos 2 ℤ* pos 1
+        ＝ pos 2 ℤ* (pos (succ q) ℤ+ pos 1)
+    iiₐₚ = distributivity-mult-over-ℤ' (pos (succ q)) (pos 1) (pos 2) ⁻¹
+    
+    i  = distributivity-mult-over-ℤ' (pos 2 ℤ* pos (succ q)) (pos 2) p ⁻¹
+    ii = ap (p ℤ*_) iiₐₚ
+
+  γ : p < p ℤ* (pos 2 ℤ* pos (succ (succ q)))
+  γ = transport (p <_) III II
+
+exponents-of-two-positive' : (n : ℕ) → pos 0 < pos (2^ n)
+exponents-of-two-positive' 0        = 0 , refl
+exponents-of-two-positive' (succ n) = γ
+ where
+  I : pos 0 < pos 2
+  I = 1 , refl
+
+  II : pos 0 < pos (2^ n)
+  II = exponents-of-two-positive' n
+
+  III : pos 0 < pos 2 ℤ* pos (2^ n)
+  III = ℤ<-pos-multiplication-preserves-order (pos 2) (pos (2^ n)) I II
+
+  IV : pos 2 ℤ* pos (2^ n) ＝ pos (2^ (succ n))
+  IV = pos 2 ℤ* pos (2^ n) ＝⟨ pos-multiplication-equiv-to-ℕ 2 (2^ n) ⟩
+       pos (2 ℕ* 2^ n)     ＝⟨ refl                                   ⟩
+       pos (2^ (succ n))   ∎
+
+  γ : pos 0 < pos (2^ (succ n))
+  γ = transport (pos 0 <_) IV III
+
+ℤ[1/2]-find-lower' : (p n : ℕ)
+                   → (α : is-ℤ[1/2] (pos (succ p)) n)
+                   → Σ k ꞉ ℤ , normalise (pos 2 , k) < ((pos (succ p) , n) , α)
+ℤ[1/2]-find-lower' p n α = pos (succ (succ n)) , γ
+ where
+  I : (pos (succ p) , n) , α ＝ normalise-pos (pos (succ p) , n)
+  I = ℤ[1/2]-to-normalise-pos ((pos (succ p) , n) , α)
+
+  II : pos 0 < pos (2^ n)
+  II = exponents-of-two-positive' n
+
+  III : pos 0 < pos 2 ℤ* pos (2^ n)
+  III = ℤ<-pos-multiplication-preserves-order (pos 2) (pos (2^ n)) (1 , refl) II
+
+  IV : pos 0 < pos 2 ℤ* pos (succ p)
+  IV = ℤ<-pos-multiplication-preserves-order (pos 2) (pos (succ p)) (1 , refl) i
+   where
+    i : pos 0 < pos (succ p)
+    i = ℤ-zero-less-than-pos p
+    
+  V : pos 2 ℤ* pos (2^ n) ℤ* (pos 2 ℤ* pos (succ p))
+    ＝ pos (succ p) ℤ* pos (2^ (succ (succ n))) 
+  V = pos 2 ℤ* pos (2^ n) ℤ* (pos 2 ℤ* pos (succ p)) ＝⟨ i   ⟩
+      pos (2^ (succ n)) ℤ* (pos 2 ℤ* pos (succ p))   ＝⟨ ii  ⟩
+      pos 2 ℤ* pos (succ p) ℤ* pos (2^ (succ n))     ＝⟨ iii ⟩
+      pos (succ p) ℤ* pos 2 ℤ* pos (2^ (succ n))     ＝⟨ iv  ⟩
+      pos (succ p) ℤ* (pos 2 ℤ* pos (2^ (succ n)))   ＝⟨ v   ⟩
+      pos (succ p) ℤ* pos (2^ (succ (succ n)))       ∎
+   where
+    iₐₚ : pos 2 ℤ* pos (2^ n) ＝ pos (2 ℕ* 2^ n)
+    iₐₚ = pos-multiplication-equiv-to-ℕ 2 (2^ n)
+    
+    i   = ap (_ℤ* (pos 2 ℤ* pos (succ p)) ) iₐₚ
+    ii  = ℤ*-comm (pos (2^ (succ n))) (pos 2 ℤ* pos (succ p))
+    iii = ap (_ℤ* pos (2^ (succ n))) (ℤ*-comm (pos 2) (pos (succ p)))
+    iv  = ℤ*-assoc (pos (succ p)) (pos 2) (pos (2^ (succ n)))
+    v   = ap (pos (succ p) ℤ*_) (pos-multiplication-equiv-to-ℕ 2 (2^ (succ n)))
+
+  VI : pos 2 ℤ* pos (2^ n) < pos 2 ℤ* pos (2^ n) ℤ* (pos 2 ℤ* pos (succ p))
+  VI = ℤ<-pos-mult (pos 2 ℤ* pos (2^ n)) p III
+
+  γ'' : pos 2 ℤ* pos (2^ n) < pos (succ p) ℤ* pos (2^ (succ (succ n)))
+  γ'' = transport (pos 2 ℤ* pos (2^ n) <_) V VI
+
+  γ' : normalise-pos (pos 2 , succ (succ n)) < normalise-pos (pos (succ p) , n)
+  γ' = normalise-pos-< (pos 2 , succ (succ n)) (pos (succ p) , n) γ''
+
+  γ : normalise-pos (pos 2 , succ (succ n)) < ((pos (succ p) , n) , α)
+  γ = transport (normalise-pos (pos 2 , succ (succ n)) <_) (I ⁻¹) γ'
+
+ℤ[1/2]-find-lower : (ε : ℤ[1/2])
+                  → ℤ[1/2]-is-positive ε
+                  → Σ k ꞉ ℤ , normalise (pos 2 , k) < ε
+ℤ[1/2]-find-lower ((pos (succ p) , n) , α) l = ℤ[1/2]-find-lower' p n α
+ℤ[1/2]-find-lower ((pos 0 , n) , α) l = 𝟘-elim γ
+ where
+  I : (pos 0 , n) , α ＝ normalise-pos (pos 0 , n)
+  I = ℤ[1/2]-to-normalise-pos ((pos 0 , n) , α)
+  
+  II : normalise-pos (pos 0 , 0) < normalise-pos (pos 0 , n)
+  II = transport (normalise-pos (pos 0 , 0) <_) I l
+
+  III : (pos 0 , 0) < (pos 0 , n)
+  III = normalise-pos-<-to-< (pos 0 , 0) (pos 0 , n) II
+
+  IV : pos 0 ℤ* pos (2^ n) ＝ pos 0
+  IV = ℤ-zero-left-base (pos (2^ n))
+
+  V : pos 0 < pos 0
+  V = transport (_< pos 0) IV III
+
+  γ : 𝟘
+  γ = ℤ-equal-not-less-than (pos 0) V
+ℤ[1/2]-find-lower ((negsucc p , n) , α) l = 𝟘-elim γ
+ where
+  I : (negsucc p , n) , α ＝ normalise-pos (negsucc p , n)
+  I = ℤ[1/2]-to-normalise-pos ((negsucc p , n) , α)
+
+  II : normalise-pos (pos 0 , 0) < normalise-pos (negsucc p , n)
+  II = transport (normalise-pos (pos 0 , 0) <_) I l
+
+  III : (pos 0 , 0) < (negsucc p , n)
+  III = normalise-pos-<-to-< (pos 0 , 0) (negsucc p , n) II
+
+  IV : pos 0 ℤ* pos (2^ n) ＝ pos 0
+  IV = ℤ-zero-left-base (pos (2^ n))
+
+  V : pos 0 < negsucc p
+  V = transport (_< negsucc p) IV III
+
+  γ : 𝟘
+  γ = negative-not-greater-than-zero p V
 
 ```
