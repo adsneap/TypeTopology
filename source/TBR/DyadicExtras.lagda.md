@@ -61,7 +61,7 @@ open import UF.Base
  where
   I : trich-locate (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
   I = ℤ-trichotomous (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
-  
+
   γ : trich-locate (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
     → ((p , a) , α) < ((q , b) , β)
     ∔ (((p , a) , α) ＝ ((q , b) , β))
@@ -84,7 +84,7 @@ open import UF.Base
   II : (u v : ℤ[1/2]) → u + v - v ＝ u
   II u v = u + v - v   ＝⟨ ℤ[1/2]+-assoc u v (- v)                   ⟩
            u + (v - v) ＝⟨ ap (u +_) (ℤ[1/2]+-inverse-sum-to-zero v) ⟩
-           u + 0ℤ[1/2] ＝⟨ ℤ[1/2]-zero-right-neutral u               ⟩ 
+           u + 0ℤ[1/2] ＝⟨ ℤ[1/2]-zero-right-neutral u               ⟩
            u           ∎
 
   III : a + b - b ＝ a
@@ -171,7 +171,7 @@ open import UF.Base
 
     γ : d < b
     γ = transport₂ _<_ IV V III
-    
+
   γ₂ (inr l) = inr γ
    where
     I : - a < - c
@@ -203,7 +203,7 @@ open import UF.Base
  where
   I : ℤ- p ℤ* r ＝ p ℤ* (ℤ- r)
   I = negation-dist-over-mult p r ⁻¹
-  
+
   γ : p ℤ* q ℤ- p ℤ* r ＝ p ℤ* (q ℤ- r)
   γ = p ℤ* q ℤ- p ℤ* r      ＝⟨ ap (p ℤ* q ℤ+_) I ⟩
       p ℤ* q ℤ+ p ℤ* (ℤ- r) ＝⟨ distributivity-mult-over-ℤ' q (ℤ- r) p ⁻¹ ⟩
@@ -214,9 +214,9 @@ open import UF.Base
  where
   I : ℤ- r ℤ* q ＝ (ℤ- r) ℤ* q
   I = negation-dist-over-mult' r q ⁻¹
-  
+
   γ : p ℤ* q ℤ- r ℤ* q ＝ (p ℤ- r) ℤ* q
-  γ = p ℤ* q ℤ- r ℤ* q      ＝⟨ ap (p ℤ* q ℤ+_) I                        ⟩ 
+  γ = p ℤ* q ℤ- r ℤ* q      ＝⟨ ap (p ℤ* q ℤ+_) I                        ⟩
       p ℤ* q ℤ+ (ℤ- r) ℤ* q ＝⟨ distributivity-mult-over-ℤ p (ℤ- r) q ⁻¹ ⟩
       (p ℤ- r) ℤ* q         ∎
 
@@ -232,7 +232,7 @@ normalise-neg-step' z 0 = γ
 
   II : z ℤ* pos 2 ℤ* pos 2 ＝ pos 2 ℤ* (z ℤ* pos 2)
   II = ℤ*-comm (z ℤ* pos 2) (pos 2)
-  
+
   γ : normalise-neg (z , 1) ＝ 2ℤ[1/2] * normalise-neg (z , zero)
   γ = normalise-neg (z , 1)                           ＝⟨ refl ⟩
       normalise-neg-lemma z 1                         ＝⟨ refl ⟩
@@ -260,14 +260,14 @@ normalise-neg-step' z (succ n) = γ
   I : normalise-neg (z ℤ* pos 2 , succ n)
     ＝ 2ℤ[1/2] * normalise-neg (z ℤ* pos 2 , n)
   I = normalise-neg-step' (z ℤ* pos 2) n
-  
+
   γ : normalise-neg (z , succ (succ n)) ＝ 2ℤ[1/2] * normalise-neg (z , succ n)
   γ = normalise-neg (z , succ (succ n))            ＝⟨ refl ⟩
       normalise-neg-lemma z (succ (succ n))        ＝⟨ refl ⟩
       normalise-neg-lemma (z ℤ* pos 2) (succ n)    ＝⟨ refl ⟩
       normalise-neg-lemma (z ℤ* pos 2 ℤ* pos 2) n  ＝⟨ I    ⟩
       2ℤ[1/2] * normalise-neg-lemma (z ℤ* pos 2) n ＝⟨ refl ⟩
-      2ℤ[1/2] * normalise-neg-lemma z (succ n)     ＝⟨ refl ⟩      
+      2ℤ[1/2] * normalise-neg-lemma z (succ n)     ＝⟨ refl ⟩
       2ℤ[1/2] * normalise-neg (z , succ n)         ∎
 
 normalise-neg-step : ((z , n) : ℤ × ℕ)
@@ -324,7 +324,7 @@ normalise-neg-to-pos' z (succ n) = γ
    where
     vₐₚ : pos 2 ℤ* pos (2^ (succ n)) ＝ pos (2 ℕ* 2^ (succ n))
     vₐₚ = pos-multiplication-equiv-to-ℕ 2 (2^ (succ n))
-    
+
     i   = normalise-neg-step (z , n)
     ii  = ap (2ℤ[1/2] *_) IH
     iii = normalise-pos-step (n' ℤ* z , 0) ⁻¹
@@ -353,7 +353,7 @@ normalise-pos-negation p q n = γ
   III = n' ℤ* n'            ＝⟨ pos-multiplication-equiv-to-ℕ (2^ n) (2^ n) ⟩
         pos (2^ n ℕ* 2^ n)  ＝⟨ ap pos (prod-of-powers 2 n n)               ⟩
         pos (2^ (n ℕ+ n))   ∎
-  
+
   IV : ((p , n) +' (ℤ- q , n)) ≈' (p ℤ- q , n)
   IV = (p ℤ* n' ℤ+ (ℤ- q) ℤ* n') ℤ* n' ＝⟨ ap (λ z → (p ℤ* n' ℤ+ z) ℤ* n') I ⟩
        (p ℤ* n' ℤ- q ℤ* n') ℤ* n'      ＝⟨ ap (_ℤ* n') II                    ⟩
@@ -378,7 +378,7 @@ normalise-negation p q (pos n) = normalise-pos-negation p q n
 normalise-negation p q (negsucc n) = γ
  where
   n' = pos (2^ (succ n))
-  
+
   γ : normalise (p , negsucc n) - normalise (q , negsucc n)
     ＝ normalise (p ℤ- q , negsucc n)
   γ = normalise (p , negsucc n) - normalise (q , negsucc n)     ＝⟨ i   ⟩
@@ -390,7 +390,7 @@ normalise-negation p q (negsucc n) = γ
    where
     iiₐₚ : normalise-neg (q , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
     iiₐₚ = normalise-neg-to-pos (q , n)
-    
+
     i   = ap (_- normalise (q , negsucc n)) (normalise-neg-to-pos (p , n))
     ii  = ap (λ z → normalise-pos (n' ℤ* p , 0) - z) iiₐₚ
     iii = normalise-pos-negation (n' ℤ* p) (n' ℤ* q) 0
@@ -403,13 +403,13 @@ normalise-negation' z (negsucc n) = γ
  where
   I : ℤ- pos (2^ (succ n)) ℤ* z ＝ pos (2^ (succ n)) ℤ* (ℤ- z)
   I = negation-dist-over-mult (pos (2^ (succ n))) z ⁻¹
-  
+
   γ : - normalise (z , negsucc n) ＝ normalise (ℤ- z , negsucc n)
   γ = - normalise (z , negsucc n)                     ＝⟨ refl ⟩
       - normalise-neg (z , n)                         ＝⟨ i    ⟩
       - normalise-pos (pos (2^ (succ n)) ℤ* z , 0)    ＝⟨ ii   ⟩
       normalise-pos (ℤ- pos (2^ (succ n)) ℤ* z , 0)   ＝⟨ iii  ⟩
-      normalise-pos (pos (2^ (succ n)) ℤ* (ℤ- z) , 0) ＝⟨ iv   ⟩      
+      normalise-pos (pos (2^ (succ n)) ℤ* (ℤ- z) , 0) ＝⟨ iv   ⟩
       normalise-neg (ℤ- z , n) ＝⟨ refl ⟩
       normalise (ℤ- z , negsucc n) ∎
    where
@@ -423,7 +423,7 @@ normalise-pos-succ z n = ≈'-to-＝ (z , n) (z ℤ+ z , succ n) γ
  where
   I : pos (2 ℕ* 2^ n) ＝ pos 2 ℤ* pos (2^ n)
   I = pos-multiplication-equiv-to-ℕ 2 (2^ n) ⁻¹
-  
+
   γ : (z , n) ≈' (z ℤ+ z , succ n)
   γ = z ℤ* pos (2^ (succ n))     ＝⟨ refl                               ⟩
       z ℤ* pos (2 ℕ* 2^ n)       ＝⟨ ap (z ℤ*_) I                       ⟩
@@ -437,7 +437,7 @@ normalise-succ' z (negsucc 0) = γ
  where
   I : pos 2 ℤ* z ＝ z ℤ* pos 2
   I = ℤ*-comm (pos 2) z
-  
+
   γ : normalise (z , negsucc 0) ＝ normalise (z ℤ+ z , pos 0)
   γ = normalise (z , negsucc 0)      ＝⟨ refl                               ⟩
       normalise-neg (z , 0)          ＝⟨ normalise-neg-to-pos (z , 0)       ⟩
@@ -458,14 +458,14 @@ normalise-succ' z (negsucc (succ x)) = γ
     ii  = ap (_ℤ* z) (ℤ*-comm (pos 2) (pos (2^ (succ x))))
     iii = ℤ*-assoc (pos (2^ (succ x))) (pos 2) z
     iv  = ap (pos (2^ (succ x)) ℤ*_) (ℤ*-comm (pos 2) z)
-  
+
   γ : normalise (z , negsucc (succ x))
     ＝ normalise (z ℤ+ z , succℤ (negsucc (succ x)))
   γ = normalise (z , negsucc (succ x))                  ＝⟨ refl ⟩
       normalise-neg (z , succ x)                        ＝⟨ i    ⟩
       normalise-pos (pos (2^ (succ (succ x))) ℤ* z , 0) ＝⟨ ii   ⟩
       normalise-pos (pos (2^ (succ x)) ℤ* (z ℤ+ z) , 0) ＝⟨ iii  ⟩
-      normalise-neg (z ℤ+ z , x)                        ＝⟨ refl ⟩      
+      normalise-neg (z ℤ+ z , x)                        ＝⟨ refl ⟩
       normalise (z ℤ+ z , succℤ (negsucc (succ x)))     ∎
    where
     i   = normalise-neg-to-pos (z , succ x)
@@ -478,7 +478,7 @@ normalise-pred' z n = γ
  where
   I : normalise (z , predℤ n) ＝ normalise (z ℤ+ z , succℤ (predℤ n))
   I = normalise-succ' z (predℤ n)
-  
+
   γ : normalise (z , predℤ n) ＝ normalise (pos 2 ℤ* z , n)
   γ = normalise (z , predℤ n)              ＝⟨ i   ⟩
       normalise (z ℤ+ z , succℤ (predℤ n)) ＝⟨ ii  ⟩
@@ -494,14 +494,14 @@ normalise-≤-prop2 p q (pos n) l = normalise-pos-≤ (p , n) (q , n) γ
  where
   I : is-pos-succ (pos (2^ n))
   I = exponents-of-two-positive n
- 
+
   γ : p ℤ* pos (2^ n) ≤ q ℤ* pos (2^ n)
   γ = positive-multiplication-preserves-order' p q (pos (2^ n)) I l
-normalise-≤-prop2 p q (negsucc n) l = γ 
+normalise-≤-prop2 p q (negsucc n) l = γ
  where
   I : normalise-pos (pos (2^ (succ n)) ℤ* p , 0) ＝ normalise-neg (p , n)
   I = normalise-neg-to-pos (p , n) ⁻¹
-  
+
   II : normalise-pos (pos (2^ (succ n)) ℤ* q , 0) ＝ normalise-neg (q , n)
   II = normalise-neg-to-pos (q , n) ⁻¹
 
@@ -519,7 +519,7 @@ normalise-≤-prop2 p q (negsucc n) l = γ
 
     ii : q ℤ* pos (2^ (succ n)) ＝ pos (2^ (succ n)) ℤ* q
     ii = ℤ*-comm q (pos (2^ (succ n)))
-  
+
   γ' : normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
       ≤ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
   γ' = normalise-pos-≤
@@ -552,10 +552,10 @@ from-normalise-≤-same-denom p q (pos n) l₁ = Cases (ℤ-trichotomous p q) γ
      where
       I : is-pos-succ (pos (2^ n))
       I = exponents-of-two-positive n
-      
+
       II : q ℤ* pos (2^ n) < p ℤ* pos (2^ n)
       II = positive-multiplication-preserves-order q p (pos (2^ n)) I l₂
-      
+
       III : normalise-pos (q , n) < normalise-pos (p , n)
       III = normalise-pos-< (q , n) (p , n) II
 
@@ -585,7 +585,7 @@ from-normalise-≤-same-denom p q (negsucc n) l₁ = Cases (ℤ-trichotomous p q
       I = normalise-neg-to-pos (p , n)
 
       II : normalise-neg (q , n) ＝ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
-      II = normalise-neg-to-pos (q , n) 
+      II = normalise-neg-to-pos (q , n)
 
       III : normalise-pos (pos (2^ (succ n)) ℤ* p , 0)
           ≤ normalise-pos (pos (2^ (succ n)) ℤ* q , 0)
@@ -628,7 +628,7 @@ from-normalise-≤-same-denom p q (negsucc n) l₁ = Cases (ℤ-trichotomous p q
 ℤ[1/2]<-1/2' p l = γ
  where
   1/2 = 1/2ℤ[1/2]
-  
+
   I : 0ℤ[1/2] < 1/2 * p
   I = ℤ[1/2]<-pos-multiplication-preserves-order 1/2 p ℤ[1/2]-0<1/2 l
 
@@ -654,7 +654,7 @@ normalise-pos-<-to-< (p , a) (q , b) l₁ = I t
  where
   t : trich-locate (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
   t = ℤ-trichotomous (p ℤ* pos (2^ b)) (q ℤ* pos (2^ a))
-  
+
   I : (p ℤ* pos (2^ b) < q ℤ* pos (2^ a))
     ∔ (p ℤ* pos (2^ b) ＝ q ℤ* pos (2^ a))
     ∔ (q ℤ* pos (2^ a) < p ℤ* pos (2^ b))
@@ -722,7 +722,7 @@ normalise-pos-<-to-< (p , a) (q , b) l₁ = I t
     iiₐₚ : pos 2 ℤ* pos (succ q) ℤ+ pos 2 ℤ* pos 1
         ＝ pos 2 ℤ* (pos (succ q) ℤ+ pos 1)
     iiₐₚ = distributivity-mult-over-ℤ' (pos (succ q)) (pos 1) (pos 2) ⁻¹
-    
+
     i  = distributivity-mult-over-ℤ' (pos 2 ℤ* pos (succ q)) (pos 2) p ⁻¹
     ii = ap (p ℤ*_) iiₐₚ
 
@@ -769,9 +769,9 @@ exponents-of-two-positive' (succ n) = γ
    where
     i : pos 0 < pos (succ p)
     i = ℤ-zero-less-than-pos p
-    
+
   V : pos 2 ℤ* pos (2^ n) ℤ* (pos 2 ℤ* pos (succ p))
-    ＝ pos (succ p) ℤ* pos (2^ (succ (succ n))) 
+    ＝ pos (succ p) ℤ* pos (2^ (succ (succ n)))
   V = pos 2 ℤ* pos (2^ n) ℤ* (pos 2 ℤ* pos (succ p)) ＝⟨ i   ⟩
       pos (2^ (succ n)) ℤ* (pos 2 ℤ* pos (succ p))   ＝⟨ ii  ⟩
       pos 2 ℤ* pos (succ p) ℤ* pos (2^ (succ n))     ＝⟨ iii ⟩
@@ -781,7 +781,7 @@ exponents-of-two-positive' (succ n) = γ
    where
     iₐₚ : pos 2 ℤ* pos (2^ n) ＝ pos (2 ℕ* 2^ n)
     iₐₚ = pos-multiplication-equiv-to-ℕ 2 (2^ n)
-    
+
     i   = ap (_ℤ* (pos 2 ℤ* pos (succ p)) ) iₐₚ
     ii  = ℤ*-comm (pos (2^ (succ n))) (pos 2 ℤ* pos (succ p))
     iii = ap (_ℤ* pos (2^ (succ n))) (ℤ*-comm (pos 2) (pos (succ p)))
@@ -808,7 +808,7 @@ exponents-of-two-positive' (succ n) = γ
  where
   I : (pos 0 , n) , α ＝ normalise-pos (pos 0 , n)
   I = ℤ[1/2]-to-normalise-pos ((pos 0 , n) , α)
-  
+
   II : normalise-pos (pos 0 , 0) < normalise-pos (pos 0 , n)
   II = transport (normalise-pos (pos 0 , 0) <_) I l
 
@@ -842,5 +842,60 @@ exponents-of-two-positive' (succ n) = γ
 
   γ : 𝟘
   γ = negative-not-greater-than-zero p V
+
+_ℤ[1/2]'≤_ : (x y : ℤ × ℤ) → 𝓤₀ ̇
+(x , pos a) ℤ[1/2]'≤ (y , pos b)         = (x , a) ≤ (y , b)
+(x , pos a) ℤ[1/2]'≤ (y , negsucc b)     = (x , a) ≤ (pos (2^ (succ b)) ℤ* y , 0)
+(x , negsucc a) ℤ[1/2]'≤ (y , pos b)     = (pos (2^ (succ a)) ℤ* x , 0) ≤ (y , b)
+(x , negsucc a) ℤ[1/2]'≤ (y , negsucc b) = (pos (2^ (succ a)) ℤ* x , 0) ≤ (pos (2^ (succ b)) ℤ* y , 0)
+
+instance
+ Order-ℤℤ : Order (ℤ × ℤ) (ℤ × ℤ)
+ _≤_ {{Order-ℤℤ}} = _ℤ[1/2]'≤_
+
+normalise-≤ : (x y : ℤ × ℤ)
+            → x ≤ y
+            → normalise x ≤ normalise y
+normalise-≤ (x , pos a) (y , pos b) x≤y = γ
+ where
+  γ : normalise-pos (x , a) ≤ normalise-pos (y , b)
+  γ = normalise-pos-≤ (x , a) (y , b) x≤y
+normalise-≤ (x , pos a) (y , negsucc b) x≤y = γ
+ where
+  I : normalise-pos (x , a) ≤ normalise-pos (pos (2^ (succ b)) ℤ* y , 0)
+  I = normalise-pos-≤ (x , a) (pos (2^ (succ b)) ℤ* y , 0) x≤y
+
+  II : normalise-pos (pos (2^ (succ b)) ℤ* y , 0) ＝ normalise (y , negsucc b)
+  II = normalise-neg-to-pos (y , b) ⁻¹
+
+  γ : normalise (x , pos a) ≤ normalise (y , negsucc b)
+  γ = transport (normalise (x , pos a) ≤_) II I
+normalise-≤ (x , negsucc a) (y , pos b) x≤y = γ
+ where
+  I : normalise-pos (pos (2^ (succ a)) ℤ* x , 0) ≤ normalise-pos (y , b)
+  I = normalise-pos-≤ (pos (2^ (succ a)) ℤ* x , 0) (y , b) x≤y
+
+  II : normalise-pos (pos (2^ (succ a)) ℤ* x , 0) ＝ normalise (x , negsucc a)
+  II = normalise-neg-to-pos (x , a) ⁻¹
+
+  γ : normalise (x , negsucc a) ≤ normalise (y , pos b)
+  γ = transport (_≤ normalise-pos (y , b)) II I
+normalise-≤ (x , negsucc a) (y , negsucc b) x≤y = γ
+ where
+  I : normalise-pos (pos (2^ (succ a)) ℤ* x , 0)
+    ≤ normalise-pos (pos (2^ (succ b)) ℤ* y , 0)
+  I = normalise-pos-≤
+       (pos (2^ (succ a)) ℤ* x , 0)
+       (pos (2^ (succ b)) ℤ* y , 0)
+       x≤y
+
+  II : normalise-pos (pos (2^ (succ a)) ℤ* x , 0) ＝ normalise (x , negsucc a)
+  II = normalise-neg-to-pos (x , a) ⁻¹
+
+  III : normalise-pos (pos (2^ (succ b)) ℤ* y , 0) ＝ normalise (y , negsucc b)
+  III = normalise-neg-to-pos (y , b) ⁻¹
+
+  γ : normalise (x , negsucc a) ≤ normalise (y , negsucc b)
+  γ = transport₂ _≤_ II III I
 
 ```
