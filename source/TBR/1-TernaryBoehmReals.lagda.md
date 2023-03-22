@@ -117,7 +117,7 @@ We now define `𝕋` as functions where each "brick" on "precision-level" `n+1` 
 below that on `n`.
 
 ```agda
-𝕋 : 𝓤₀ ̇ 
+𝕋 : 𝓤₀ ̇
 𝕋 = Σ x ꞉ (ℤ → ℤ) , ((δ : ℤ) → x (succℤ δ) below x δ)
 
 ⟨_⟩ : 𝕋 → (ℤ → ℤ)
@@ -219,7 +219,7 @@ number.
 
 ```agda
 replace-right' : (ℤ → ℤ) → (i : ℤ) → (δ : ℤ) → trich-locate δ i → ℤ
-replace-right' x i δ (inl (n , δ+sn＝i)) = (upRight ^ succ n) (x i) 
+replace-right' x i δ (inl (n , δ+sn＝i)) = (upRight ^ succ n) (x i)
 replace-right' x i δ (inr         i≤δ ) = x δ
 
 replace-right'-correct
@@ -243,7 +243,7 @@ replace-right x i
             (ℤ-trichotomous-is-prop (succℤ δ) i
               (ℤ-trich-succ δ i (ℤ-trichotomous δ i))
               (ℤ-trichotomous (succℤ δ) i))
-            (replace-right'-correct x i δ (ℤ-trichotomous δ i))) 
+            (replace-right'-correct x i δ (ℤ-trichotomous δ i)))
  where r = replace-right' ⟨ x ⟩ i
 ```
 
@@ -297,7 +297,7 @@ ci-lower-upper-<' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                   → (δ : ℤ)
                   → (n : ℕ) → succℤ i +pos n ＝ δ
                   → rec k downLeft (succ n) ≤ ⟨ ι x ⟩ δ
-                  ≤ rec k downRight (succ n) 
+                  ≤ rec k downRight (succ n)
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ 0        refl
  = γx i
 ci-lower-upper-<' (k , i) ((x , γx) , refl) δ (succ n) refl
@@ -320,13 +320,13 @@ ci-lower-upper-< : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                  → ((n , _) : i <ℤ δ)
                  → rec k downLeft  (succ n)
                  ≤ ⟨ ι x ⟩ δ
-                 ≤ rec k downRight (succ n) 
+                 ≤ rec k downRight (succ n)
 ci-lower-upper-< (k , i) x δ (n , i<δ) = ci-lower-upper-<' (k , i) x δ n i<δ
 
 ci-lower-upper->' : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                   → (δ : ℤ)
                   → (n : ℕ) → succℤ δ +pos n ＝ i
-                  → rec k upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k upRight (succ n) 
+                  → rec k upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k upRight (succ n)
 ci-lower-upper->' (k , i) ((x , γx) , refl) δ 0        refl
  = below-implies-above _ _ (γx δ)
 ci-lower-upper->' (k , i) ((x , γx) , refl) δ (succ n) refl
@@ -347,12 +347,12 @@ ci-lower-upper->' (k , i) ((x , γx) , refl) δ (succ n) refl
 ci-lower-upper-> : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                  → (δ : ℤ)
                  → ((n , _) : δ <ℤ i)
-                 → rec k upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k upRight (succ n) 
+                 → rec k upLeft (succ n) ≤ ⟨ ι x ⟩ δ ≤ rec k upRight (succ n)
 ci-lower-upper-> (k , i) x δ (n , δ<i) = ci-lower-upper->' (k , i) x δ n δ<i
 
 ci-lower-upper : ((k , i) : ℤ × ℤ) → (x : CompactInterval (k , i))
                → (δ : ℤ)
-               → lower (k , i) δ ≤ ⟨ ι x ⟩ δ ≤ upper (k , i) δ 
+               → lower (k , i) δ ≤ ⟨ ι x ⟩ δ ≤ upper (k , i) δ
 ci-lower-upper (k , i) ((x , γx) , refl) δ with ℤ-trichotomous i δ
 ... | inl      i<δ   = ci-lower-upper-< (k , i) ((x , γx) , refl) δ i<δ
 ... | inr (inl refl) = (0 , refl) , (0 , refl)
@@ -416,7 +416,7 @@ lower/upper-implies-below/above : ((k , i) (c , δ) : ℤ × ℤ)
                                 → (c , δ) below/above (k , i)
 lower/upper-implies-below/above (k , i) (c , δ) with ℤ-trichotomous i δ
 ... | inl (n , _)       = lower-upper-below k c n
-... | inr (inl refl)    = ≤ℤ-antisym        k c  
+... | inr (inl refl)    = ≤ℤ-antisym        k c
 ... | inr (inr (n , _)) = lower-upper-above k c n
 ```
 
@@ -456,12 +456,12 @@ upLeft-or-upRight k₁ k₂ c k₁≤k₂ ((m₁ , η₁) , (m₂ , η₂))
          (upLeft-downRight k₂) r)))
 
 lower-upper-below k c 0 = id
-lower-upper-below k c (succ n) l≤c≤u  
+lower-upper-below k c (succ n) l≤c≤u
  = Cases (upLeft-or-upRight _ _ _ (downLeft≤downRight k (succ n)) l≤c≤u)
      (λ η → upLeft  c , above-implies-below _ _ (upLeft-above  c) , IH-l η)
      (λ η → upRight c , above-implies-below _ _ (upRight-above c) , IH-r η)
  where
-   IH-l = lower-upper-below k (upLeft  c) n 
+   IH-l = lower-upper-below k (upLeft  c) n
    IH-r = lower-upper-below k (upRight c) n
 
 down-choices' : (k₁ k₂ c : ℤ) (n m : ℕ)
@@ -471,7 +471,7 @@ down-choices' : (k₁ k₂ c : ℤ) (n m : ℕ)
               → (downRight k₁ ≤ downLeft  c ≤ downLeft k₂)
               + (downRight k₁ ≤ downRight c ≤ downLeft k₂)
 down-choices' k₁ .((k₁ +pos zero) +pos zero) .(k₁ +pos zero) 0 0 refl refl f
- = 𝟘-elim (ℤ-less-not-equal _ _ f refl) 
+ = 𝟘-elim (ℤ-less-not-equal _ _ f refl)
 down-choices'
  k₁ .((k₁ +pos zero) +pos succ m) .(k₁ +pos zero) 0 (succ m) refl refl f
  = inr ((zero , refl)
@@ -500,7 +500,7 @@ down-choices k₁ k₂ c k₁≤k₂ ((m₁ , η₁) , (m₂ , η₂)) with ℤ�
            (above-implies-below c k₁ ((m₁ , η₁) , (m₂ , η₂))))
      (inl ∘ l) (cases (inr ∘ inl ∘ m) (inr ∘ inr ∘ r))
  where
-   l : k₁ ＝ downLeft  c → k₁ ≤ℤ downLeft  c ≤ℤ k₁ 
+   l : k₁ ＝ downLeft  c → k₁ ≤ℤ downLeft  c ≤ℤ k₁
    l refl = ℤ≤²-refl (downLeft  c)
    m : k₁ ＝ downMid   c → k₁ ≤ℤ downMid   c ≤ℤ k₁
    m refl = ℤ≤²-refl (downMid   c)
@@ -541,7 +541,7 @@ below/above-implies-lower/upper : ((k , i) (c , δ) : ℤ × ℤ)
                                 → lower (k , i) δ ≤ c ≤ upper (k , i) δ
 below/above-implies-lower/upper (k , i) (c , δ) with ℤ-trichotomous i δ
 ... | inl (n , _)       = below-lower-upper k c n
-... | inr (inl refl)    = equal-lower-upper k c  
+... | inr (inl refl)    = equal-lower-upper k c
 ... | inr (inr (n , _)) = above-lower-upper k c n
 ```
 
@@ -617,7 +617,7 @@ replace' (k , i) (c , δ) with ℤ-trichotomous i δ
 Using the relationship between lower/upper bounds and below/above we can further
 determine that, given two interval encodings `(k , i), (c , δ) : ℤ × ℤ` where
 `lower (k , i) δ ≤ c ≤ upper (k , i) δ`, then we can construct a real encoding
-`x : CompactInterval (k , i)` that "goes via" `(c , δ) : ℤ × ℤ`. 
+`x : CompactInterval (k , i)` that "goes via" `(c , δ) : ℤ × ℤ`.
 
 ```agda
 replace : ((k , i) (c , δ) : ℤ × ℤ)
@@ -687,7 +687,7 @@ replace-below (k , i) (c , j) (n , i<j') b with build-via-ci (k , i)
                   (vert-trich-ij-is-prop (succℤ z) i<j
                     (vert-trich-ij-succ z i<j η) η') (γ z η)
 
-replace-above (k , i) (c , j) j<i b 
+replace-above (k , i) (c , j) j<i b
  = ((pr₁ (pr₁ γ)) , (pr₂ γ)) , (pr₂ (pr₁ γ))
  where
    γ = replace-below (c , j) (k , i) j<i (aboveⁿ-implies-belowⁿ k c (pr₁ j<i) b)
@@ -698,4 +698,3 @@ Next, we define functions from the mathematical real space in
 
 Then, we combine our work for the purpose of searchability in
 [`TernaryBoehmRealsSearch`](3-TernaryBoehmRealsSearch.lagda.md).
-
