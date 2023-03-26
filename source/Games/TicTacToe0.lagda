@@ -5,7 +5,7 @@ history dependent game.
 
 \begin{code}
 
-{-# OPTIONS --without-K --safe --auto-inline --exact-split #-}
+{-# OPTIONS --without-K --safe --no-sized-types --no-guardedness --auto-inline --exact-split #-}
 
 module Games.TicTacToe0 where
 
@@ -68,7 +68,7 @@ It is also convenient to have a type of boards:
 
 \begin{code}
 
-Grid   = R × R
+Grid   = Fin 3 × Fin 3
 Matrix = Grid → Maybe Player
 Board  = Player × Matrix
 
