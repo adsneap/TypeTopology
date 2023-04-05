@@ -24,6 +24,18 @@ record Functor (A : precategory {𝓤} {𝓥})
   Fid  : {a : ob A} → _⇒ { a } (u A) ＝ u B
   _∘F_ : {a b c : ob A} {f : hom A a b} {g : hom A b c} → _⇒ (g ∘A f) ＝ _⇒ g ∘B _⇒ f
 
+module FunctorComposition {𝓧 𝓨 : Universe}
+                          (A : precategory {𝓤} {𝓥})
+                          (B : precategory {𝓦} {𝓣})
+                          (C : precategory {𝓧} {𝓨})
+ where
+
+ _∘Functor_ : Functor B C → Functor A B → Functor A C
+ G ∘Functor F = record { _⟶ = λ a → Functor._⟶ G (Functor._⟶ F a)
+                       ; _⇒ = {!!}
+                       ; Fid = {!!}
+                       ; _∘F_ = {!!} }
+
 record NaturalTransformation
   {A : precategory {𝓤} {𝓥}}
   {B : precategory {𝓦} {𝓣}}
@@ -56,7 +68,7 @@ module FunctorPrecategory
  open precategory
  open Functor
  open NaturalTransformation
- 
+
  private
   _∘A_ = _∘_ A
   _∘B_ = _∘_ B
@@ -83,13 +95,13 @@ module FunctorPrecategory
                                                                     γ ψ b ∘B ((f ⇒G) ∘B γ δ a)   ＝⟨ ap (γ ψ b ∘B_) (naturality-axiom δ f) ⟩
                                                                     γ ψ b ∘B (γ δ b ∘B (f ⇒F))   ＝⟨ assoc B (f ⇒F) (γ δ b) (γ ψ b) ⟩
                                                                     (γ ψ b ∘B γ δ b) ∘B (f ⇒F) ∎ }
-                                              
+
  functorPC : precategory
  functorPC = record
                { ob = Functor A B
                ; hom = NaturalTransformation
                ; hom-set = λ {F} {G} {γ} → NaturalTransformationIsSet γ
-               ; u =  ufPC 
+               ; u =  ufPC
                ; _∘_ = _∘fPC_
                ; unit-l = λ {F} {G} f → (ufPC ∘fPC f) ＝⟨ {!!} ⟩
                                         {!!}          ＝⟨ {!!} ⟩
@@ -98,14 +110,54 @@ module FunctorPrecategory
                ; unit-r = {!!}
                ; assoc = {!!}
                }
-         
+
+\end{code}
+
+id Functor
+
+\begin{code}
+
+module idF
+  (𝓐 : precategory { 𝓤 } { 𝓥 })
+ where
+
+ open precategory 𝓐
+ open Functor
+
+ idF : Functor 𝓐 𝓐
+ idF = record { _⟶ = id
+              ; _⇒ = id
+              ; Fid = refl
+              ; _∘F_ = refl }
+
+\end{code}
+
+Category of Categories
+
+\begin{code}
+
+module Cat (𝓤 𝓥 : Universe) where
+
+ open Functor
+ open NaturalTransformation
+
+ pCat : precategory { (𝓤 ⁺) ⊔ (𝓥 ⁺) } { 𝓤 ⊔ 𝓥 }
+ pCat = record
+          { ob      = precategory { 𝓤 } { 𝓥 }
+          ; hom     = Functor
+          ; hom-set = {!!}
+          ; u       = {!!}
+          ; _∘_     = λ {a} {b} {c} F G → {!∘F!}
+          ; unit-l  = {!!}
+          ; unit-r  = {!!}
+          ; assoc   = {!!}
+          }
+
 \end{code}
 
 Fibration
 
 \begin{code}
-
-
 
 module Fibration
   (𝓐 : precategory { 𝓤 } { 𝓥 })
