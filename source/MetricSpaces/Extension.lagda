@@ -232,7 +232,7 @@ distance-ℚ-ℝ x y (ε , 0<ε) l = ∥∥-rec (ℚ<-is-prop (abs (x - y)) ε) 
 distance-ℚ-ℝ-ℚ : (u v : ℚ) ((ε , 0<ε) : ℚ₊) (x : ℝ) → (u < x) × (x < v) → B-ℚ u v ε 0<ε → B-ℝ (ι u) x ε 0<ε
 distance-ℚ-ℝ-ℚ u v (ε , 0<ε) x (u<x , x<v) l = ∥∥-functor I (rounded-right-b (upper-cut-of x) (rounded-from-real-R x) v x<v)
  where
-  I : Σ v' ꞉ ℚ , v' < v × x < v' → Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , (a < u) × (c < x) × (u < b) × (x < d) × B-ℚ (min a c) (max b d) ε 0<ε
+  I : Σ v' ꞉ ℚ , (v' < v) × (x < v') → Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , (a < u) × (c < x) × (u < b) × (x < d) × B-ℚ (min a c) (max b d) ε 0<ε
   I (v' , v'<v , x<v') = (u - (v - v') , v' , u - (v - v') , v')
                        , l₁
                        , rounded-left-c (lower-cut-of x) (rounded-from-real-L x) (u - (v - v')) u l₁ u<x
@@ -254,7 +254,7 @@ distance-ℚ-ℝ-ℚ u v (ε , 0<ε) x (u<x , x<v) l = ∥∥-functor I (rounded
 distance-ℚ-ℝ-ℚ' : (u v : ℚ) ((ε , 0<ε) : ℚ₊) (x : ℝ) → (u < x) × (x < v) → B-ℚ u v ε 0<ε → B-ℝ x (ι v) ε 0<ε
 distance-ℚ-ℝ-ℚ' u v (ε , 0<ε) x (u<x , x<v) l = ∥∥-functor I (rounded-left-b (lower-cut-of x) (rounded-from-real-L x) u u<x)
  where
-  I : Σ u' ꞉ ℚ , u < u' × u' < x → Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , (a < x) × (c < v) × (x < b) × (v < d) × B-ℚ (min a c) (max b d) ε 0<ε
+  I : Σ u' ꞉ ℚ , u < u' < x → Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , (a < x) × (c < v) × (x < b) × (v < d) × B-ℚ (min a c) (max b d) ε 0<ε
   I (u' , u<u' , u'<x) = (u' , v + (u' - u) , u' , v + (u' - u))
                        , u'<x
                        , disjoint-from-real x u' v (u'<x , x<v)
@@ -349,7 +349,7 @@ f→f̂ f is-continuous δ-sup x = (L , R) , inhabited-l , inhabited-r , rounded
         δ = pr₁ (uniform-modulus ℚ-metric-space ℚ-metric-space f is-continuous (ε , 0<ε))
         0<δ : 0ℚ < δ
         0<δ = pr₂ (uniform-modulus ℚ-metric-space ℚ-metric-space f is-continuous (ε , 0<ε))
-        II : (Σ p' ꞉ ℚ , p + ε < p' × p' < f u) → Σ p' ꞉ ℚ , p < p' × p' ∈ L
+        II : (Σ p' ꞉ ℚ , p + ε < p' < f u) → Σ p' ꞉ ℚ , p < p' × p' ∈ L
         II (p' , l₁ , l₂) = p' - ε , (ℚ<-subtraction-preserves-order''' p ε p' l₁ , ∣ (u , v , ε , 0<ε) , u<x , x<v , u-v<δ , i ∣)
          where
           ii : p' ＝ p' - ε + ε
@@ -382,7 +382,7 @@ f→f̂ f is-continuous δ-sup x = (L , R) , inhabited-l , inhabited-r , rounded
         → Σ q' ꞉ ℚ , q' < q × q' ∈ R
       I ((u , v , (ε , 0<ε)) , u<x , x<v , u-v<δ , l) = II (ℚ-dense (f v) (q - ε) l)
        where
-        II : (Σ q' ꞉ ℚ , f v < q' × q' < q - ε) → Σ q' ꞉ ℚ , q' < q × q' ∈ R
+        II : (Σ q' ꞉ ℚ , f v < q' < q - ε) → Σ q' ꞉ ℚ , q' < q × q' ∈ R
         II (q' , l₁ , l₂) = q' + ε , (ℚ<-subtraction-preserves-order'' q' q ε l₂ , ∣ (u , v , ε , 0<ε) , u<x , x<v , u-v<δ , transport (f v <_) ii l₁ ∣)
          where
           ii : q' ＝ q' + ε - ε
@@ -450,7 +450,7 @@ f→f̂ f is-continuous δ-sup x = (L , R) , inhabited-l , inhabited-r , rounded
       iii = ℚ<-trans (f v - f u + (1/4 * (q - p) + 1/4 * (q - p))) (1/4 * (q - p) + (1/4 * (q - p) + 1/4 * (q - p))) (q - p) iv vi
       i : (f v + 1/4 * (q - p) - (f u - 1/4 * (q - p))) <ℚ (q - p)
       i = transport (_< q - p) ii iii
-      II : p < f u - 1/4 * (q - p) ∔ f v + 1/4 * (q - p) < q
+      II : (p < f u - 1/4 * (q - p)) ∔ (f v + 1/4 * (q - p) < q)
       II = order-lemma (f v + 1/4 * (q - p)) (f u - 1/4 * (q - p)) q p i
       III : p < f u - 1/4 * (q - p) → p ∈ L ∔ q ∈ R
       III l = inl ∣ (u , v , 1/4 * (q - p) , 0<1/4q-p) , u<x , x<v , uv , (ℚ<-subtraction-preserves-order'' p (f u) (1/4 * (q - p)) l) ∣
@@ -479,7 +479,7 @@ f→f̂ f is-continuous δ-sup x = (L , R) , inhabited-l , inhabited-r , rounded
          0<δ₂ = pr₂ (uniform-modulus ℚ-metric-space ℚ-metric-space f is-continuous (ε' , 0<ε'))
          cont : B-ℚ u v' δ 0<δ → B-ℚ (f u) (f v') (ε + ε') (ℚ<-adding-zero ε ε' 0<ε 0<ε')
          cont = pr₂ (is-continuous ((ε , 0<ε) ℚ₊+ (ε' , 0<ε'))) u v'
-         III : abs (u - v') < δ ∔ (abs (u - v') ＝ δ) ∔ δ < abs (u - v') → 𝟘
+         III : (abs (u - v') < δ) ∔ (abs (u - v') ＝ δ) ∔ (δ < abs (u - v')) → 𝟘
          III (inl l₅)       = ℚ<-not-itself (ε + ε') (ℚ<-trans (ε + ε') (abs (f u - f v')) (ε + ε') iv using-continuity)
           where
            using-continuity : abs (f u - f v') < (ε + ε')

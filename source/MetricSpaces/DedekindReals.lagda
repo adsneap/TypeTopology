@@ -55,11 +55,11 @@ B-ℝ x y ε l =
 B-ℝ-ε-transport : (x y : ℝ) → (ε ε' : ℚ) → (ε ＝ ε') → (l₁ : 0ℚ < ε) → (l₂ : 0ℚ < ε') → B-ℝ x y ε l₁ → B-ℝ x y ε' l₂
 B-ℝ-ε-transport x y ε ε' e l₁ l₂ = ∥∥-functor I
  where
-  I : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε l₁
-    → Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε' l₂
+  I : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε l₁
+    → Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε' l₂
   I ((p , q , u , v) , pLx , uLy , qRx , vRy , B) = ((p , q , u , v) , pLx , uLy , qRx , vRy , transport (ℚ-metric (min p u) (max q v) <_) e B)
 
-ℝ-m1a-lemma : (x y : ℝ) → ((ε : ℚ) → (ε>0 : 0ℚ < ε) → ∃ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε ε>0) → lower-cut-of x ⊆ lower-cut-of y
+ℝ-m1a-lemma : (x y : ℝ) → ((ε : ℚ) → (ε>0 : 0ℚ < ε) → ∃ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε ε>0) → lower-cut-of x ⊆ lower-cut-of y
 ℝ-m1a-lemma ((Lx , Rx) , inhabited-left-x , inhabited-right-x , rounded-left-x , rounded-right-x , disjoint-x , located-x) ((Ly , Ry) , inhabited-left-y , inhabited-right-y , rounded-left-y , rounded-right-y , disjoint-y , located-y) f k kLx = ∥∥-rec Ly-is-prop α obtain-k'
  where
   Ly-is-prop : is-prop (k ∈ Ly)
@@ -148,8 +148,8 @@ abstract a proof in the first condition.
 ℝ-m2 : m2 ℝ B-ℝ
 ℝ-m2 x y ε l = ∥∥-functor α
  where
-  α : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε l
-    → Σ (u , v , p , q) ꞉ ℚ × ℚ × ℚ × ℚ , u < y × p < x × y < v × x < q × B-ℚ (min u p) (max v q) ε l
+  α : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε l
+    → Σ (u , v , p , q) ꞉ ℚ × ℚ × ℚ × ℚ , (u < y) × (p < x) × (y < v) × (x < q) × B-ℚ (min u p) (max v q) ε l
   α ((p , q , u , v) , p<x , u<y , x<q , y<v , B)
    = (u , v , p , q) , u<y , p<x , y<v , x<q , transport₂ (λ α β → B-ℚ α β ε l) (min-comm p u) (max-comm q v) B
 
@@ -189,8 +189,8 @@ abstract a proof in the first condition.
 ℝ-m3 : m3 ℝ B-ℝ
 ℝ-m3 x y ε₁ ε₂ l₁ l₂ l₃ = ∥∥-functor I
  where
-  I : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε₁ l₁
-    → Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , p < x × u < y × x < q × y < v × B-ℚ (min p u) (max q v) ε₂ l₂
+  I : Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε₁ l₁
+    → Σ (p , q , u , v) ꞉ ℚ × ℚ × ℚ × ℚ , (p < x) × (u < y) × (x < q) × (y < v) × B-ℚ (min p u) (max q v) ε₂ l₂
   I ((p , q , u , v) , p<x , y<u , x<q , y<v , B)
    = (p , q , u , v) , p<x , y<u , x<q , y<v , ℚ<-trans (ℚ-metric (min p u) (max q v)) ε₁ ε₂ B l₃
 
@@ -582,7 +582,7 @@ cauchy-approximation-limit-exists (f , approximation-condition) = y , y-is-limit
          → 𝟘
       II ((((ε₁ , l₁) , (θ₁ , l₂)) , klc) , ((ε₂ , l₃) , (θ₂ , l₄)) , kuc)  = ∥∥-rec 𝟘-is-prop III (approximation-condition (ε₁ , l₁) (ε₂ , l₃))
        where
-        III : Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , a < (f (ε₁ , l₁)) × c < (f (ε₂ , l₃)) × b > (f (ε₁ , l₁)) × d > (f (ε₂ , l₃)) × B-ℚ (min a c) (max b d) (ε₁ + ε₂) (ℚ<-adding-zero ε₁ ε₂ l₁ l₃) → 𝟘
+        III : Σ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , (a < (f (ε₁ , l₁))) × (c < (f (ε₂ , l₃))) × (b > (f (ε₁ , l₁))) × (d > (f (ε₂ , l₃))) × B-ℚ (min a c) (max b d) (ε₁ + ε₂) (ℚ<-adding-zero ε₁ ε₂ l₁ l₃) → 𝟘
         III ((a , b , c , d) , aL1 , cL2 , bR1 , dR2 , B)  = ℚ<-not-itself 0ℚ xii
          where
           i : c < k - ε₂ - θ₂
@@ -623,8 +623,8 @@ cauchy-approximation-limit-exists (f , approximation-condition) = y , y-is-limit
             γ = ℚ<-difference-positive c b ν
             δ : abs (c - b) ＝ b - c
             δ = ℚ-metric-commutes c b ∙ abs-of-pos-is-pos (b - c) (ℚ<-coarser-than-≤ 0ℚ (b - c) γ)
-            α : a ≤ c × (min a c ＝ a) ∔ c ≤ a × (min a c ＝ c)
-              → b ≤ d × (max b d ＝ d) ∔ d ≤ b × (max b d ＝ b)
+            α : (a ≤ c) × (min a c ＝ a) ∔ c ≤ a × (min a c ＝ c)
+              → (b ≤ d) × (max b d ＝ d) ∔ d ≤ b × (max b d ＝ b)
               → b - c < ε₁ + ε₂
             α (inl (a≤c , e₁)) (inl (b≤d , e₂)) = β (ℚ≤-split b d b≤d) (ℚ≤-split a c a≤c)
              where
@@ -710,9 +710,9 @@ cauchy-approximation-limit-exists (f , approximation-condition) = y , y-is-limit
     0<θ/2 : 0ℚ < 1/2 * θ
     0<θ/2 = ℚ<-pos-multiplication-preserves-order 1/2 θ (0 , refl) l₂
 
-    obtain-bounds :  ∃ (u , v) ꞉ ℚ × ℚ , u < (f (ε , l₁)) × v > (f (ε , l₁)) × 0ℚ < (v - u) × (v - u) < 1/2 * θ
+    obtain-bounds : ∃ (u , v) ꞉ ℚ × ℚ , (u < (f (ε , l₁))) × (v > (f (ε , l₁))) × (0ℚ < (v - u)) × ((v - u) < 1/2 * θ)
     obtain-bounds = ℝ-arithmetically-located (f (ε , l₁)) (1/2 * θ) 0<θ/2
-    I :  Σ (u , v) ꞉ ℚ × ℚ , u < (f (ε , l₁)) × v > (f (ε , l₁)) × 0ℚ < (v - u) × (v - u) < 1/2 * θ
+    I : Σ (u , v) ꞉ ℚ × ℚ , (u < (f (ε , l₁))) × (v > (f (ε , l₁))) × (0ℚ < (v - u)) × ((v - u) < 1/2 * θ)
       → ∃ (a , b , c , d) ꞉ ℚ × ℚ × ℚ × ℚ , a ∈ Lε × c ∈ Ly × b ∈ Rε × d ∈ Ry × B-ℚ (min a c) (max b d) (ε + θ) l₃
     I ((u , v) , uLε , vRε , 0<v-u , v-u<θ/2) = ∥∥-functor using-located (located-from-real y u v u<v)
      where

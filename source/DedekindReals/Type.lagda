@@ -163,18 +163,29 @@ open import Notation.Order
 _ℚ<ℝ_  : ℚ → ℝ → 𝓤₀ ̇
 p ℚ<ℝ x = p ∈ lower-cut-of x
 
-instance
- Strict-Order-ℚ-ℝ : Strict-Order ℚ ℝ
- _<_ {{Strict-Order-ℚ-ℝ}} = _ℚ<ℝ_
-
 _ℝ<ℚ_  : ℝ → ℚ → 𝓤₀ ̇
 x ℝ<ℚ q = q ∈ upper-cut-of x
 
 instance
+ Strict-Order-ℚ-ℝ : Strict-Order ℚ ℝ
+ _<_ {{Strict-Order-ℚ-ℝ}} = _ℚ<ℝ_
+
  Strict-Order-ℝ-ℚ : Strict-Order ℝ ℚ
  _<_ {{Strict-Order-ℝ-ℚ}} = _ℝ<ℚ_
 
-ℚ<-not-itself-from-ℝ : (p : ℚ) → (x : ℝ) → ¬ (p < x × x < p)
+ Strict-Order-Chain-ℚ-ℝ-ℚ : Strict-Order-Chain ℚ ℝ ℚ _<_ _<_
+ _<_<_ {{Strict-Order-Chain-ℚ-ℝ-ℚ}} p x q = (p < x) × (x < q)
+
+ Strict-Order-Chain-ℝ-ℚ-ℝ : Strict-Order-Chain ℝ ℚ ℝ _<_ _<_
+ _<_<_ {{Strict-Order-Chain-ℝ-ℚ-ℝ}} x p y = (x < p) × (p < y)
+
+ Strict-Order-Chain-ℚ-ℚ-ℝ : Strict-Order-Chain ℚ ℚ ℝ _<_ _<_
+ _<_<_ {{Strict-Order-Chain-ℚ-ℚ-ℝ}} p q x = (p < q) × (q < x)
+
+ Strict-Order-Chain-ℝ-ℚ-ℚ : Strict-Order-Chain ℝ ℚ ℚ _<_ _<_
+ _<_<_ {{Strict-Order-Chain-ℝ-ℚ-ℚ}} x p q = (x < p) × (p < q)
+
+ℚ<-not-itself-from-ℝ : (p : ℚ) → (x : ℝ) → ¬ (p < x < p)
 ℚ<-not-itself-from-ℝ p x (l₁ , l₂) = ℚ<-not-itself p (disjoint-from-real x p p (l₁ , l₂))
 
 embedding-ℚ-to-ℝ : ℚ → ℝ
@@ -337,6 +348,6 @@ instance
 ℝ-equality-from-left-cut' x y s t = ℝ-equality-from-left-cut x y (subset-extensionality pe fe s t)
 
 type-of-locator-for-reals : 𝓤₁ ̇
-type-of-locator-for-reals = (x : ℝ) → (p q : ℚ) → p < x ∔ x < q
+type-of-locator-for-reals = (x : ℝ) → (p q : ℚ) → (p < x) ∔ (x < q)
 
 \end{code}

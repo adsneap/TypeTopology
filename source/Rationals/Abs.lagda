@@ -112,7 +112,7 @@ abs-of-pos-is-pos' p l = abs-of-pos-is-pos p (ℚ<-coarser-than-≤ 0ℚ p l)
   γ = ℚ-positive-not-zero x a e
 ℚ-abs-zero-is-zero ((negsucc x , a) , p) e = 𝟘-elim (ℚ-positive-not-zero x a e)
 
-ℚ-abs-≤ : (q : ℚ) → (- abs q ≤ q) × (q ≤ abs q)
+ℚ-abs-≤ : (q : ℚ) → - abs q ≤ q ≤ abs q
 ℚ-abs-≤ q = cases γ₁ γ₂ (ℚ-abs-inverse q)
  where
   I : 0ℚ ≤ abs q
@@ -269,16 +269,16 @@ abs-of-pos-is-pos' p l = abs-of-pos-is-pos p (ℚ<-coarser-than-≤ 0ℚ p l)
 ℚ-triangle-inequality : (x y : ℚ) → abs (x + y) ≤ abs x + abs y
 ℚ-triangle-inequality x y = ℚ≤-to-abs (x + y) (abs x + abs y) (γ I II)
  where
-  I : - abs x ≤ x × x ≤ abs x
+  I : - abs x ≤ x ≤ abs x
   I = ℚ-abs-≤ x
 
-  II : - abs y ≤ y × y ≤ abs y
+  II : - abs y ≤ y ≤ abs y
   II = ℚ-abs-≤ y
 
-  γ : - abs x ≤ x × x ≤ abs x
-    → - abs y ≤ y × y ≤ abs y
-    → - (abs x + abs y) ≤ x + y
-    × x + y ≤ abs x + abs y
+  γ : (- abs x ≤ x ≤ abs x)
+    → (- abs y ≤ y ≤ abs y)
+    → (- (abs x + abs y) ≤ x + y)
+    × (x + y ≤ abs x + abs y)
   γ (l₁ , l₂) (l₃ , l₄) = (transport (_≤ x + y) IV III) , V
    where
     III : (- abs x) - abs y ≤ x + y

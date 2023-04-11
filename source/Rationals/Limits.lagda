@@ -41,7 +41,7 @@ L limit-of f = ∀ (ε : ℚ) → 0ℚ < ε
 
 sandwich-theorem : (L : ℚ)
                  → (f g h : ℕ → ℚ)
-                 → (Σ k ꞉ ℕ , ((k' : ℕ) → k ≤ k' → f k' ≤ g k' × g k' ≤ h k'))
+                 → (Σ k ꞉ ℕ , ((k' : ℕ) → k ≤ k' → f k' ≤ g k' ≤ h k'))
                  → L limit-of f
                  → L limit-of h
                  → L limit-of g
@@ -81,12 +81,12 @@ sandwich-theorem L f g h (k , k-greater) lim-f lim-h = lim-g
         h-close' : ℚ-metric (h n) L < ε
         h-close' = h-close n (≤-trans N₂ N n (≤-trans N₂ (ℕ-max N₁ N₂) N N₂-small N₁N₂-small) less)
 
-        obtain-inequalities : - ε < f n - L × f n - L < ε
-                            → - ε < h n - L × h n - L < ε
+        obtain-inequalities : - ε < f n - L < ε
+                            → - ε < h n - L < ε
                             → ℚ-metric (g n) L < ε
         obtain-inequalities (l₁ , l₂) (l₃ , l₄) = ℚ<-to-abs (g n - L) ε (I , II)
          where
-          k-greater' : f n ≤ g n × g n ≤ h n
+          k-greater' : f n ≤ g n ≤ h n
           k-greater' = k-greater n (≤-trans k N n k-small less)
 
           I : - ε < g n - L
