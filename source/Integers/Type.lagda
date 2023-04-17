@@ -9,7 +9,7 @@ canonical inclusion of natural numbers in the integers.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
+{-# OPTIONS --without-K --exact-split --safe --no-sized-types --no-guardedness --auto-inline #-}
 
 open import MLTT.Spartan renaming (_+_ to _∔_)
 open import TypeTopology.DiscreteAndSeparated
@@ -32,6 +32,10 @@ For example, negsucc 0 = -1
 data ℤ : 𝓤₀ ̇ where
  pos     : ℕ → ℤ
  negsucc : ℕ → ℤ
+
+{-# BUILTIN INTEGER       ℤ       #-}
+{-# BUILTIN INTEGERPOS    pos     #-}
+{-# BUILTIN INTEGERNEGSUC negsucc #-}
 
 \end{code}
 
@@ -182,14 +186,14 @@ always equal.
 ℤ-is-discrete : is-discrete ℤ
 ℤ-is-discrete (pos x) (pos y) = f (ℕ-is-discrete x y)
  where
-  f : (x ＝ y) ∔ ¬ (x ＝ y) → decidable (pos x ＝ pos y)
+  f : (x ＝ y) ∔ ¬ (x ＝ y) → is-decidable (pos x ＝ pos y)
   f (inl e)  = inl (ap pos e)
   f (inr ne) = inr (λ e → ne (pos-lc e))
 ℤ-is-discrete (pos x) (negsucc y) = inr pos-not-negsucc
 ℤ-is-discrete (negsucc x) (pos y) = inr negsucc-not-pos
 ℤ-is-discrete (negsucc x) (negsucc y) = f (ℕ-is-discrete x y)
  where
-  f : (x ＝ y) ∔ ¬ (x ＝ y) → decidable (negsucc x ＝ negsucc y)
+  f : (x ＝ y) ∔ ¬ (x ＝ y) → is-decidable (negsucc x ＝ negsucc y)
   f (inl e)  = inl (ap negsucc e)
   f (inr ne) = inr (λ e → ne (negsucc-lc e))
 ℤ-is-set : is-set ℤ

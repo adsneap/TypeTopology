@@ -26,7 +26,7 @@ notably doesn't use set quotients.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline --lossy-unification #-}
+{-# OPTIONS --without-K --exact-split --safe --no-sized-types --no-guardedness --auto-inline --lossy-unification #-}
 
 
 open import UF.Quotient
@@ -143,7 +143,7 @@ unquotiented type Σ i ꞉ I , ⟨ α i ⟩.
   ≺-is-well-founded : is-well-founded _≺_
   ≺-is-well-founded = transfinite-induction-converse _≺_ wf
    where
-    wf : Well-founded _≺_
+    wf : is-Well-founded _≺_
     wf P IH (i , x) = lemma (α i ↓ x) i x refl
      where
       P̃ : Ordinal 𝓤 → 𝓤 ⁺ ̇

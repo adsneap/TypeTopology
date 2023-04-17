@@ -59,7 +59,7 @@ apartness relation is a set, and so this reflection is always a set.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
+{-# OPTIONS --without-K --exact-split --safe --no-sized-types --no-guardedness --auto-inline #-}
 
 module TypeTopology.TotallySeparated where
 
@@ -811,7 +811,7 @@ apartness relation _♯₂ is tight:
    d x y z = ∥∥-functor g
     where
      g : (Σ p ꞉ (X → 𝟚) , p x ≠ p y) → (x ♯₂ z) + (y ♯₂ z)
-     g (p , u) = h (discrete-is-cotransitive 𝟚-is-discrete {p x} {p y} {p z} u)
+     g (p , u) = h (discrete-types-are-cotransitive 𝟚-is-discrete {p x} {p y} {p z} u)
       where
        h : (p x ≠ p z) + (p z ≠ p y) → (x ♯₂ z) + (y ♯₂ z)
        h (inl u) = inl ∣ p , u ∣

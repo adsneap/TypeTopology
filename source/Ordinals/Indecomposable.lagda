@@ -15,7 +15,7 @@ property unless weak excluded middle holds.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe #-}
+{-# OPTIONS --without-K --exact-split --safe --no-sized-types --no-guardedness #-}
 
 open import UF.Univalence
 
@@ -198,7 +198,7 @@ true to y. We collect all such functions in a type Ω-Path 𝓥 x y.
 
 \end{code}
 
-The ordinals in any universe have Ω-paths between any two points.
+The the of ordinals in any universe has Ω-paths between any two points.
 
 \begin{code}
 
@@ -269,12 +269,10 @@ decomposition-of-Ω-gives-WEM {𝓤} (f , (p₀@(P₀ , i₀) , e₀) , (p₁@(P
   g (Q , j) = ((P₀ × Q) + (P₁ × ¬ Q)) , k
    where
     k : is-prop ((P₀ × Q) + (P₁ × ¬ Q))
-    k (inl (a , b)) (inl (u , v)) = ap inl (to-×-＝ (i₀ a u) (j b v))
-    k (inl (a , b)) (inr (u , v)) = 𝟘-elim (v b)
-    k (inr (a , b)) (inl (u , v)) = 𝟘-elim (b v)
-    k (inr (a , b)) (inr (u , v)) = ap inr (to-×-＝
-                                             (i₁ a u)
-                                             (negations-are-props fe' b v))
+    k = +-is-prop
+         (×-is-prop i₀ j)
+         (×-is-prop i₁ (negations-are-props fe'))
+         (λ (p₀ , q) (p₁ , ν) → ν q)
 
   I₀ : (q : Ω 𝓤) → q holds → f (g q) ＝ ₀
   I₀ q h = II
@@ -317,7 +315,8 @@ decomposition-of-type-with-Ω-paths-gives-WEM : {X : 𝓤 ̇ }
                                              → decomposition X
                                              → has-Ω-paths 𝓥 X
                                              → WEM 𝓥
-decomposition-of-type-with-Ω-paths-gives-WEM {𝓤} {𝓥} {X} (f , (x₀ , e₀) , (x₁ , e₁)) c = γ
+decomposition-of-type-with-Ω-paths-gives-WEM {𝓤} {𝓥} {X}
+                                             (f , (x₀ , e₀) , (x₁ , e₁)) c = γ
  where
   g : Ω 𝓥 → X
   g = pr₁ (c x₀ x₁)

@@ -19,7 +19,7 @@ Other local assumptions belonging to HoTT/UF are discussed below.
 
 \begin{code}
 
-{-# OPTIONS --without-K --exact-split --safe --auto-inline #-}
+{-# OPTIONS --without-K --exact-split --safe --no-sized-types --no-guardedness --auto-inline #-}
 
 open import UF.Univalence
 
@@ -142,7 +142,7 @@ module _ {𝓤 : Universe}
   where
    open import Ordinals.OrdinalOfTruthValues fe 𝓤 (pe 𝓤)
    open Omega (pe 𝓤)
-   open import Ordinals.Arithmetic-Properties ua
+   open import Ordinals.ArithmeticProperties ua
 
    τ = 𝟚ᵒ
 

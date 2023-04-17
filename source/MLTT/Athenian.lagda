@@ -4,7 +4,7 @@ Non-spartan types in MLTT, which are definable from spartan MLTT, but we include
 
 \begin{code}
 
-{-# OPTIONS --without-K --safe --auto-inline #-} -- --exact-split
+{-# OPTIONS --without-K --safe --no-sized-types --no-guardedness --auto-inline #-} -- --exact-split
 
 module MLTT.Athenian where
 
@@ -15,14 +15,16 @@ data Maybe {𝓤 : Universe} (A : 𝓤 ̇ ) : 𝓤 ̇ where
  Nothing : Maybe A
  Just    : A → Maybe A
 
+{-# BUILTIN MAYBE Maybe #-}
+
 Just-is-not-Nothing : {A : 𝓤 ̇ } {a : A} → Just a ≠ Nothing
 Just-is-not-Nothing ()
 
-Nothing-is-isolated : {A : 𝓤 ̇ } (x : Maybe A) → decidable (Nothing ＝ x)
+Nothing-is-isolated : {A : 𝓤 ̇ } (x : Maybe A) → is-decidable (Nothing ＝ x)
 Nothing-is-isolated Nothing  = inl refl
 Nothing-is-isolated (Just a) = inr (λ (p : Nothing ＝ Just a) → Just-is-not-Nothing (p ⁻¹))
 
-Nothing-is-isolated' : {A : 𝓤 ̇ } (x : Maybe A) → decidable (x ＝ Nothing)
+Nothing-is-isolated' : {A : 𝓤 ̇ } (x : Maybe A) → is-decidable (x ＝ Nothing)
 Nothing-is-isolated' Nothing  = inl refl
 Nothing-is-isolated' (Just a) = inr Just-is-not-Nothing
 
@@ -39,6 +41,10 @@ Nothing-is-h-isolated' x = equiv-to-prop ＝-flip (Nothing-is-h-isolated x)
 
 data Bool : 𝓤₀ ̇ where
  true false : Bool
+
+{-# BUILTIN BOOL  Bool  #-}
+{-# BUILTIN FALSE false #-}
+{-# BUILTIN TRUE  true  #-}
 
 true-is-not-false : true ≠ false
 true-is-not-false ()
@@ -117,7 +123,36 @@ data List {𝓤 : Universe} (X : 𝓤 ̇ ) : 𝓤 ̇ where
  []  : List X
  _∷_ : X → List X → List X
 
+{-# BUILTIN LIST List #-}
+
 infixr 3 _∷_
+
+[]-is-not-cons : {X : 𝓤 ̇ } (x : X) (xs : List X)
+               → [] ≠ x ∷ xs
+[]-is-not-cons x []        ()
+[]-is-not-cons x (x₀ ∷ xs) ()
+
+[_] : {X : 𝓤 ̇ } → X → List X
+[ x ] = x ∷ []
+
+equal-heads : {X : 𝓤 ̇ } {x y : X} {xs ys : List X}
+            → x ∷ xs ＝ y ∷ ys
+            → x ＝ y
+equal-heads {𝓤} {X} {x} = ap head
+ where
+  head : List X → X
+  head []       = x
+  head (z ∷ zs) = z
+
+equal-tails : {X : 𝓤 ̇ } {x y : X} {xs ys : List X}
+            → x ∷ xs ＝ y ∷ ys
+            → xs ＝ ys
+equal-tails {𝓤} {X} = ap tail
+ where
+  tail : List X → List X
+  tail []       = []
+  tail (x ∷ xs) = xs
+
 
 length : {X : 𝓤 ̇ } → List X → ℕ
 length []       = 0
@@ -164,7 +199,7 @@ listable⁺ : Type → Type
 listable⁺ X = X × listable X
 
 type-from-list : {X : Type} → List X → Type
-type-from-list {X} xs = (Σ x ꞉ X , member x xs)
+type-from-list {X} xs = Σ x ꞉ X , member x xs
 
 type-from-list-is-listable : {X : Type} (xs : List X)
                            → listable (type-from-list xs)

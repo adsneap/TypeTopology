@@ -6,7 +6,7 @@ Athenian in this respect.
 
 \begin{code}
 
-{-# OPTIONS --without-K --safe --auto-inline --exact-split #-}
+{-# OPTIONS --without-K --safe --no-sized-types --no-guardedness --auto-inline --exact-split #-}
 
 module MLTT.List where
 
@@ -30,6 +30,11 @@ equal-tails {𝓤} {X} refl = refl
 
 [_] : {X : 𝓤 ̇ } → X → List X
 [ x ] = x ∷ []
+
+[]-is-not-cons : {X : 𝓤 ̇ } (x : X) (xs : List X)
+               → [] ≠ x ∷ xs
+[]-is-not-cons x []        ()
+[]-is-not-cons x (x₀ ∷ xs) ()
 
 _++_ : {X : 𝓤 ̇ } → List X → List X → List X
 []      ++ t = t
